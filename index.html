@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur Smash Up Avancé</title>
+<title>Advanced Smash Up Generator</title>
 <style>
 :root {
     --bg-color: #f4f4f9;
@@ -224,11 +224,32 @@ li { margin: 15px auto; font-size: 18px; }
     background: url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 14C10 8 4 12 7 18C10 19 13 18 16 14Z' fill='%231e7a33' stroke='%230d3b18' stroke-width='0.8'/%3E%3Cpath d='M16 14C22 8 28 12 25 18C22 19 19 18 16 14Z' fill='%23258f3d' stroke='%230d3b18' stroke-width='0.8'/%3E%3Ccircle cx='16' cy='15' r='2.6' fill='%23d91c2b'/%3E%3Ccircle cx='13.5' cy='17.5' r='2.3' fill='%23b81422'/%3E%3Ccircle cx='18.5' cy='17.5' r='2.3' fill='%23e62535'/%3E%3C/svg%3E") no-repeat center/contain;
 }
 #historiqueContainer { display: none; }
+body { padding-bottom: 80px; }
+.tab-hidden { display: none !important; }
+.menu-extensions > summary { display: none; }
+#resultat:not(:empty) { border: 2px solid var(--border-color); border-radius: 10px; padding: 10px; margin: 15px auto; max-width: 440px; box-shadow: var(--panel-shadow); }
+.tabs-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; z-index: 20; background: var(--panel-bg); border-top: var(--panel-border); }
+.tabs-bar button { flex: 1; margin: 0; border-radius: 0; background: transparent; color: var(--text-color); padding: 14px 0; font-size: 15px; box-shadow: none; border: none; }
+.tabs-bar button.actif { background: var(--btn-primary); color: #fff; }
+.logo, .badge { width: 28px; height: 28px; border-radius: 50%; vertical-align: middle; margin-right: 6px; }
+.logo { object-fit: cover; }
+.badge { display: inline-flex; align-items: center; justify-content: center; background: var(--btn-secondary); color: #fff; font-size: 12px; font-weight: bold; }
+.fac-res { display: block; margin: 6px 0; font-size: 16px; text-align: left; }
+.fac-res small { display: block; opacity: .7; font-size: 12px; margin-left: 34px; }
+.draft-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 10px 0; }
+.draft-pool button { margin: 0; padding: 8px 10px; font-size: 14px; }
+.draft-pool button:disabled, #resultat button:disabled { opacity: .4; }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.7) rotate(-5deg); } to { opacity: 1; transform: none; } }
+.carte-draft { animation: pop .45s cubic-bezier(.2,.9,.3,1.3) backwards; min-width: 120px; }
+.carte-draft.sel { outline: 3px solid #ffd54a; transform: scale(1.06); filter: brightness(1.15); }
+#resultat > p { margin: 24px 0 6px; }
+#paramContainer label { font-size: 14px; }
+#paramContainer select, #paramContainer input[type="number"] { font-size: 14px; padding: 3px; }
+#paramContainer .controls-top { gap: 12px; margin-bottom: 10px; }
 .historique-item { font-size: 14px; padding: 10px; text-align: left; border-bottom: var(--panel-border); box-shadow: none; border-radius: 0; background: transparent; margin: 0; max-width: 100%; backdrop-filter: none; }
 .historique-item:last-child { border-bottom: none; }
 .historique-titre { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .historique-heure { color: var(--text-color); opacity: 0.7; font-size: 0.85em; font-weight: normal; }
-.theme-toggle { position: absolute; top: -2px; right: -2px; background: transparent !important; box-shadow: none !important; color: var(--text-color); padding: 15px; border: none !important; margin: 0; display: flex; align-items: center; justify-content: center; z-index: 10; }
 .theme-toggle svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
 .ext-actions { text-align: center; margin-bottom: 15px; }
 .ext-actions-history { display: flex; justify-content: center; margin-bottom: 15px; gap: 15px; }
@@ -236,6 +257,15 @@ li { margin: 15px auto; font-size: 18px; }
     @keyframes p { 0%,100% { opacity: 0.85; } 50% { opacity: 1; } }
     .glow-anim { animation: p 3.5s infinite ease-in-out; }
 }
+.theme-toggle { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; padding: 0; margin: 0; background: transparent !important; box-shadow: none !important; border: none !important; color: var(--text-color); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.lang-toggle { right: auto; left: 4px; }
+.param-row { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0 0 14px; }
+.param-row .lbl { font-size: 14px; font-weight: bold; }
+.seg { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; }
+.seg button { margin: 0; padding: 6px 10px; min-width: 34px; font-size: 13px; border-radius: 4px; background: var(--btn-secondary); opacity: .8; }
+.seg button.on { background: var(--btn-primary); opacity: 1; box-shadow: inset 0 0 0 2px rgba(255,255,255,.6); }
+.seg input[type="number"] { width: 44px; font-size: 13px; padding: 4px; }
+.seg input[type="number"].on { outline: 2px solid var(--btn-primary); }
 </style>
 </head>
 <body>
@@ -346,7 +376,7 @@ li { margin: 15px auto; font-size: 18px; }
 </div>
 
 <div class="app-content">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Changer le thème">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Change theme" data-ttl="Changer le thème">
         <svg id="icon-sun" style="display:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <svg id="icon-sepia" style="display:none" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <svg id="icon-moon" style="display:none" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -356,66 +386,61 @@ li { margin: 15px auto; font-size: 18px; }
         <svg id="icon-halloween" style="display:none" viewBox="0 0 24 24"><path d="M12 2c-1 0-2 2-2 3v1c-4.4 0-8 3.1-8 7s3.6 7 8 7 8-3.1 8-7-3.6-7-8-7V5c0-1-1-3-2-3zM9 13l1 2 1-2zm6 0l-1 2-1-2zm-6 4l1.5 1 1.5-1 1.5 1 1.5-1"/></svg>
         <svg id="icon-christmas" style="display:none" viewBox="0 0 24 24"><path d="M12 2L20 10H16L22 18H2L8 10H4ZM10 18v4h4v-4Z"/></svg>
     </button>
+    <button class="theme-toggle lang-toggle" onclick="toggleLangue()" title="Langue / Language">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+    </button>
 
     <div class="header-container">
-        <h2>Tirage Smash Up</h2>
-    </div>
-    
-    <div class="controls-top">
-        <label>Nb joueurs 
-            <select id="selectNbJoueurs" onchange="changerTypeSaisie('Joueurs'); genererChampsJoueurs(); sauvegarderParametres();">
-                <option value="2">2</option>
-                <option value="3" selected>3</option>
-                <option value="4">4</option>
-                <option value="custom">Personnalisé...</option>
-            </select>
-            <input type="number" id="inputNbJoueurs" value="5" min="1" max="20" style="display:none" onchange="genererChampsJoueurs(); sauvegarderParametres();">
-        </label>
-        <label>Factions/joueur 
-            <select id="selectNbFactions" onchange="changerTypeSaisie('Factions'); sauvegarderParametres();">
-                <option value="2" selected>2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="custom">Personnalisé...</option>
-            </select>
-            <input type="number" id="inputNbFactions" value="5" min="1" max="10" style="display:none" onchange="sauvegarderParametres();">
-        </label>
+        <h2 data-t="Tirage Smash Up">Smash Up Draw</h2>
     </div>
 
-    <div id="nomsJoueursContainer"></div>
-    
-    <button onclick="lancerTirage()">Tirer les Factions</button>
-    
+    <button onclick="lancerTirage()" data-t="Tirer les Factions">Draw Factions</button>
+
     <div id="resultat"></div>
-    
-    <details id="historiqueContainer" class="menu-extensions">
-        <summary>Historique des tirages</summary>
+
+    <div id="paramContainer" class="menu-extensions tab-hidden" style="text-align:center">
+        <div class="param-row"><span class="lbl" data-t="Nb joueurs">Nb players</span><div class="seg" id="segJ"></div></div>
+        <div class="param-row"><span class="lbl" data-t="Mode">Mode</span><div class="seg" id="segMode"></div></div>
+        <div class="param-row tab-hidden" id="rowMain"><span class="lbl" data-t="Factions proposées par joueur">Factions offered per player</span><div class="seg" id="segMain"></div></div>
+        <div class="param-row tab-hidden" id="rowPool"><span class="lbl" data-t="Taille de la réserve">Common pool size</span><div class="seg" id="segPool"></div></div>
+        <div id="nomsJoueursContainer"></div>
+    </div>
+
+    <details id="historiqueContainer" class="menu-extensions tab-hidden" open>
+        <summary data-t="Historique des tirages">Draw history</summary>
         <div class="ext-actions-history">
-            <button class="btn-compact" onclick="viderHistorique()">🗑️ Vider l'historique</button>
-            <button class="btn-compact btn-danger" onclick="reinitialiserTout()">🔄 Réinitialiser</button>
+            <button class="btn-compact" onclick="viderHistorique()" data-t="Vider l'historique" data-e="🗑️ ">🗑️ Clear history</button>
+            <button class="btn-compact btn-danger" onclick="reinitialiserTout()" data-t="Réinitialiser" data-e="🔄 ">🔄 Reset</button>
         </div>
         <ul id="historiqueListe"></ul>
     </details>
 
     <br>
 
-    <details class="menu-extensions">
-        <summary>Extensions & factions</summary>
+    <details id="extContainer" class="menu-extensions tab-hidden" open>
+        <summary data-t="Extensions & factions">Expansions & factions</summary>
         <div class="ext-actions">
-            <button class="btn-small" onclick="actionToutesFactions(true)">Tout cocher</button>
-            <button class="btn-small" onclick="actionToutesFactions(false)">Tout décocher</button>
+            <button class="btn-small" onclick="actionToutesFactions(true)" data-t="Tout cocher">Check all</button>
+            <button class="btn-small" onclick="actionToutesFactions(false)" data-t="Tout décocher">Uncheck all</button>
         </div>
         <div id="optionsExtensions"></div>
     </details>
 </div>
+
+<nav class="tabs-bar">
+    <button id="tabParam" onclick="ouvrirOnglet('paramContainer','tabParam')" data-t="Paramètres">Settings</button>
+    <button id="tabHist" style="display:none" onclick="ouvrirOnglet('historiqueContainer','tabHist')" data-t="Historique">History</button>
+    <button id="tabExt" onclick="ouvrirOnglet('extContainer','tabExt')" data-t="Extensions">Expansions</button>
+</nav>
 
 <script>
 const donneesCSV = `Smash Up|(2013)|1|Aliens;Dinosaures;Ninjas;Pirates;Robots;Petit Peuple;Sorciers;Zombies
 Smash Up : Même Pas Mort|(2013)|1|Cavalerie Ours;Fantômes;Plantes Carnivores;Steampunks
 Smash Up : Cthulhu Fhtagn !|(2014)|1|Grands Anciens;Innsmouth;Serviteurs de Cthulhu;Université Miskatonic
 Smash Up : Séries B|(2014)|1|Métamorphes;Singes Cyborgs;Super Espions;Voyageurs du Temps
-Smash Up : Monstres Sacrés|(2015)|0|Fourmis Géantes;Loups-Garous;Savants Fous;Vampires
-Smash Up : Trop Minions|(2015)|0|Chatons;Fées;Poneys Magiques;Princesses
+Smash Up : Monstres Sacrés|(2015)|1|Fourmis Géantes;Loups-Garous;Savants Fous;Vampires
+Smash Up : Trop Minions|(2015)|1|Chatons;Fées;Poneys Magiques;Princesses
+Smash Up : La Grosse Boîte pour Geek|(2015)|0|Geeks
 Smash Up : Munchkin|(2016)|1|Elfes;Guerriers;Halfelins;Magiciens;Nains;Orques;Prêtres;Voleurs
 Smash Up : Ressemblances Fortuites|(2017)|1|Changeformers;Chevaliers des Étoiles;Squatteurs de Trône;Voyageurs de l'Espace
 Smash Up : Vous l'aurez voulu !|(2017)|1|Dragons;Mythologies Grecques;Requins;Super-Héros;Tornades
@@ -423,7 +448,7 @@ Smash Up : Conflit de Générations|(2017)|1|Explorateurs;Grands-Mères;Oursons;
 Smash Up : Rois du Japon|(2018)|1|Kaijū;Monstrapoches;Petites Magiciennes;Super Combattants
 Smash Up : Ces Années-Là|(2019)|0|Danseurs Disco;Justiciers;Maîtres Kung-Fu;Routiers
 Smash Up : Vous en voulez encore ?|(2020)|0|Anciens Égyptiens;Cow-Boys;Samouraïs;Vikings
-Smash Up : L'Énorme Boîte pour Geek|(2020)|0|Dream Team;Geeks
+Smash Up : L'Énorme Boîte pour Geek|(2020)|0|Dream Team
 Smash Up : Tournée Mondiale - Incident Diplomatique|(2021)|0|Luchadors;Mousquetaires;Police Montée;Sumos
 Smash Up Knights of the Round Table|(2021 VO)|0|Knights of the Round Table
 Smash Up : Marvel|(2022)|1|Avengers;Hydra;Kree;Masters of Evil;S.H.I.E.L.D.;Sinister Six;Spider-Verse;Ultimates
@@ -438,23 +463,74 @@ Smash Up Half the Battle|(2025 VO)|0|Adolescent Epic Geckos;G.I. Gerald;Pearl an
 Smash Up Slashers|(2025 VO)|0|Slashers
 Smash Up Clowns|(2025 VO)|0|Clowns`;
 
+const EN = {"Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
+Object.assign(EN, {
+    "Nb joueurs": "Nb players", "Mode": "Mode", "Draft": "Draft",
+    "Factions proposées par joueur": "Factions offered per player",
+    "Taille de la réserve": "Common pool size",
+    "Générateur Smash Up Avancé": "Advanced Smash Up Generator",
+    "Changer le thème": "Change theme",
+    "Historique des tirages": "Draw history", "Extensions & factions": "Expansions & factions",
+    "Halfelins": "Halflings", "Dream Team": "Smash Up All Stars", "Champions du Monde": "World Champs",
+    "Squatteurs de Trône": "Ignobles", "Luchadors": "Luchadores"
+});
+
 const $ = id => document.getElementById(id);
-let structureExtensions = {}, compteurTirage = 1, nomsFixes = [];
+const LS = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+const jsonLS = (k, def) => { try { const v = JSON.parse(LS.get(k)); return v == null ? def : v; } catch (e) { return def; } };
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+let langue = LS.get("smashup_lang") === "fr" ? "fr" : "en";   // anglais par défaut
+const L = (fr, en) => langue === "en" ? en : fr;
+const t = n => langue === "en" ? (EN[n] || n.replace(" : ", ": ")) : n;
+
+let structureExtensions = {}, compteurTirage = 1, nomsFixes = [], factionExt = {}, customs = [];
+let draft = null, historique = [], dernierResultat = null;
+
+const MODES = ["tirage", "draft", "pick", "pickban"];
+const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "Pick & Ban" };
+const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10 };
+let P = { ...DEFAUTS };
+
 const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "halloween", "christmas"];
 const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", halloween: "halloween", christmas: "christmas" };
+const PANNEAUX = [["paramContainer", "tabParam"], ["historiqueContainer", "tabHist"], ["extContainer", "tabExt"]];
 
 function initialiser() {
     chargerTheme();
     chargerParametres();
     chargerHistorique();
-    genererChampsJoueurs();
     parserCSV();
-    genererHTMLFactions();
-    chargerPreferencesFactions();
+    appliquerLangue();
 }
 
+/* ---------- Langue ---------- */
+function toggleLangue() {
+    langue = langue === "fr" ? "en" : "fr";
+    LS.set("smashup_lang", langue);
+    appliquerLangue();
+}
+
+function appliquerLangue() {
+    document.documentElement.lang = langue;
+    document.title = t("Générateur Smash Up Avancé");
+    document.querySelectorAll("[data-t]").forEach(el => el.textContent = (el.dataset.e || "") + t(el.dataset.t));
+    document.querySelectorAll("[data-ttl]").forEach(el => el.title = t(el.dataset.ttl));
+    genererHTMLFactions();
+    chargerPreferencesFactions();
+    rendreSegments();
+    genererChampsJoueurs();
+    rendreHistorique();
+    if (draft) rendreDraft(); else if (dernierResultat) rendreResultat();
+}
+
+/* ---------- Thème ---------- */
 function chargerTheme() {
-    const theme = localStorage.getItem("smashup_theme") || "light";
+    const theme = LS.get("smashup_theme") || "light";
     document.documentElement.setAttribute("data-theme", theme);
     majIconeTheme(theme);
 }
@@ -463,7 +539,7 @@ function toggleTheme() {
     const current = document.documentElement.getAttribute("data-theme");
     const next = themesList[(themesList.indexOf(current) + 1) % themesList.length];
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("smashup_theme", next);
+    LS.set("smashup_theme", next);
     majIconeTheme(next);
 }
 
@@ -473,88 +549,133 @@ function majIconeTheme(theme) {
     }
 }
 
-function changerTypeSaisie(type) {
-    const s = $("selectNb" + type), i = $("inputNb" + type);
-    if (s.value === "custom") {
-        s.style.display = "none";
-        i.style.display = "inline-block";
-        i.focus();
-    }
-}
-
-function getValeur(type) {
-    const s = $("selectNb" + type), i = $("inputNb" + type);
-    return parseInt(s.style.display === "none" ? i.value : s.value) || 0;
-}
-
-function sauvegarderParametres() {
-    const sJ = $("selectNbJoueurs"), iJ = $("inputNbJoueurs"), sF = $("selectNbFactions"), iF = $("inputNbFactions");
-    localStorage.setItem("smashup_params", JSON.stringify({
-        joueursMode: sJ.style.display === "none" ? "custom" : sJ.value,
-        joueursVal: iJ.value,
-        factionsMode: sF.style.display === "none" ? "custom" : sF.value,
-        factionsVal: iF.value
-    }));
-}
+/* ---------- Paramètres (boutons à bascule) ---------- */
+function sauvegarderParametres() { LS.set("smashup_params", JSON.stringify(P)); }
 
 function chargerParametres() {
-    const saved = localStorage.getItem("smashup_params");
-    if (!saved) return;
-    const p = JSON.parse(saved);
-    if (p.joueursMode === "custom") {
-        $("selectNbJoueurs").style.display = "none";
-        $("inputNbJoueurs").style.display = "inline-block";
-        $("inputNbJoueurs").value = p.joueursVal;
-    } else $("selectNbJoueurs").value = p.joueursMode;
-
-    if (p.factionsMode === "custom") {
-        $("selectNbFactions").style.display = "none";
-        $("inputNbFactions").style.display = "inline-block";
-        $("inputNbFactions").value = p.factionsVal;
-    } else $("selectNbFactions").value = p.factionsMode;
+    const p = jsonLS("smashup_params", null);
+    if (!p || typeof p.nbJ !== "number") return;
+    P = { ...DEFAUTS, ...p };
+    P.nbJ = Math.min(20, Math.max(1, P.nbJ | 0));
+    P.mainK = Math.min(20, Math.max(3, P.mainK | 0));
+    P.poolVal = Math.min(60, Math.max(2, P.poolVal | 0));
+    if (!MODES.includes(P.mode)) P.mode = "tirage";
 }
 
-function chargerHistorique() {
-    const savedNoms = localStorage.getItem("smashup_noms");
-    if (savedNoms) nomsFixes = JSON.parse(savedNoms);
+function setP(k, v) {
+    P[k] = v;
+    sauvegarderParametres();
+    rendreSegments();
+    if (k === "nbJ") genererChampsJoueurs();
+}
 
-    const savedHist = localStorage.getItem("smashup_historique");
-    if (!savedHist) return;
-    const histData = JSON.parse(savedHist);
-    if ((Date.now() - histData.timestamp) / 36e5 > 5) {
-        localStorage.removeItem("smashup_historique");
-    } else {
-        $("historiqueListe").innerHTML = histData.html;
-        compteurTirage = histData.compteur;
-        if (histData.html !== "") {
-            $("historiqueContainer").style.display = "inline-block";
-            $("nomsJoueursContainer").style.display = "none";
-        }
-    }
+function setPInput(k, el, min, max) {
+    let v = parseInt(el.value, 10);
+    if (isNaN(v)) return rendreSegments();
+    v = Math.min(max, Math.max(min, v));
+    P[k] = v;
+    if (k === "poolVal") P.poolAuto = false;
+    sauvegarderParametres();
+    rendreSegments();
+    if (k === "nbJ") genererChampsJoueurs();
+}
+
+function rendreSegments() {
+    const btn = (label, on, js) => `<button type="button" class="${on ? "on" : ""}" aria-pressed="${on}" onclick="${js}">${label}</button>`;
+    const num = (id, val, on, min, max, js) =>
+        `<input type="number" id="${id}" class="${on ? "on" : ""}" min="${min}" max="${max}" placeholder="…" value="${on ? val : ""}" onchange="${js}">`;
+    const preJ = [2, 3, 4, 5, 6], preK = [3, 4, 5, 6];
+
+    $("segJ").innerHTML = preJ.map(n => btn(n, P.nbJ === n, `setP('nbJ',${n})`)).join("") +
+        num("inNbJ", P.nbJ, !preJ.includes(P.nbJ), 1, 20, "setPInput('nbJ',this,1,20)");
+    $("segMode").innerHTML = MODES.map(m => btn(t(MODE_LABEL[m]), P.mode === m, `setP('mode','${m}')`)).join("");
+    $("segMain").innerHTML = preK.map(n => btn(n, P.mainK === n, `setP('mainK',${n})`)).join("") +
+        num("inMain", P.mainK, !preK.includes(P.mainK), 3, 20, "setPInput('mainK',this,3,20)");
+    $("segPool").innerHTML = btn(`Auto (${5 * P.nbJ})`, P.poolAuto, "setP('poolAuto',true)") +
+        num("inPool", P.poolVal, !P.poolAuto, 2, 60, "setPInput('poolVal',this,2,60)");
+
+    $("rowMain").classList.toggle("tab-hidden", P.mode !== "draft");
+    $("rowPool").classList.toggle("tab-hidden", P.mode !== "pick" && P.mode !== "pickban");
 }
 
 function genererChampsJoueurs() {
-    const conteneur = $("nomsJoueursContainer");
-    if (conteneur.style.display === "none") return;
-    const nb = getValeur("Joueurs");
-    const nomsSaisis = Array.from(conteneur.querySelectorAll("input")).map(inp => inp.value);
+    const c = $("nomsJoueursContainer");
+    const saisis = Array.from(c.querySelectorAll("input")).map(inp => inp.value);
     let html = "";
-    for (let i = 1; i <= nb; i++) {
-        let nom = nomsSaisis[i - 1] !== undefined ? nomsSaisis[i - 1] : (nomsFixes[i - 1] || "");
-        html += `<input type="text" id="nomJoueur${i}" placeholder="Joueur ${i}" value="${nom.replace(/"/g, "&quot;")}">`;
+    for (let i = 1; i <= P.nbJ; i++) {
+        const nom = saisis[i - 1] !== undefined ? saisis[i - 1] : (nomsFixes[i - 1] || "");
+        html += `<input type="text" id="nomJoueur${i}" placeholder="${L("Joueur", "Player")} ${i}" value="${esc(nom)}">`;
     }
-    conteneur.innerHTML = html;
+    c.innerHTML = html;
 }
 
+/* ---------- Historique ---------- */
+function chargerHistorique() {
+    const noms = jsonLS("smashup_noms", null);
+    if (Array.isArray(noms)) nomsFixes = noms;
+    const h = jsonLS("smashup_historique", null);
+    if (!h || !Array.isArray(h.items)) return;   // ancien format (html) ignoré
+    if ((Date.now() - h.timestamp) / 36e5 > 5) { LS.del("smashup_historique"); return; }
+    historique = h.items;
+    compteurTirage = h.compteur || historique.length + 1;
+}
+
+function sauverHistorique() {
+    LS.set("smashup_historique", JSON.stringify({ items: historique, compteur: compteurTirage, timestamp: Date.now() }));
+}
+
+function rendreHistorique() {
+    const loc = langue === "en" ? "en-GB" : "fr-FR";
+    $("historiqueListe").innerHTML = historique.map(h => {
+        const heure = new Date(h.ts).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        return `<li class="historique-item"><div class="historique-titre"><b>${L("Tirage", "Draw")} ${h.n}</b><span class="historique-heure">${heure}</span></div>` +
+            h.groupes.map((g, i) => `<b>${nomJ(i, h.noms)}</b> : ${g.map(t).join(" & ")}<br>`).join("") +
+            `🎲 ${nomJ(h.premier, h.noms)} ${t("commence")}<br></li>`;
+    }).join("");
+    majTabHist();
+}
+
+function majTabHist() {
+    const vide = !historique.length;
+    $("historiqueContainer").style.display = vide ? "none" : "inline-block";
+    $("tabHist").style.display = vide ? "none" : "";
+    if (vide) { $("historiqueContainer").classList.add("tab-hidden"); $("tabHist").classList.remove("actif"); }
+}
+
+function verifierExpirationHistorique() {
+    const h = jsonLS("smashup_historique", null);
+    if (h && (Date.now() - h.timestamp) / 36e5 > 5) viderHistorique();
+}
+
+function viderHistorique() {
+    historique = [];
+    dernierResultat = null;
+    compteurTirage = 1;
+    $("resultat").innerHTML = "";
+    LS.del("smashup_historique");
+    majTabHist();
+    rendreHistorique();
+}
+
+function reinitialiserTout() {
+    viderHistorique();
+    ["smashup_factions", "smashup_params", "smashup_noms", "smashup_mode"].forEach(k => LS.del(k));
+    P = { ...DEFAUTS };
+    nomsFixes = [];
+    $("nomsJoueursContainer").innerHTML = "";
+    rendreSegments();
+    genererChampsJoueurs();
+    chargerPreferencesFactions();
+}
+
+/* ---------- Factions / extensions ---------- */
 function parserCSV() {
     donneesCSV.split(/\r?\n/).forEach(ligne => {
         if (!ligne.trim()) return;
         const [nomExt, annee, def, facs] = ligne.split("|");
         const parDefaut = def === "1";
-        structureExtensions[nomExt] = {
-            annee,
-            factions: facs.split(";").map(nom => ({ nom, parDefaut }))
-        };
+        structureExtensions[nomExt] = { annee, factions: facs.split(";").map(nom => ({ nom, parDefaut })) };
+        facs.split(";").forEach(f => factionExt[f] = nomExt);
     });
 }
 
@@ -562,29 +683,56 @@ function genererHTMLFactions() {
     let html = "", idCounter = 0;
     for (const [ext, data] of Object.entries(structureExtensions)) {
         const id = "ext_" + idCounter++;
-        html += `<details class="ext-details"><summary><input type="checkbox" id="${id}" onclick="toggleExtension(event,'${id}')">${ext} ${data.annee}</summary><div class="factions-list">`;
+        const annee = langue === "en" ? data.annee.replace(" VO", "") : data.annee;
+        html += `<details class="ext-details"><summary><input type="checkbox" id="${id}" onclick="toggleExtension(event,'${id}')">${t(ext)} ${annee}</summary><div class="factions-list">`;
         data.factions.forEach(f => {
-            html += `<label><input type="checkbox" class="fac_${id} faction-cb" value="${f.nom}" data-default="${f.parDefaut}" onchange="updateMasterCb('${id}');sauvegarderPreferencesFactions()"> ${f.nom}</label>`;
+            html += `<label><input type="checkbox" class="fac_${id} faction-cb" value="${f.nom}" data-default="${f.parDefaut}" onchange="updateMasterCb('${id}');sauvegarderPreferencesFactions()"> ${t(f.nom)}</label>`;
         });
         html += `</div></details>`;
     }
+    html += `<details class="ext-details" open><summary><input type="checkbox" id="ext_custom" onclick="toggleExtension(event,'ext_custom')">${t("Personnalisé")}</summary><div class="factions-list"><div id="customList"></div><input type="text" id="customNom" placeholder="${t("Nouvelle faction")}" maxlength="30"><button class="btn-compact" onclick="ajouterCustom()">+</button></div></details>`;
     $("optionsExtensions").innerHTML = html;
+    customs = jsonLS("smashup_custom", []);
+    customs.forEach(n => factionExt[n] = "Personnalisé");
+    rendreCustoms();
+}
+
+function rendreCustoms() {
+    $("customList").innerHTML = customs.map((n, i) => `<label><input type="checkbox" class="fac_ext_custom faction-cb" value="${esc(n)}" data-default="true" onchange="updateMasterCb('ext_custom');sauvegarderPreferencesFactions()"> ${esc(n)} <button class="btn-compact btn-danger" onclick="supprimerCustom(${i})">✕</button></label>`).join("");
+}
+
+function ajouterCustom() {
+    const n = $("customNom").value.trim().replace(/[<>"]/g, "");
+    if (!n || factionExt[n]) return;
+    customs.push(n);
+    factionExt[n] = "Personnalisé";
+    LS.set("smashup_custom", JSON.stringify(customs));
+    rendreCustoms();
+    Array.from(document.querySelectorAll(".fac_ext_custom")).pop().checked = true;
+    $("customNom").value = "";
+    updateMasterCb("ext_custom");
+    sauvegarderPreferencesFactions();
+}
+
+function supprimerCustom(i) {
+    delete factionExt[customs[i]];
+    customs.splice(i, 1);
+    LS.set("smashup_custom", JSON.stringify(customs));
+    rendreCustoms();
+    updateMasterCb("ext_custom");
+    sauvegarderPreferencesFactions();
 }
 
 function sauvegarderPreferencesFactions() {
     const cochees = Array.from(document.querySelectorAll(".faction-cb:checked")).map(cb => cb.value);
-    localStorage.setItem("smashup_factions", JSON.stringify(cochees));
+    LS.set("smashup_factions", JSON.stringify(cochees));
 }
 
 function chargerPreferencesFactions() {
-    const prefs = localStorage.getItem("smashup_factions");
-    const cases = document.querySelectorAll(".faction-cb");
-    if (prefs) {
-        const list = JSON.parse(prefs);
-        cases.forEach(cb => cb.checked = list.includes(cb.value));
-    } else {
-        cases.forEach(cb => cb.checked = cb.getAttribute("data-default") === "true");
-    }
+    const list = jsonLS("smashup_factions", null);
+    document.querySelectorAll(".faction-cb").forEach(cb => {
+        cb.checked = Array.isArray(list) ? list.includes(cb.value) : cb.getAttribute("data-default") === "true";
+    });
     document.querySelectorAll(".ext-details").forEach(d => updateMasterCb(d.querySelector("summary input").id));
 }
 
@@ -596,7 +744,8 @@ function toggleExtension(event, extId) {
 }
 
 function updateMasterCb(extId) {
-    $(extId).checked = Array.from(document.querySelectorAll(".fac_" + extId)).every(cb => cb.checked);
+    const l = Array.from(document.querySelectorAll(".fac_" + extId));
+    $(extId).checked = l.length > 0 && l.every(cb => cb.checked);
 }
 
 function actionToutesFactions(coche) {
@@ -604,96 +753,161 @@ function actionToutesFactions(coche) {
     sauvegarderPreferencesFactions();
 }
 
-function verifierExpirationHistorique() {
-    const saved = localStorage.getItem("smashup_historique");
-    if (saved && (Date.now() - JSON.parse(saved).timestamp) / 36e5 > 5) viderHistorique();
+/* ---------- Panneaux ---------- */
+function fermerPanneaux() {
+    PANNEAUX.forEach(([p, b]) => { $(p).classList.add("tab-hidden"); $(b).classList.remove("actif"); });
+}
+
+function ouvrirOnglet(panneau, bouton) {
+    const ouvre = $(panneau).classList.contains("tab-hidden");
+    fermerPanneaux();
+    if (ouvre) {
+        $(panneau).classList.remove("tab-hidden");
+        $(bouton).classList.add("actif");
+        $(panneau).scrollIntoView({ behavior: "smooth" });
+    } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });   // fermeture : retour en haut
+    }
+}
+
+/* ---------- Tirage ---------- */
+function melanger(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function nomJ(i, noms = nomsFixes) { return noms[i] ? esc(noms[i]) : `${L("Joueur", "Player")} ${i + 1}`; }
+
+function slug(n) { return n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+
+function carteFaction(n) {
+    const ini = t(n).split(/[\s-]+/).map(w => w[0]).join("").replace(/[^\p{L}\p{N}]/gu, "").slice(0, 2).toUpperCase();
+    return `<span class="fac-res"><img class="logo" src="logos/${slug(n)}.png" alt="" onerror="this.outerHTML='<span class=badge>${ini}</span>'">${t(n)}<small>${t(factionExt[n] || "")}</small></span>`;
 }
 
 function lancerTirage() {
+    fermerPanneaux();
     verifierExpirationHistorique();
     const actives = Array.from(document.querySelectorAll(".faction-cb:checked")).map(cb => cb.value);
-    const nbJ = getValeur("Joueurs"), nbF = getValeur("Factions"), total = nbJ * nbF;
-
-    if (total > actives.length || total <= 0) {
-        return alert(`Impossible : Vous demandez ${total} factions au total, mais seulement ${actives.length} sont cochées.`);
+    const nbJ = P.nbJ, mode = P.mode;
+    let besoin, min = 0;
+    if (mode === "tirage") besoin = 2 * nbJ;
+    else if (mode === "draft") besoin = nbJ * P.mainK;
+    else {
+        min = (mode === "pick" ? 2 : 4) * nbJ;
+        besoin = P.poolAuto ? Math.min(5 * nbJ, actives.length) : P.poolVal;
     }
-
-    const conteneurNoms = $("nomsJoueursContainer");
-    if (conteneurNoms.style.display !== "none") {
-        nomsFixes = [];
-        for (let i = 1; i <= nbJ; i++) {
-            const el = $("nomJoueur" + i);
-            nomsFixes.push(el ? el.value.trim() : "");
-        }
-        conteneurNoms.style.display = "none";
-    } else {
-        while (nomsFixes.length < nbJ) nomsFixes.push("");
+    if (besoin < min) {
+        return alert(L(`Réserve trop petite : il faut au moins ${min} factions pour ${nbJ} joueur(s) dans ce mode.`,
+                       `Pool too small: at least ${min} factions are needed for ${nbJ} player(s) in this mode.`));
     }
-
-    let pioche = [...actives];
-    for (let i = pioche.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pioche[i], pioche[j]] = [pioche[j], pioche[i]];
+    if (besoin > actives.length || besoin <= 0) {
+        return alert(L(`Impossible : ${besoin} factions nécessaires, mais seulement ${actives.length} sont cochées.`,
+                       `Not possible: ${besoin} factions needed, but only ${actives.length} are checked.`));
     }
-
-    let html = "<ul>";
-    const heure = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    let htmlHist = `<div class="historique-titre"><b>Tirage ${compteurTirage}</b><span class="historique-heure">${heure}</span></div>`;
-
-    let idx = 0;
-    for (let i = 1; i <= nbJ; i++) {
-        const nom = nomsFixes[i - 1] !== "" ? nomsFixes[i - 1] : `Joueur ${i}`;
-        const attribuees = pioche.slice(idx, idx += nbF).join(" & ");
-        html += `<li><b>${nom}</b><br>${attribuees}</li>`;
-        htmlHist += `<b>${nom}</b> : ${attribuees}<br>`;
-    }
-
-    $("resultat").innerHTML = html + "</ul>";
-
-    const liHist = document.createElement("li");
-    liHist.className = "historique-item";
-    liHist.innerHTML = htmlHist;
-    $("historiqueListe").prepend(liHist);
-    $("historiqueContainer").style.display = "inline-block";
-    compteurTirage++;
-
-    localStorage.setItem("smashup_noms", JSON.stringify(nomsFixes));
-    localStorage.setItem("smashup_historique", JSON.stringify({
-        html: $("historiqueListe").innerHTML,
-        compteur: compteurTirage,
-        timestamp: Date.now()
-    }));
-}
-
-function viderHistorique() {
-    $("historiqueListe").innerHTML = "";
-    $("historiqueContainer").style.display = "none";
-    $("resultat").innerHTML = "";
-    compteurTirage = 1;
-    localStorage.removeItem("smashup_historique");
-}
-
-function reinitialiserTout() {
-    viderHistorique();
-    ["smashup_factions", "smashup_params", "smashup_noms"].forEach(k => localStorage.removeItem(k));
-
-    $("selectNbJoueurs").style.display = "inline-block";
-    $("selectNbJoueurs").value = "3";
-    $("inputNbJoueurs").style.display = "none";
-    $("inputNbJoueurs").value = "5";
-
-    $("selectNbFactions").style.display = "inline-block";
-    $("selectNbFactions").value = "2";
-    $("inputNbFactions").style.display = "none";
-    $("inputNbFactions").value = "5";
 
     nomsFixes = [];
-    $("nomsJoueursContainer").style.display = "flex";
-    genererChampsJoueurs();
-    chargerPreferencesFactions();
+    for (let i = 1; i <= nbJ; i++) {
+        const el = $("nomJoueur" + i);
+        nomsFixes.push(el ? el.value.trim() : "");
+    }
+
+    const pioche = melanger([...actives]);
+    const premier = Math.floor(Math.random() * nbJ);
+    draft = null;
+    if (mode !== "tirage") return demarrerDraft(pioche, nbJ, mode, premier, besoin);
+    afficherResultats(Array.from({ length: nbJ }, (_, i) => pioche.slice(i * 2, (i + 1) * 2)), premier);
 }
 
-window.onload = initialiser;
+function rendreResultat() {
+    const r = dernierResultat;
+    let html = "<ul>";
+    r.groupes.forEach((g, i) => { html += `<li><b>${nomJ(i, r.noms)}</b><br>${g.map(carteFaction).join("")}</li>`; });
+    $("resultat").innerHTML = html + `</ul><p>🎲 <b>${nomJ(r.premier, r.noms)}</b> ${t("commence")}</p>`;
+}
+
+function afficherResultats(groupes, premier) {
+    const noms = groupes.map((_, i) => nomsFixes[i] || "");
+    dernierResultat = { groupes, premier, noms };
+    rendreResultat();
+    historique.unshift({ n: compteurTirage, ts: Date.now(), groupes, premier, noms });
+    compteurTirage++;
+    rendreHistorique();
+    LS.set("smashup_noms", JSON.stringify(nomsFixes));
+    sauverHistorique();
+}
+
+/* ---------- Draft / Pick / Pick & Ban ---------- */
+function demarrerDraft(pioche, nbJ, mode, premier, taille) {
+    const rot = Array.from({ length: nbJ }, (_, k) => (premier + k) % nbJ);   // le joueur qui commence passe en premier
+    const inv = [...rot].reverse();
+    draft = { mode, premier, etape: 0, sel: [], ecran: "attente", bannies: [], pris: Array.from({ length: nbJ }, () => []) };
+    if (mode === "draft") {
+        const k = P.mainK;
+        draft.ordre = rot;
+        draft.mains = rot.map((_, i) => pioche.slice(i * k, (i + 1) * k));
+    } else {
+        draft.pool = pioche.slice(0, taille);
+        const pick = s => s.map(j => [j, "pick"]), ban = s => s.map(j => [j, "ban"]);
+        draft.ordre = mode === "pick"
+            ? [...pick(rot), ...pick(inv)]
+            // Pick & Ban : bans (ordre normal) → picks (ordre normal) → bans (ordre inversé) → picks (ordre inversé)
+            : [...ban(rot), ...pick(rot), ...ban(inv), ...pick(inv)];
+    }
+    rendreDraft();
+}
+
+function rendreDraft() {
+    const d = draft;
+    if (d.mode === "draft") return rendreMain();
+    const [j, type] = d.ordre[d.etape];
+    $("resultat").innerHTML = `<b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small><div class="draft-pool">` +
+        d.pool.map((n, i) => `<button class="${type === "ban" ? "btn-danger" : ""}" onclick="choisirDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
+        (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
+        d.pris.map((g, i) => `<div><b>${nomJ(i)}</b> : ${g.map(t).join(" & ") || "—"}</div>`).join("");
+}
+
+function choisirDraft(i) {
+    const d = draft, [j, type] = d.ordre[d.etape], n = d.pool.splice(i, 1)[0];
+    (type === "ban" ? d.bannies : d.pris[j]).push(n);
+    if (++d.etape < d.ordre.length) return rendreDraft();
+    draft = null;
+    afficherResultats(d.pris, d.premier);
+}
+
+function rendreMain() {
+    const d = draft, j = d.ordre[d.etape];
+    if (d.ecran === "attente") {
+        $("resultat").innerHTML = `<p>${t("Passe l'écran à")} <b>${nomJ(j)}</b></p><button onclick="draft.ecran='choix';rendreDraft()">${t("Je suis")} ${nomJ(j)}</button>`;
+        return;
+    }
+    $("resultat").innerHTML = `<b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small><div class="draft-pool">` +
+        d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
+        `</div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
+}
+
+function basculerDraft(i) {
+    const d = draft, p = d.sel.indexOf(i);
+    if (p >= 0) d.sel.splice(p, 1); else if (d.sel.length < 2) d.sel.push(i);
+    document.querySelectorAll(".carte-draft").forEach((b, k) => b.classList.toggle("sel", d.sel.includes(k)));
+    $("nbSel").textContent = d.sel.length;
+    $("btnValider").disabled = d.sel.length !== 2;
+}
+
+function validerMain() {
+    const d = draft;
+    d.pris[d.ordre[d.etape]] = d.sel.map(i => d.mains[d.etape][i]);
+    d.sel = [];
+    d.ecran = "attente";
+    if (++d.etape < d.ordre.length) return rendreDraft();
+    draft = null;
+    afficherResultats(d.pris, d.premier);
+}
+
+initialiser();
 </script>
 </body>
 </html>
