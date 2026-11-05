@@ -399,7 +399,7 @@ body { padding-bottom: 80px; }
     <div id="resultat"></div>
 
     <div id="paramContainer" class="menu-extensions tab-hidden" style="text-align:center">
-        <div class="param-row"><span class="lbl" data-t="Nb joueurs">Nb players</span><div class="seg" id="segJ"></div></div>
+        <div class="param-row"><span class="lbl" data-t="Nombre de joueurs">Number of players</span><div class="seg" id="segJ"></div></div>
         <div class="param-row"><span class="lbl" data-t="Mode">Mode</span><div class="seg" id="segMode"></div></div>
         <div class="param-row tab-hidden" id="rowMain"><span class="lbl" data-t="Factions proposées par joueur">Factions offered per player</span><div class="seg" id="segMain"></div></div>
         <div class="param-row tab-hidden" id="rowPool"><span class="lbl" data-t="Taille de la réserve">Common pool size</span><div class="seg" id="segPool"></div></div>
@@ -463,9 +463,12 @@ Smash Up Half the Battle|(2025 VO)|0|Adolescent Epic Geckos;G.I. Gerald;Pearl an
 Smash Up Slashers|(2025 VO)|0|Slashers
 Smash Up Clowns|(2025 VO)|0|Clowns`;
 
+const DOSSIER_ICO = "ico/";   // sous-dossier des icônes : ico/<CODE>.png
+const CODES = {"Aliens":"ALI","Dinosaures":"DIN","Ninjas":"NIN","Pirates":"PIR","Robots":"ROB","Petit Peuple":"PTP","Sorciers":"SOR","Zombies":"ZOM","Cavalerie Ours":"CAO","Fantômes":"FAN","Plantes Carnivores":"PLC","Steampunks":"STE","Grands Anciens":"GRA","Innsmouth":"INN","Serviteurs de Cthulhu":"SDC","Université Miskatonic":"MIS","Métamorphes":"MET","Singes Cyborgs":"SIC","Super Espions":"SUE","Voyageurs du Temps":"VDT","Fourmis Géantes":"FOU","Loups-Garous":"LOU","Savants Fous":"SAF","Vampires":"VAM","Chatons":"CHA","Fées":"FEE","Poneys Magiques":"PON","Princesses":"PRI","Geeks":"GEE","Elfes":"ELF","Guerriers":"GUE","Halfelins":"HAL","Magiciens":"MAG","Nains":"NAI","Orques":"ORQ","Prêtres":"PRE","Voleurs":"VOL","Changeformers":"CHF","Chevaliers des Étoiles":"CDE","Squatteurs de Trône":"SDT","Voyageurs de l'Espace":"VDE","Dragons":"DRA","Mythologies Grecques":"MYG","Requins":"REQ","Super-Héros":"SUH","Tornades":"TOR","Explorateurs":"EXP","Grands-Mères":"GME","Oursons":"OUR","Rockstars":"ROK","Kaijū":"KAI","Monstrapoches":"MON","Petites Magiciennes":"PMA","Super Combattants":"SUC","Danseurs Disco":"DIS","Justiciers":"JUS","Maîtres Kung-Fu":"KUN","Routiers":"ROU","Anciens Égyptiens":"EGY","Cow-Boys":"COW","Samouraïs":"SAM","Vikings":"VIK","Dream Team":"DRE","Luchadors":"LUC","Mousquetaires":"MOU","Police Montée":"POM","Sumos":"SUM","Knights of the Round Table":"KRT","Avengers":"AVE","Hydra":"HYD","Kree":"KRE","Masters of Evil":"MOE","S.H.I.E.L.D.":"SHI","Sinister Six":"SIS","Spider-Verse":"SPI","Ultimates":"ULT","Anciens Incas":"AIN","Contes d'Anansi":"ANA","Contes de Grimm":"GRI","Contes Féeriques Russes":"CFR","Voyageurs Polynésiens":"VPO","Moutons":"MOT","Aladdin":"ALA","Beauty and the Beast":"BAB","Big Hero 6":"BIG","Frozen":"FRO","Mulan":"MUL","The Lion King":"LIK","The Nightmare Before Christmas":"NBC","Wreck-It Ralph":"WIR","Pingouins":"PIN","Teens":"TEE","Traqueurs de Spectres":"TDS","Extramorphes":"EXT","Hommes d'Action":"HDA","Retourneurs du Futur":"RDF","Champions du Monde":"CDM","Gobelins":"GOB","Sirènes":"SIR","Squelettes":"SQU","Adolescent Epic Geckos":"GEC","G.I. Gerald":"GIG","Pearl and the Images":"PEA","Rulers of the Cosmos":"RTC","Slashers":"SLA","Clowns":"CLO"};
+const ANNEE_EN = {"Smash Up":"(2012)","Smash Up : Même Pas Mort":"(2013)","Smash Up : Cthulhu Fhtagn !":"(2013)","Smash Up : Séries B":"(2014)","Smash Up : Monstres Sacrés":"(2014)","Smash Up : Trop Minions":"(2015)","Smash Up : La Grosse Boîte pour Geek":"(2014)","Smash Up : Munchkin":"(2015)","Smash Up : Ressemblances Fortuites":"(2016)","Smash Up : Vous l'aurez voulu !":"(2016)","Smash Up : Conflit de Générations":"(2017)","Smash Up : Rois du Japon":"(2017)","Smash Up : Ces Années-Là":"(2018)","Smash Up : Vous en voulez encore ?":"(2018)","Smash Up : L'Énorme Boîte pour Geek":"(2018)","Smash Up : Tournée Mondiale - Incident Diplomatique":"(2019)","Smash Up : Tournée Mondiale - Choc des Cultures":"(2019)","Mini-extension Smash Up : Faction Moutons":"(2017)","Mini-extension Smash Up : Faction Pingouins":"(2019)","Smash Up Fait son Cinéma":"(2024)","Smash Up : Édition Anniversaire":"(2022)","Smash Up : Marvel":"(2020)"};   // années de sortie originales
 const EN = {"Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
 Object.assign(EN, {
-    "Nb joueurs": "Nb players", "Mode": "Mode", "Draft": "Draft",
+    "Nombre de joueurs": "Number of players", "Mode": "Mode", "Draft": "Draft",
     "Factions proposées par joueur": "Factions offered per player",
     "Taille de la réserve": "Common pool size",
     "Générateur Smash Up Avancé": "Advanced Smash Up Generator",
@@ -584,7 +587,7 @@ function rendreSegments() {
     const btn = (label, on, js) => `<button type="button" class="${on ? "on" : ""}" aria-pressed="${on}" onclick="${js}">${label}</button>`;
     const num = (id, val, on, min, max, js) =>
         `<input type="number" id="${id}" class="${on ? "on" : ""}" min="${min}" max="${max}" placeholder="…" value="${on ? val : ""}" onchange="${js}">`;
-    const preJ = [2, 3, 4, 5, 6], preK = [3, 4, 5, 6];
+    const preJ = [2, 3, 4], preK = [3, 4, 5, 6];
 
     $("segJ").innerHTML = preJ.map(n => btn(n, P.nbJ === n, `setP('nbJ',${n})`)).join("") +
         num("inNbJ", P.nbJ, !preJ.includes(P.nbJ), 1, 20, "setPInput('nbJ',this,1,20)");
@@ -647,6 +650,8 @@ function verifierExpirationHistorique() {
     if (h && (Date.now() - h.timestamp) / 36e5 > 5) viderHistorique();
 }
 
+function remonter() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+
 function viderHistorique() {
     historique = [];
     dernierResultat = null;
@@ -655,6 +660,7 @@ function viderHistorique() {
     LS.del("smashup_historique");
     majTabHist();
     rendreHistorique();
+    remonter();
 }
 
 function reinitialiserTout() {
@@ -666,6 +672,7 @@ function reinitialiserTout() {
     rendreSegments();
     genererChampsJoueurs();
     chargerPreferencesFactions();
+    remonter();
 }
 
 /* ---------- Factions / extensions ---------- */
@@ -683,7 +690,7 @@ function genererHTMLFactions() {
     let html = "", idCounter = 0;
     for (const [ext, data] of Object.entries(structureExtensions)) {
         const id = "ext_" + idCounter++;
-        const annee = langue === "en" ? data.annee.replace(" VO", "") : data.annee;
+        const annee = langue === "en" ? (ANNEE_EN[ext] || data.annee.replace(" VO", "")) : data.annee;
         html += `<details class="ext-details"><summary><input type="checkbox" id="${id}" onclick="toggleExtension(event,'${id}')">${t(ext)} ${annee}</summary><div class="factions-list">`;
         data.factions.forEach(f => {
             html += `<label><input type="checkbox" class="fac_${id} faction-cb" value="${f.nom}" data-default="${f.parDefaut}" onchange="updateMasterCb('${id}');sauvegarderPreferencesFactions()"> ${t(f.nom)}</label>`;
@@ -781,15 +788,16 @@ function melanger(a) {
 
 function nomJ(i, noms = nomsFixes) { return noms[i] ? esc(noms[i]) : `${L("Joueur", "Player")} ${i + 1}`; }
 
-function slug(n) { return n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
-
 function carteFaction(n) {
     const ini = t(n).split(/[\s-]+/).map(w => w[0]).join("").replace(/[^\p{L}\p{N}]/gu, "").slice(0, 2).toUpperCase();
-    return `<span class="fac-res"><img class="logo" src="logos/${slug(n)}.png" alt="" onerror="this.outerHTML='<span class=badge>${ini}</span>'">${t(n)}<small>${t(factionExt[n] || "")}</small></span>`;
+    const badge = `<span class=badge>${ini}</span>`;
+    const logo = CODES[n] ? `<img class="logo" src="${DOSSIER_ICO}${CODES[n]}.png" alt="" onerror="this.outerHTML='${badge}'">` : badge;
+    return `<span class="fac-res">${logo}${t(n)}<small>${t(factionExt[n] || "")}</small></span>`;
 }
 
 function lancerTirage() {
     fermerPanneaux();
+    remonter();
     verifierExpirationHistorique();
     const actives = Array.from(document.querySelectorAll(".faction-cb:checked")).map(cb => cb.value);
     const nbJ = P.nbJ, mode = P.mode;
