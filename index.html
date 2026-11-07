@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Advanced Smash Up Generator</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- PWA : installation Android / iOS / ordinateur (chemins relatifs : compatible GitHub Pages) -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b801c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Smash Draft">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<script>
+// Service worker : uniquement en http(s) (le site continue de s'ouvrir normalement en double-cliquant sur index.html).
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function () { /* échec silencieux : le site marche sans */ });
+    });
+}
+</script>
+</head>
+<body>
+
+<div id="scene-halloween" class="theme-scene" aria-hidden="true">
+    <svg class="scene-svg-top-left" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#ff9436" stroke-width="1" fill="none" opacity="0.32">
+            <path d="M0 0L250 30M0 0L220 95M0 0L175 165M0 0L105 220M0 0L35 250M45 5Q38 25 35 38Q22 40 5 45M90 11Q75 40 65 65Q45 72 13 90M140 17Q115 62 95 95Q62 115 19 140M195 23Q158 82 130 125Q85 155 26 195"/>
+            <line x1="95" y1="95" x2="95" y2="158" stroke="#ffb366" stroke-width="1.2" opacity="0.8"/>
+        </g>
+        <g transform="translate(95,165)" fill="#09040e" stroke="#ff7b1c" stroke-width="0.8">
+            <circle cx="0" cy="-4" r="3.5"/><ellipse cx="0" cy="3" rx="5.5" ry="6.5"/>
+            <path d="M-3 -2Q-12 -10 -16 -3M-4 0Q-14 -3 -18 5M-4 3Q-14 4 -16 12M-3 6Q-10 12 -12 18M3 -2Q12 -10 16 -3M4 0Q14 -3 18 5M4 3Q14 4 16 12M3 6Q10 12 12 18" fill="none" stroke-width="1.2"/>
+            <circle cx="-1.5" cy="-5.5" r="0.8" fill="#f30" stroke="none"/><circle cx="1.5" cy="-5.5" r="0.8" fill="#f30" stroke="none"/>
+        </g>
+    </svg>
+    <svg class="scene-svg-top-right" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="mg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="55%" stop-color="#ffb042"/><stop offset="90%" stop-color="#d95b12"/><stop offset="100%" stop-color="#d95b12" stop-opacity="0"/></radialGradient></defs>
+        <circle cx="185" cy="82" r="68" fill="url(#mg)" opacity="0.35" class="glow-anim"/><circle cx="185" cy="82" r="42" fill="url(#mg)" opacity="0.9"/>
+        <circle cx="170" cy="68" r="7" fill="#c95b18" opacity="0.25"/><circle cx="198" cy="92" r="10" fill="#c95b18" opacity="0.2"/><circle cx="175" cy="98" r="5" fill="#c95b18" opacity="0.2"/>
+        <path d="M105 92Q135 80 165 88Q205 78 245 92Q265 98 235 104Q175 108 115 102Z" fill="#12071f" opacity="0.82"/>
+        <path d="M140 62Q175 54 215 62Q240 66 210 71Q170 73 140 68Z" fill="#190a29" opacity="0.7"/>
+        <path d="M155 78c-5-6-12-4-16 2 5-1 9 1 12 4 2-2 4-2 8 0 3-3 7-5 12-4-4-6-11-8-16-2ZM115 52c-4-4-9-3-12 1 4-1 7 1 9 3 1.5-1.5 3-1.5 6 0 2-2 5-4 9-3-3-4-8-5-12-1ZM225 118c-3-3-7-2-9 1 3-1 5 1 7 2 1-1 2-1 4 0 1.5-1 4-3 7-2-2-3-6-4-9-1Z" fill="#0b0412"/>
+        <path d="M300 0L140 20M300 0L170 85M300 0L215 145M300 0L275 190M245 7Q252 28 300 42M195 14Q212 58 300 90" stroke="#ff9436" stroke-width="0.9" fill="none" opacity="0.28"/>
+    </svg>
+    <svg class="scene-svg-bottom" viewBox="0 0 1200 280" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff7714" stop-opacity="0"/><stop offset="50%" stop-color="#59216b" stop-opacity="0.28"/><stop offset="100%" stop-color="#09030f" stop-opacity="0.95"/></linearGradient>
+            <radialGradient id="pg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffea79"/><stop offset="60%" stop-color="#ff6a00"/><stop offset="100%" stop-color="#f30" stop-opacity="0"/></radialGradient>
+        </defs>
+        <path d="M0 280L0 210Q180 155 420 205T880 190T1200 215L1200 280Z" fill="#140821"/>
+        <g fill="#0c0414">
+            <polygon points="155,190 155,115 145,115 175,72 205,115 195,115 195,135 235,135 235,95 228,95 250,55 272,95 265,95 265,190"/>
+            <polygon points="125,190 125,140 118,140 142,108 162,140 155,140 155,190"/>
+            <rect x="169" y="122" width="10" height="16" rx="5" fill="#ff9a2e" class="glow-anim"/><rect x="244" y="102" width="11" height="18" rx="5" fill="#ff7b14" class="glow-anim"/><rect x="244" y="140" width="11" height="16" fill="#ffae42"/><rect x="137" y="148" width="9" height="14" fill="#ff8019"/>
+        </g>
+        <path d="M40 260Q55 190 48 130Q35 90 10 65M48 145Q75 115 105 102M52 175Q22 150 0 145M48 130Q58 95 78 72M1130 265Q1115 185 1125 120Q1145 80 1180 55M1125 140Q1085 105 1045 95M1120 170Q1155 140 1195 130M1070 102Q1055 82 1035 78" stroke="#09030f" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+        <path d="M1055 94c3-7 10-9 15-5l5-1-4 3c1 5-3 10-9 11l-6 5 2-6c-2-2-3-4-3-7Z" fill="#050208"/>
+        <rect x="0" y="140" width="1200" height="140" fill="url(#fg)"/>
+        <path d="M0 280L0 232Q300 212 600 235T1200 225L1200 280Z" fill="#07020c"/>
+        <g fill="#12081c" stroke="#2a143d" stroke-width="1">
+            <path d="M320 245L320 202A16 16 0 0 1 352 202L352 245Z"/><path d="M336 210v18M329 216h14" stroke="#07020c" stroke-width="2"/>
+            <path d="M860 245L865 198A18 15 0 0 1 898 202L892 245Z"/><polygon points="780,242 780,210 770,210 770,202 780,202 780,190 788,190 788,202 798,202 798,210 788,210 788,242"/>
+        </g>
+        <path d="M420 242h320M420 220h320M430 250v-42M450 250v-42M470 250v-42M490 250v-42M670 250v-42M690 250v-42M710 250v-42M730 250v-42" stroke="#0c0513" stroke-width="2.5"/>
+        <g transform="translate(95,232)">
+            <circle cx="0" cy="0" r="36" fill="url(#pg)" opacity="0.55" class="glow-anim"/>
+            <ellipse cx="0" cy="4" rx="22" ry="17" fill="#c9460c" stroke="#421203" stroke-width="1.2"/><ellipse cx="0" cy="4" rx="13" ry="17" fill="#e05612"/>
+            <path d="M0 -13Q3 -22 9 -20" stroke="#3b5e1e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <polygon points="-11,-1 -4,-1 -7.5,5" fill="#fff294" class="glow-anim"/><polygon points="4,-1 11,-1 7.5,5" fill="#fff294" class="glow-anim"/><polygon points="-1.5,4 1.5,4 0,7" fill="#fff294"/>
+            <path d="M-12 9L-7 13L-3 10L0 13L3 10L7 13L12 9L8 15L0 16L-8 15Z" fill="#fff294" class="glow-anim"/>
+        </g>
+        <g transform="translate(1065,236) scale(0.9)">
+            <circle cx="0" cy="0" r="36" fill="url(#pg)" opacity="0.55" class="glow-anim"/>
+            <ellipse cx="0" cy="4" rx="24" ry="18" fill="#b83b07" stroke="#380e02" stroke-width="1.2"/><ellipse cx="0" cy="4" rx="14" ry="18" fill="#d4490d"/>
+            <path d="M0 -14Q-4 -23 -9 -20" stroke="#3b5e1e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <polygon points="-12,-2 -4,0 -9,5" fill="#ffeb7a" class="glow-anim"/><polygon points="4,0 12,-2 9,5" fill="#ffeb7a" class="glow-anim"/>
+            <path d="M-13 10Q0 19 13 10Q6 15 0 15Q-6 15 -13 10Z" fill="#ffeb7a" class="glow-anim"/>
+        </g>
+    </svg>
+</div>
+
+<div id="scene-christmas" class="theme-scene" aria-hidden="true">
+    <div class="scene-snowflakes"></div>
+    <svg class="scene-svg-top-garland" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fffbe0"/><stop offset="45%" stop-color="#fc4"/><stop offset="100%" stop-color="#f90" stop-opacity="0"/></radialGradient>
+            <radialGradient id="rb" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#ff7a85"/><stop offset="45%" stop-color="#cf1524"/><stop offset="100%" stop-color="#69060e"/></radialGradient>
+            <radialGradient id="gb" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#fff5c0"/><stop offset="50%" stop-color="#d4af37"/><stop offset="100%" stop-color="#7a5c0c"/></radialGradient>
+        </defs>
+        <path d="M0 0H1200V28Q1120 48 1040 24Q960 52 880 26Q800 48 720 22Q600 50 480 22Q400 48 320 26Q240 52 160 24Q80 48 0 28Z" fill="#092614"/>
+        <path d="M0 0H1200V18Q1140 36 1070 16Q980 38 900 18Q820 35 740 15Q600 38 460 15Q380 35 300 18Q220 38 130 16Q60 36 0 18Z" fill="#134224" stroke="#1e5e35"/>
+        <path d="M0 20Q150 68 300 24Q450 68 600 24Q750 68 900 24Q1050 68 1200 20" fill="none" stroke="#2b1d0c" stroke-width="2"/>
+        <path d="M160 22v40M440 20v34M760 20v36M1040 22v40" stroke="#d4af37" stroke-width="1.5"/>
+        <circle cx="160" cy="74" r="13" fill="url(#rb)"/><circle cx="440" cy="64" r="11" fill="url(#gb)"/><circle cx="760" cy="66" r="11" fill="url(#rb)"/><circle cx="1040" cy="74" r="13" fill="url(#gb)"/>
+        <g class="glow-anim" fill="url(#bg)">
+            <circle cx="75" cy="42" r="16"/><circle cx="225" cy="42" r="16"/><circle cx="375" cy="44" r="16"/><circle cx="525" cy="44" r="16"/><circle cx="675" cy="44" r="16"/><circle cx="825" cy="44" r="16"/><circle cx="975" cy="42" r="16"/><circle cx="1125" cy="42" r="16"/>
+        </g>
+    </svg>
+    <svg class="scene-svg-bottom" viewBox="0 0 1200 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="ww" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff4b8"/><stop offset="55%" stop-color="#fa3"/><stop offset="100%" stop-color="#f70" stop-opacity="0"/></radialGradient></defs>
+        <path d="M0 270V195Q240 155 520 195T1020 180T1200 195V270Z" fill="#0d3320"/>
+        <path d="M60 145L35 205h50ZM110 130L80 210h60ZM280 150l-25 55h50ZM890 135l-30 70h60ZM945 140l-30 70h60Z" fill="#092617"/>
+        <path d="M1068 122Q1058 98 1072 80Q1086 62 1074 42" stroke="#dce8ee" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.28"/>
+        <g transform="translate(985,130)">
+            <rect x="76" y="-8" width="14" height="28" fill="#59281e"/><path d="M74 -8h18v5H74z" fill="#eef6f9"/>
+            <polygon points="12,38 55,2 98,38 98,95 12,95" fill="#4a2511" stroke="#2b1306" stroke-width="1.5"/>
+            <path d="M2 42L55 -2L108 42L102 47L55 8L8 47Z" fill="#eef6fa"/>
+            <circle cx="55" cy="58" r="45" fill="url(#ww)" opacity="0.45" class="glow-anim"/>
+            <rect x="28" y="46" width="20" height="22" rx="2" fill="#ffcf5c" stroke="#2b1306" stroke-width="2" class="glow-anim"/>
+            <rect x="62" y="46" width="20" height="22" rx="2" fill="#ffcf5c" stroke="#2b1306" stroke-width="2" class="glow-anim"/>
+            <path d="M38 46v22M28 57h20M72 46v22M62 57h20" stroke="#4a2511" stroke-width="1.5"/>
+        </g>
+        <g transform="translate(155,95)">
+            <rect x="-8" y="120" width="16" height="24" fill="#3d1e0d"/>
+            <polygon points="0,8 -48,68 -22,68 -58,112 -26,112 -66,145 66,145 26,112 58,112 22,68 48,68" fill="#114224" stroke="#092915" stroke-width="1.5"/>
+            <path d="M0 8L-24 38Q0 44 24 38ZM-36 68Q0 76 36 68M-48 112Q0 122 48 112" fill="#e8f4f8" opacity="0.8"/>
+            <polygon points="0,-6 4,3 14,4 6,10 9,20 0,14 -9,20 -6,10 -14,4 -4,3" fill="#ffd700" class="glow-anim"/>
+            <circle cx="-15" cy="55" r="4.5" fill="#d91c2b"/><circle cx="18" cy="62" r="4.5" fill="#ffd700" class="glow-anim"/><circle cx="-25" cy="95" r="5" fill="#ffd700" class="glow-anim"/><circle cx="8" cy="88" r="5" fill="#d91c2b"/><circle cx="28" cy="105" r="4.5" fill="#d91c2b"/><circle cx="-35" cy="130" r="5" fill="#d91c2b"/><circle cx="0" cy="125" r="5" fill="#ffd700" class="glow-anim"/><circle cx="35" cy="132" r="5" fill="#ffd700" class="glow-anim"/>
+        </g>
+        <path d="M0 270V228Q260 202 580 232T1200 218V270Z" fill="#d8e8f0"/>
+        <path d="M0 270V238Q320 218 660 242T1200 230V270Z" fill="#f2f8fc"/>
+        <g transform="translate(185,222)">
+            <rect x="0" y="0" width="22" height="18" rx="1" fill="#c91e2c" stroke="#7a0d16"/><rect x="9" y="0" width="4" height="18" fill="#ffd700"/><rect x="0" y="7" width="22" height="4" fill="#ffd700"/>
+            <rect x="26" y="4" width="18" height="14" rx="1" fill="#1d6e38" stroke="#0d3d1d"/><rect x="33" y="4" width="4" height="14" fill="#e63946"/>
+        </g>
+    </svg>
+</div>
+
+<div class="app-content">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Change theme" data-ttl="Changer le thème">
+        <svg id="icon-sun" style="display:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg id="icon-sepia" style="display:none" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <svg id="icon-moon" style="display:none" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="icon-parchment" style="display:none" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5zM16 8L2 22m15.5-7H9"/></svg>
+        <svg id="icon-felt" style="display:none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/><circle cx="8.5" cy="15.5" r="1.5"/></svg>
+        <svg id="icon-wood" style="display:none" viewBox="0 0 24 24"><path d="M8 6 L18 4 A4.5 6.5 0 0 1 18 17 L8 19" fill="none" stroke="currentColor"/><ellipse cx="8" cy="12.5" rx="4.8" ry="6.5" fill="none" stroke="currentColor"/><ellipse cx="8" cy="12.5" rx="2.4" ry="3.3" fill="none" stroke="currentColor"/><path d="M8 12.5 L4 11 M8 12.5 L10 17.5 M13 9.5 h4 M14 14 h3.5" fill="none" stroke="currentColor"/></svg>
+        <svg id="icon-halloween" style="display:none" viewBox="0 0 24 24"><path d="M12 2c-1 0-2 2-2 3v1c-4.4 0-8 3.1-8 7s3.6 7 8 7 8-3.1 8-7-3.6-7-8-7V5c0-1-1-3-2-3zM9 13l1 2 1-2zm6 0l-1 2-1-2zm-6 4l1.5 1 1.5-1 1.5 1 1.5-1"/></svg>
+        <svg id="icon-christmas" style="display:none" viewBox="0 0 24 24"><path d="M12 2L20 10H16L22 18H2L8 10H4ZM10 18v4h4v-4Z"/></svg>
+    </button>
+    <button class="theme-toggle lang-toggle" onclick="toggleLangue()" title="Langue / Language">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+    </button>
+
+    <div class="header-container">
+        <h2 data-t="Tirage Smash Up">Smash Up Draw</h2>
+    </div>
+
+    <button onclick="lancerTirage()" data-t="Tirer les Factions">Draw Factions</button>
+
+    <div id="resultat"></div>
+
+    <div id="paramContainer" class="menu-extensions tab-hidden" style="text-align:center">
+        <div class="param-row"><span class="lbl" data-t="Nombre de joueurs">Number of players</span><div class="seg" id="segJ"></div></div>
+        <div class="param-row"><span class="lbl" data-t="Mode">Mode</span><div class="seg" id="segMode"></div></div>
+        <div class="param-row tab-hidden" id="rowMain"><span class="lbl" data-t="Factions proposées par joueur">Factions offered per player</span><div class="seg" id="segMain"></div></div>
+        <div class="param-row tab-hidden" id="rowPool"><span class="lbl" data-t="Taille de la réserve">Common pool size</span><div class="seg" id="segPool"></div></div>
+        <div id="nomsJoueursContainer"></div>
+    </div>
+
+    <details id="historiqueContainer" class="menu-extensions tab-hidden" open>
+        <summary data-t="Historique des tirages">Draw history</summary>
+        <div class="ext-actions-history">
+            <button class="btn-compact" onclick="viderHistorique()" data-t="Vider l'historique" data-e="🗑️ ">🗑️ Clear history</button>
+            <button class="btn-compact btn-danger" onclick="reinitialiserTout()" data-t="Réinitialiser" data-e="🔄 ">🔄 Reset</button>
+        </div>
+        <ul id="historiqueListe"></ul>
+    </details>
+
+    <br>
+
+    <details id="extContainer" class="menu-extensions tab-hidden" open>
+        <summary data-t="Extensions & factions">Expansions & factions</summary>
+        <div class="ext-actions">
+            <button class="btn-small" onclick="actionToutesFactions(true)" data-t="Tout cocher">Check all</button>
+            <button class="btn-small" onclick="actionToutesFactions(false)" data-t="Tout décocher">Uncheck all</button>
+        </div>
+        <div id="optionsExtensions"></div>
+    </details>
+</div>
+
+<nav class="tabs-bar">
+    <button id="tabParam" onclick="ouvrirOnglet('paramContainer','tabParam')" data-t="Paramètres">Settings</button>
+    <button id="tabHist" style="display:none" onclick="ouvrirOnglet('historiqueContainer','tabHist')" data-t="Historique">History</button>
+    <button id="tabExt" onclick="ouvrirOnglet('extContainer','tabExt')" data-t="Extensions">Expansions</button>
+</nav>
+
+<script src="data/data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
