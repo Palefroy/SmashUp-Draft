@@ -1,3 +1,21 @@
+// Appli : zoom interdit (pincer, double appui). Conserve les autres réglages du <meta viewport> existant ; le blocage de la sélection est dans style.css.
+(function () {
+    function fixerViewport() {
+        let metas = document.querySelectorAll('meta[name="viewport"]');
+        if (!metas.length) {
+            const m = document.createElement("meta"); m.name = "viewport"; m.content = "width=device-width, initial-scale=1";
+            document.head.appendChild(m); metas = [m];
+        }
+        metas.forEach(m => {
+            const c = (m.getAttribute("content") || "width=device-width, initial-scale=1").replace(/,?\s*(maximum-scale|minimum-scale|user-scalable)\s*=\s*[^,]*/gi, "");
+            m.setAttribute("content", c + ", maximum-scale=1, user-scalable=no");
+        });
+    }
+    fixerViewport();
+    document.addEventListener("DOMContentLoaded", fixerViewport);
+    ["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));   // iOS (PWA)
+})();
+
 const donneesCSV = `Smash Up|(2013)|1|Aliens;Dinosaures;Ninjas;Pirates;Robots;Petit Peuple;Sorciers;Zombies
 Smash Up : Même Pas Mort|(2013)|1|Cavalerie Ours;Fantômes;Plantes Carnivores;Steampunks
 Smash Up : Cthulhu Fhtagn !|(2014)|1|Grands Anciens;Innsmouth;Serviteurs de Cthulhu;Université Miskatonic
@@ -597,14 +615,39 @@ async function ouvrirFiche(n) {
         if (e.target === f || e.target.closest(".fiche-art")) fermerFiche();
     });
     // Appui long sur l'illustration = mode focus : boutons, cartes et bulle sont masqués (classe .focus, voir style.css).
+    // Appui long sur les 3 cartes = focus des cartes (classe .focus-cartes) : elles passent au centre de l'écran, agrandies, le reste est masqué.
     // Le déclenchement (400 ms sur l'illustration) est inchangé. La SORTIE se fait uniquement au relâchement du doigt/de la souris,
     // quelle que soit la position du doigt à l'écran. Un appui simple ferme la fiche (ci-dessus) ; le clic qui suit un appui long est ignoré.
     const DELAI_FOCUS = 400;
-    let focusTm = null, focusFait = false, fx = 0, fy = 0;
+    let focusTm = null, retourTm = null, focusFait = false, fx = 0, fy = 0;
+    // Focus des cartes : on mesure les cartes à leur place normale, puis on calcule le décalage (--dx, --dy) et le grossissement (--sc)
+    // qui les amènent au centre de l'écran (plein écran moins une marge, grossissement max x3). Le déplacement est animé par style.css.
+    const debutFocusCartes = () => {
+        const C = scene.querySelector(".fiche-cartes");
+        if (!C) return;
+        clearTimeout(retourTm);
+        f.classList.remove("retour-cartes");
+        f.classList.add("focus-cartes");
+        C.style.transition = "none"; C.style.transform = "none";     // mesure sans l'effet d'une animation en cours
+        const r = C.getBoundingClientRect();
+        C.style.transform = ""; C.style.transition = "";
+        const W = window.innerWidth, H = window.innerHeight, M = 12;
+        const sc = Math.max(1, Math.min((W - 2 * M) / r.width, (H - 2 * M) / r.height, 3));
+        C.style.setProperty("--sc", sc.toFixed(3));
+        C.style.setProperty("--dx", (W / 2 - (r.left + r.width / 2)).toFixed(1) + "px");
+        C.style.setProperty("--dy", (H / 2 - (r.top + r.height / 2)).toFixed(1) + "px");
+    };
     const finFocus = () => {
         clearTimeout(focusTm);
-        if (!f.classList.contains("focus")) return;
+        const enCartes = f.classList.contains("focus-cartes");
+        if (!f.classList.contains("focus") && !enCartes) return;
         f.classList.remove("focus");
+        if (enCartes) {                                              // retour animé des cartes ; la fiche reste "ouverte" (non rognée) pendant l'animation
+            f.classList.remove("focus-cartes");
+            f.classList.add("retour-cartes");
+            clearTimeout(retourTm);
+            retourTm = setTimeout(() => f.classList.remove("retour-cartes"), 360);
+        }
         setTimeout(() => { focusFait = false; }, 150);
     };
     // Tactile : si le navigateur reprend le geste (défilement), il envoie "pointercancel" alors que le doigt est toujours posé.
@@ -612,12 +655,16 @@ async function ouvrirFiche(n) {
     const surAnnulation = e => { if (e.pointerType !== "touch") finFocus(); };
     const surToucherFin = e => { if (!e.touches || e.touches.length === 0) finFocus(); };
     // En focus, le doigt peut glisser n'importe où sans faire défiler la fiche ni la page.
-    const bloquerGeste = e => { if (f.classList.contains("focus") && e.cancelable) e.preventDefault(); };
+    const bloquerGeste = e => { if ((f.classList.contains("focus") || f.classList.contains("focus-cartes")) && e.cancelable) e.preventDefault(); };
     f.addEventListener("pointerdown", e => {
-        if (e.button !== 0 || !e.target.closest(".fiche-art")) return;
+        if (e.button !== 0) return;
+        const surArt = !!e.target.closest(".fiche-art");
+        // Appui long sur les 3 cartes (pas sur les boutons Titan/Stats/Notes/rang ni sur une bulle, pas si la fiche n'a pas de cartes) = focus des cartes.
+        const surCartes = !surArt && !!e.target.closest(".fiche-cartes:not(.vide)") && !e.target.closest(".fbtn, .rkbtn, .bulle");
+        if (!surArt && !surCartes) return;
         fx = e.clientX; fy = e.clientY;
         clearTimeout(focusTm);
-        focusTm = setTimeout(() => { focusFait = true; f.classList.add("focus"); }, DELAI_FOCUS);
+        focusTm = setTimeout(() => { focusFait = true; if (surCartes) debutFocusCartes(); else f.classList.add("focus"); }, DELAI_FOCUS);
     });
     f.addEventListener("pointermove", e => { if (!focusFait && Math.hypot(e.clientX - fx, e.clientY - fy) > 12) clearTimeout(focusTm); });   // le doigt bouge (défilement) avant le focus : pas de focus
     f.addEventListener("touchmove", bloquerGeste, { passive: false });
@@ -628,7 +675,7 @@ async function ouvrirFiche(n) {
     window.addEventListener("blur", finFocus);            // sécurité : changement d'appli/onglet pendant le focus
     window.addEventListener("resize", placer);
     ficheCtl = { fermerBulle, nettoyer: () => {
-        clearTimeout(minuteur); clearTimeout(focusTm);
+        clearTimeout(minuteur); clearTimeout(focusTm); clearTimeout(retourTm);
         window.removeEventListener("resize", placer);
         window.removeEventListener("pointerup", finFocus, true);
         window.removeEventListener("pointercancel", surAnnulation, true);

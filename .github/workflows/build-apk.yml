@@ -60,6 +60,43 @@ jobs:
           npx capacitor-assets generate --android
           npx cap sync android
 
+      - name: Réglages WebView (texte à 100 %, zoom bloqué)
+        working-directory: build/android
+        run: |
+          F=app/src/main/java/com/palefroy/smashupdraft/MainActivity.java
+          test -d "$(dirname "$F")"
+          cat > "$F" <<'EOF'
+          package com.palefroy.smashupdraft;
+
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  reglagesWebView();
+              }
+
+              @Override
+              public void onStart() {
+                  super.onStart();
+                  reglagesWebView();
+              }
+
+              // Texte non agrandi par la taille de police du système, zoom (pincer / double appui) désactivé.
+              private void reglagesWebView() {
+                  if (this.bridge == null || this.bridge.getWebView() == null) return;
+                  WebSettings s = this.bridge.getWebView().getSettings();
+                  s.setTextZoom(100);
+                  s.setSupportZoom(false);
+                  s.setBuiltInZoomControls(false);
+                  s.setDisplayZoomControls(false);
+              }
+          }
+          EOF
+
       - name: Numéro de version (augmente à chaque build)
         working-directory: build/android
         run: sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/" app/build.gradle

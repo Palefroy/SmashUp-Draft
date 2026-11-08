@@ -1,3 +1,6 @@
+/* Appli : pas de sélection de texte, pas de zoom (pincer, double appui), pas de surbrillance au toucher. Les champs de saisie restent éditables. */
+html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+input, textarea { -webkit-user-select: text; user-select: text; }
 :root {
     --taille-icone: 56px;   /* taille du rond d'icône : seule valeur à changer */
     --bg-color: #f4f4f9;
@@ -271,6 +274,19 @@ body { padding-bottom: 80px; }
 .fiche-art { overflow: hidden; border-radius: 15px; transition: border-radius .18s; }
 .fiche-fond.focus .fiche { background: transparent; border-color: transparent; box-shadow: none; overflow: hidden; }
 .fiche-fond.focus .fiche-art { border-radius: 15px; }
+/* Mode focus des cartes (appui long sur les 3 cartes) : les cartes glissent au centre de l'écran en grossissant, tout le reste disparaît.
+   Au relâchement elles reviennent à leur place. --dx, --dy, --sc sont calculés par script.js au début de l'appui long. */
+.fiche-cartes { transition: opacity .15s, visibility .15s, transform .32s cubic-bezier(.2,.8,.25,1); }
+.fiche-art { transition: border-radius .18s, opacity .2s, visibility .2s; }
+.fiche-fond { transition: background-color .25s; }
+.fiche-fond.focus-cartes { background: rgba(0,0,0,.9); }
+.fiche-fond.focus-cartes .fiche { background: transparent; border-color: transparent; box-shadow: none; overflow: visible; }
+.fiche-fond.retour-cartes .fiche { overflow: visible; }
+.fiche-fond.focus-cartes .fiche-art, .fiche-fond.focus-cartes .fiche-boutons, .fiche-fond.focus-cartes .rkbtn, .fiche-fond.focus-cartes .bulle { opacity: 0; visibility: hidden; }
+.fiche-fond.focus-cartes .fiche-cartes { transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(var(--sc, 1)); }
+.fiche-cartes img { transition: box-shadow .3s; }
+.fiche-fond.focus-cartes .fiche-cartes img { box-shadow: 0 12px 40px rgba(0,0,0,.7); }
+@media (prefers-reduced-motion: reduce) { .fiche-cartes { transition: opacity .15s, visibility .15s; } }
 /* Trois couleurs : Notes = bleu, Stats = vert, Titan = jaune (--c = teinte, --cg = même teinte en R,V,B pour la lueur) */
 .fbtn[data-b="notes"], .bulle[data-k="notes"] { --c: #7fbcff; --cg: 90,160,255; }
 .fbtn[data-b="stats"], .bulle[data-k="stats"] { --c: #6fe3a0; --cg: 60,200,120; }
