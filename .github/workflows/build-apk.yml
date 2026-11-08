@@ -1,0 +1,88 @@
+# Fabrication automatique de l'APK Android (application locale, sans navigateur) avec Capacitor.
+# Se lance : - tout seul à chaque push qui modifie le site (HTML, CSS, JS, data, images, icônes, dossier apk/)
+#            - à la demande : onglet Actions > "Build APK" > bouton "Run workflow"
+# Résultat : l'APK est publié dans l'onglet Releases du dépôt (release "apk-latest", fichier SmashUp-Draft.apk).
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "style.css"
+      - "script.js"
+      - "manifest.json"
+      - "data/**"
+      - "img/**"
+      - "icons/**"
+      - "apk/**"
+      - ".github/workflows/build-apk.yml"
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installer Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Préparer le projet Capacitor
+        run: |
+          mkdir -p build/www
+          cp index.html style.css script.js manifest.json build/www/
+          cp -r data img icons build/www/
+          cp apk/capacitor.config.json build/
+          cp -r apk/assets build/assets
+          cd build
+          npm init -y
+          npm install @capacitor/core@7 @capacitor/android@7
+          npm install -D @capacitor/cli@7 @capacitor/assets
+          npx cap add android
+          npx capacitor-assets generate --android
+          npx cap sync android
+
+      - name: Numéro de version (augmente à chaque build)
+        working-directory: build/android
+        run: sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/" app/build.gradle
+
+      - name: Clé de signature fixe (permet les mises à jour par-dessus)
+        run: |
+          mkdir -p ~/.android
+          cp apk/debug.keystore ~/.android/debug.keystore
+
+      - name: Compiler l'APK
+        working-directory: build/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Renommer l'APK
+        run: cp build/android/app/build/outputs/apk/debug/app-debug.apk SmashUp-Draft.apk
+
+      - name: Publier dans Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: APK Android (dernière version)
+          body: "Dernière version de l'application Android. Télécharge SmashUp-Draft.apk ci-dessous. Construit automatiquement (build n°${{ github.run_number }})."
+          files: SmashUp-Draft.apk
+          make_latest: true

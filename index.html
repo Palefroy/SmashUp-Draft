@@ -16,8 +16,8 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <script>
-// Service worker : uniquement en http(s) (le site continue de s'ouvrir normalement en double-cliquant sur index.html).
-if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+// Service worker : uniquement en http(s) et hors application APK (le site continue de s'ouvrir normalement en double-cliquant sur index.html).
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !window.Capacitor) {
     window.addEventListener("load", function () {
         navigator.serviceWorker.register("sw.js").catch(function () { /* échec silencieux : le site marche sans */ });
     });
