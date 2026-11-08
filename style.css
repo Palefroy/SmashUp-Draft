@@ -140,7 +140,7 @@ body {
 }
 .app-content { position: relative; z-index: 2; }
 .theme-scene { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; display: none; }
-[data-theme="halloween"] #scene-halloween,[data-theme="christmas"] #scene-christmas { display: block; }
+[data-theme="halloween"] #scene-halloween,[data-theme="christmas"] #scene-christmas,[data-theme="easter"] #scene-easter { display: block; }
 .scene-svg-top-left { position: absolute; top: 0; left: 0; width: min(320px,55vw); height: auto; }
 .scene-svg-top-right { position: absolute; top: 0; right: 0; width: min(320px,55vw); height: auto; }
 .scene-svg-top-garland { position: absolute; top: 0; left: 0; width: 100%; height: min(110px,22vw); }
@@ -148,7 +148,8 @@ body {
 .scene-snowflakes {
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='300' height='300' viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' opacity='0.55'%3E%3Ccircle cx='35' cy='45' r='2'/%3E%3Ccircle cx='140' cy='25' r='1.2'/%3E%3Ccircle cx='250' cy='70' r='2.5'/%3E%3Ccircle cx='85' cy='120' r='1.5'/%3E%3Ccircle cx='210' cy='150' r='1.8'/%3E%3Ccircle cx='25' cy='210' r='1.2'/%3E%3Ccircle cx='165' cy='230' r='2.2'/%3E%3Ccircle cx='275' cy='260' r='1.5'/%3E%3Cpath d='M110 65v10M105 70h10M106.5 66.5l7 7M113.5 66.5l-7 7M230 205v10M225 210h10M226.5 206.5l7 7M233.5 206.5l-7 7M60 265v8M56 269h8' stroke='%23fff' stroke-width='1' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");
+    overflow: hidden;
+    --tuile: url("data:image/svg+xml,%3Csvg width='300' height='300' viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' opacity='0.55'%3E%3Ccircle cx='35' cy='45' r='2'/%3E%3Ccircle cx='140' cy='25' r='1.2'/%3E%3Ccircle cx='250' cy='70' r='2.5'/%3E%3Ccircle cx='85' cy='120' r='1.5'/%3E%3Ccircle cx='210' cy='150' r='1.8'/%3E%3Ccircle cx='25' cy='210' r='1.2'/%3E%3Ccircle cx='165' cy='230' r='2.2'/%3E%3Ccircle cx='275' cy='260' r='1.5'/%3E%3Cpath d='M110 65v10M105 70h10M106.5 66.5l7 7M113.5 66.5l-7 7M230 205v10M225 210h10M226.5 206.5l7 7M233.5 206.5l-7 7M60 265v8M56 269h8' stroke='%23fff' stroke-width='1' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");   /* tuile de flocons de 300 px, répétée par les deux couches ci-dessous */
     opacity: 0.7;
 }
 .header-container { display: flex; justify-content: center; align-items: center; margin: 0 auto 25px; min-height: 40px; max-width: 400px; }
@@ -312,18 +313,18 @@ body { padding-bottom: 80px; }
 .charge-rond { flex: none; box-sizing: border-box; width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(255,211,106,.22); border-top-color: #ffd36a; }
 @media (prefers-reduced-motion: no-preference) { .charge-rond { animation: tourne .8s linear infinite; } .charge-fond { animation: fonduFiche .18s; } }
 @keyframes tourne { to { transform: rotate(360deg); } }
-.bulle { --c: #ffc94d; --cg: 242,182,48; position: absolute; z-index: 5; color: #f1f1f1; text-align: left; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
-.bulle-corps { box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 12px 14px; border-radius: 14px; background: rgba(14,16,24,.95); border: 1px solid rgba(var(--cg),.65); box-shadow: 0 8px 26px rgba(0,0,0,.65), 0 0 16px rgba(var(--cg),.22), inset 0 0 0 1px rgba(255,255,255,.05); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); scrollbar-width: thin; }
+.bulle { --c: #ffc94d; --cg: 242,182,48; position: absolute; z-index: 5; color: #f1f1f1; text-align: left; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: calc(14px * var(--e, 1)); line-height: 1.4; }   /* --e : échelle du texte, réglée par placerBulle (script.js) selon le contenu */
+.bulle-corps { box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: .86em 1em; border-radius: 14px; background: rgba(14,16,24,.95); border: 1px solid rgba(var(--cg),.65); box-shadow: 0 8px 26px rgba(0,0,0,.65), 0 0 16px rgba(var(--cg),.22), inset 0 0 0 1px rgba(255,255,255,.05); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); scrollbar-width: thin; }
 .bulle-pointe { position: absolute; z-index: -1; width: 13px; height: 13px; background: rgba(14,16,24,.95); border: 1px solid rgba(var(--cg),.65); }
 .bulle.g .bulle-pointe { right: -6px; top: var(--p); transform: translateY(-50%) rotate(45deg); border-left: 0; border-bottom: 0; }
 .bulle.h .bulle-pointe { bottom: -6px; left: var(--p); transform: translateX(-50%) rotate(45deg); border-left: 0; border-top: 0; }
 .bulle.b .bulle-pointe { top: -6px; left: var(--p); transform: translateX(-50%) rotate(45deg); border-right: 0; border-bottom: 0; }
-.bulle-titre { display: block; margin-bottom: 6px; color: var(--c); font-size: 16px; font-weight: 700; }
+.bulle-titre { display: block; margin-bottom: .43em; color: var(--c); font-size: 1.143em; font-weight: 700; }
 .bulle p { margin: 0; white-space: pre-line; opacity: .92; }
-.bulle p.bulle-aide { margin-top: 6px; font-size: 12px; opacity: .65; }
-.stat-l { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; font-size: 12.5px; }
+.bulle p.bulle-aide { margin-top: .43em; font-size: .857em; opacity: .65; }
+.stat-l { display: flex; align-items: center; justify-content: space-between; gap: .57em; padding: .21em 0; font-size: .893em; }
 .stat-l + .stat-l { border-top: 1px solid rgba(255,255,255,.08); }
-.etoiles { flex: none; font-size: 13px; letter-spacing: .5px; line-height: 1; white-space: nowrap; color: transparent; -webkit-text-fill-color: transparent; background: linear-gradient(90deg, #ffc83d calc(var(--v) * 20%), rgba(255,255,255,.2) 0); -webkit-background-clip: text; background-clip: text; }
+.etoiles { flex: none; font-size: .929em; letter-spacing: .04em; line-height: 1; white-space: nowrap; color: transparent; -webkit-text-fill-color: transparent; background: linear-gradient(90deg, #ffc83d calc(var(--v) * 20%), rgba(255,255,255,.2) 0); -webkit-background-clip: text; background-clip: text; }
 @media (prefers-reduced-motion: no-preference) { .bulle { animation: bulleIn .16s ease-out; } }
 @keyframes bulleIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
 .fiche img, .ico-btn img, .fac-res img { -webkit-touch-callout: none; -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
@@ -423,5 +424,94 @@ body { padding-bottom: 80px; }
 /* PWA (iPhone, barre d'état "black-translucent" + encoche) : marges de sécurité. Valent 0 partout ailleurs. */
 body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: calc(20px + env(safe-area-inset-left, 0px)); padding-right: calc(20px + env(safe-area-inset-right, 0px)); padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 .tabs-bar { padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-/* Fenêtre des détails remontée d'environ 20 px : marge basse = marge haute + 40 px (le centrage vertical monte de la moitié). */
-.fiche-fond { padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+/* Fenêtre des détails remontée de --monte-fiche (avant : 20 px ; maintenant 55 px, de quoi recouvrir à peu près le titre) : marge basse = marge haute + 2 x décalage (le centrage vertical monte de la moitié).
+   Dimensions inchangées. Le plafond de hauteur ne joue que sur un écran très court : il évite que le haut de la fenêtre sorte de l'écran. */
+.fiche-fond { --monte-fiche: 55px; padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(26px + 2 * var(--monte-fiche) + env(safe-area-inset-bottom, 0px)); }
+.fiche { max-height: min(86vh, calc(100vh - 2 * var(--monte-fiche) - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))); }
+
+/* ===== Menu de langues : même geste que le menu de thèmes (appui long, glisser, relâcher). Les lignes reprennent le thème courant. ===== */
+#langToggle { touch-action: none; }
+.lang-menu { right: auto; left: 4px; width: min(210px, calc(100vw - 40px)); transform-origin: top left; }
+.lang-code { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 30px; height: 22px; padding: 0 5px; border-radius: 6px; font: 800 12px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .5px; color: #fff; background: var(--btn-primary); border: var(--btn-border); box-shadow: var(--btn-shadow); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+
+/* ===== Thème Pâques (même esprit que Noël et Halloween : palette, décor de scène, motifs sur les panneaux) ===== */
+[data-theme="easter"] {
+    --bg-color: #e9f5ea;
+    --bg-image: radial-gradient(circle at 18% 10%,rgba(255,236,150,0.45) 0%,transparent 38%),radial-gradient(ellipse at 80% 92%,rgba(255,196,222,0.35) 0%,transparent 52%),linear-gradient(180deg,#d6ebfb 0%,#e8f3fb 26%,#f7f0fa 52%,#e5f4dc 78%,#cdeab9 100%);
+    --text-color: #46304f;
+    --panel-bg: linear-gradient(165deg,rgba(255,253,246,0.94),rgba(255,244,249,0.94));
+    --border-color: #e29bbd;
+    --summary-bg: linear-gradient(180deg,rgba(205,236,212,0.96),rgba(184,223,195,0.96));
+    --btn-primary: linear-gradient(180deg,#e8689c 0%,#b8407a 100%);
+    --btn-secondary: linear-gradient(180deg,#5faa6a 0%,#3f8250 100%);
+    --btn-danger: linear-gradient(180deg,#ee6a5c 0%,#bb3a30 100%);
+    --shadow-color: rgba(120,70,110,0.28);
+    --panel-shadow: 0 6px 16px rgba(120,70,110,0.22),0 0 12px rgba(255,170,205,0.28),inset 0 0 14px rgba(255,255,255,0.55),inset 0 1px 0 rgba(255,255,255,0.9);
+    --text-shadow: 0 1px 0 rgba(255,255,255,0.65);
+    --panel-border: 1px solid rgba(226,155,189,0.8);
+    --btn-border: 1px solid rgba(255,214,232,0.85);
+    --btn-shadow: 0 3px 8px rgba(120,60,100,0.3),inset 0 1px 0 rgba(255,255,255,0.5);
+}
+[data-theme="easter"] h2 { color: #b8407a; text-shadow: 0 1px 0 rgba(255,255,255,0.85),0 0 10px rgba(255,170,205,0.55); }
+[data-theme="easter"] button:not(.theme-toggle):hover { box-shadow: 0 4px 14px rgba(120,60,100,0.4),0 0 16px rgba(255,170,205,0.65),inset 0 1px 0 rgba(255,255,255,0.6); }
+[data-theme="easter"] #resultat > ul > li::before,[data-theme="easter"] .menu-extensions::before {
+    content: ""; position: absolute; left: 10px; right: 10px; bottom: 3px; height: 11px; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='12' viewBox='0 0 96 12'%3E%3Cg fill='%236fbe72'%3E%3Cpath d='M2 12L4 3 6.5 12Z'/%3E%3Cpath d='M9 12L12 1 14 12Z'/%3E%3Cpath d='M17 12L19 5 21.5 12Z'/%3E%3Cpath d='M30 12L32 4 34.5 12Z'/%3E%3Cpath d='M38 12L41 2 43 12Z'/%3E%3Cpath d='M47 12L49 5 51.5 12Z'/%3E%3Cpath d='M60 12L62 3 64.5 12Z'/%3E%3Cpath d='M68 12L71 1 73 12Z'/%3E%3Cpath d='M77 12L79 5 81.5 12Z'/%3E%3Cpath d='M88 12L90 4 92.5 12Z'/%3E%3C/g%3E%3Cg%3E%3Ccircle cx='25' cy='6' r='2.1' fill='%23ff9fc2'/%3E%3Ccircle cx='25' cy='6' r='0.7' fill='%23ffd54a'/%3E%3Ccircle cx='55' cy='7' r='1.9' fill='%23fff'/%3E%3Ccircle cx='55' cy='7' r='0.6' fill='%23ffd54a'/%3E%3Ccircle cx='84' cy='6' r='2.1' fill='%23c9a8f0'/%3E%3Ccircle cx='84' cy='6' r='0.7' fill='%23ffd54a'/%3E%3C/g%3E%3C/svg%3E") repeat-x left bottom / auto 11px;
+}
+[data-theme="easter"] #resultat > ul > li::after,[data-theme="easter"] .menu-extensions::after {
+    content: ""; position: absolute; top: 4px; right: 6px; width: 26px; height: 30px; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 30'%3E%3Cpath d='M13 1C19 1 24 10 24 18a11 11 0 0 1-22 0C2 10 7 1 13 1Z' fill='%23ffc9dc' stroke='%23d9739f' stroke-width='1'/%3E%3Cpath d='M5 15l2.7-3 2.7 3 2.7-3 2.7 3 2.7-3 2.7 3' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M3.6 21h18.8' stroke='%23ffe27a' stroke-width='2.4'/%3E%3Ccircle cx='8' cy='25.4' r='1.2' fill='%23fff'/%3E%3Ccircle cx='13' cy='26.4' r='1.2' fill='%23fff'/%3E%3Ccircle cx='18' cy='25.4' r='1.2' fill='%23fff'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* ===== Animations des thèmes festifs : légères (transformations et opacité uniquement, composées par le GPU), lentes et discrètes.
+   Désactivées si le téléphone demande « réduire les animations » : la scène reste alors fixe, comme avant. ===== */
+.scene-petales { position: absolute; inset: 0; overflow: hidden; --tuile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300' viewBox='0 0 200 300'%3E%3Cg fill='%23ffc3d9'%3E%3Cellipse cx='28' cy='40' rx='4.4' ry='2.6' transform='rotate(-30 28 40)'/%3E%3Cellipse cx='150' cy='82' rx='3.6' ry='2.2' transform='rotate(40 150 82)'/%3E%3Cellipse cx='84' cy='135' rx='4.8' ry='2.8' transform='rotate(15 84 135)'/%3E%3Cellipse cx='174' cy='190' rx='4' ry='2.4' transform='rotate(-55 174 190)'/%3E%3Cellipse cx='46' cy='228' rx='3.8' ry='2.3' transform='rotate(60 46 228)'/%3E%3Cellipse cx='118' cy='272' rx='4.4' ry='2.6' transform='rotate(-10 118 272)'/%3E%3C/g%3E%3Cg fill='%23fff' opacity='0.9'%3E%3Cellipse cx='100' cy='28' rx='3.4' ry='2' transform='rotate(25 100 28)'/%3E%3Cellipse cx='20' cy='160' rx='3.6' ry='2.1' transform='rotate(-40 20 160)'/%3E%3Cellipse cx='138' cy='236' rx='3.2' ry='1.9' transform='rotate(50 138 236)'/%3E%3C/g%3E%3C/svg%3E"); }
+.scene-petales::before, .scene-snowflakes::before, .scene-petales::after, .scene-snowflakes::after { content: ""; position: absolute; left: 0; background-image: var(--tuile); background-repeat: repeat; will-change: transform; }
+.scene-petales::before { top: -300px; bottom: 0; right: -200px; background-size: 200px 300px; }
+.scene-petales::after { top: -210px; bottom: 0; right: -140px; background-size: 140px 210px; background-position: 50px 70px; opacity: .8; }
+.scene-snowflakes::before { top: -300px; bottom: 0; right: 0; background-size: 300px 300px; }
+.scene-snowflakes::after { top: -180px; bottom: 0; right: 0; background-size: 180px 180px; background-position: 70px 40px; opacity: .85; }
+@media (prefers-reduced-motion: reduce) { .scene-petales::after, .scene-snowflakes::after { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+    /* chute en boucle parfaite : le décalage vaut exactement une tuile */
+    .scene-snowflakes::before { animation: neige-a 40s linear infinite; }
+    .scene-snowflakes::after { animation: neige-b 24s linear infinite; }
+    .scene-petales::before { animation: petales-a 42s linear infinite; }
+    .scene-petales::after { animation: petales-b 28s linear infinite; }
+    @keyframes neige-a { to { transform: translateY(300px); } }
+    @keyframes neige-b { to { transform: translateY(180px); } }
+    @keyframes petales-a { to { transform: translate(-200px, 300px); } }
+    @keyframes petales-b { to { transform: translate(-140px, 210px); } }
+    /* Noël : guirlande qui scintille en alternance, fumée de cheminée */
+    .lueur-a { animation: lueur 3.2s ease-in-out infinite; }
+    .lueur-b { animation: lueur 3.2s ease-in-out -1.6s infinite; }
+    @keyframes lueur { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+    .fumee { animation: fumee 7s ease-out infinite; }
+    @keyframes fumee { 0% { transform: translateY(10px); opacity: 0; } 25% { opacity: .3; } 100% { transform: translateY(-16px); opacity: 0; } }
+    /* Halloween : araignée qui se balance, chauves-souris qui dérivent et battent des ailes, brume au sol */
+    .araignee { transform-origin: 95px 95px; animation: balancier 6s ease-in-out infinite alternate; }
+    @keyframes balancier { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+    .vol { animation: derive-vol 9s ease-in-out infinite alternate; }
+    .vol-2 { animation-duration: 11s; animation-delay: -3s; }
+    .vol-3 { animation-duration: 7.5s; animation-delay: -5s; }
+    @keyframes derive-vol { from { transform: translate(0,0); } to { transform: translate(-16px,6px); } }
+    .aile { transform-box: fill-box; transform-origin: 50% 60%; animation: battement-chauve 1.2s ease-in-out infinite; }
+    @keyframes battement-chauve { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(.8); } }
+    .brume { animation: brume-glisse 18s ease-in-out infinite alternate; }
+    @keyframes brume-glisse { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+    /* Pâques : nuages, fleurs qui se balancent, oeufs suspendus, papillons, oreille du lapin */
+    .nuage { animation: nuage-derive 26s ease-in-out infinite alternate; }
+    .nuage-2 { animation-duration: 34s; animation-delay: -9s; }
+    @keyframes nuage-derive { from { transform: translateX(-9px); } to { transform: translateX(11px); } }
+    .balance { animation: balance 4.5s ease-in-out infinite alternate; }
+    @keyframes balance { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+    .oeuf-pendu { animation: pendule 6.5s ease-in-out infinite alternate; }
+    @keyframes pendule { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+    .vol-pap { animation: vol-papillon 11s ease-in-out infinite; }
+    .vol-pap.vol-b { animation-duration: 14s; }
+    @keyframes vol-papillon { 0%,100% { transform: translate(0,0); } 25% { transform: translate(14px,-9px); } 50% { transform: translate(26px,3px); } 75% { transform: translate(10px,11px); } }
+    .ailes { animation: battement-ailes .9s ease-in-out infinite; }
+    @keyframes battement-ailes { 0%,100% { transform: scaleX(1); } 50% { transform: scaleX(.4); } }
+    .oreille { transform-origin: -19px -55px; animation: oreille 7s ease-in-out infinite; }
+    @keyframes oreille { 0%,86%,100% { transform: rotate(0); } 90% { transform: rotate(-10deg); } 94% { transform: rotate(3deg); } 97% { transform: rotate(-4deg); } }
+}

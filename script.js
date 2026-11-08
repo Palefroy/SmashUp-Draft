@@ -92,8 +92,8 @@ const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "P
 const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10 };
 let P = { ...DEFAUTS };
 
-const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "halloween", "christmas"];
-const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", halloween: "halloween", christmas: "christmas" };
+const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "halloween", "christmas", "easter"];
+const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", halloween: "halloween", christmas: "christmas", easter: "easter" };
 const PANNEAUX = [["paramContainer", "tabParam"], ["historiqueContainer", "tabHist"], ["extContainer", "tabExt"]];
 
 function initialiser() {
@@ -106,8 +106,14 @@ function initialiser() {
 }
 
 /* ---------- Langue ---------- */
-function toggleLangue() {
-    langue = langue === "fr" ? "en" : "fr";
+function toggleLangue() {                       // clic simple : l'autre langue ; appui long : menu de langues (voir plus bas)
+    if (menuLangue.fait) return;                // clic qui suit un appui long : ignoré
+    if (menuLangue.ouvert) return fermerMenuLangue();
+    choisirLangue(langue === "fr" ? "en" : "fr");
+}
+function choisirLangue(code) {
+    if (code === langue) return;
+    langue = code;
     LS.set("smashup_lang", langue);
     appliquerLangue();
 }
@@ -133,7 +139,21 @@ const PERIODES_THEME = [
     { theme: "halloween", debut: [10, 15], fin: [11, 2] },   // 15 octobre → 2 novembre
     { theme: "christmas", debut: [12, 1], fin: [1, 6] }      // 1er décembre → 6 janvier
 ];
+// Pâques change chaque année : dimanche de Pâques calculé (calendrier grégorien, algorithme de Meeus/Jones/Butcher).
+// Thème proposé de 10 jours avant le dimanche de Pâques jusqu'au lundi de Pâques inclus (à modifier dans PAQUES_AVANT / PAQUES_APRES).
+const PAQUES_AVANT = 10, PAQUES_APRES = 1;
+function dimanchePaques(an) {
+    const a = an % 19, b = Math.floor(an / 100), c = an % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    return new Date(an, Math.floor((h + l - 7 * m + 114) / 31) - 1, ((h + l - 7 * m + 114) % 31) + 1);
+}
+function ecartPaques(date) {   // nombre de jours depuis le dimanche de Pâques de l'année (négatif avant)
+    const j = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return Math.round((j - dimanchePaques(date.getFullYear())) / 864e5);
+}
 function themeDeSaison(date = new Date()) {
+    const ep = ecartPaques(date);
+    if (ep >= -PAQUES_AVANT && ep <= PAQUES_APRES) return "easter";
     const v = (date.getMonth() + 1) * 100 + date.getDate();
     for (const p of PERIODES_THEME) {
         const d = p.debut[0] * 100 + p.debut[1], f = p.fin[0] * 100 + p.fin[1];
@@ -177,8 +197,8 @@ function toggleTheme() {                          // clic simple : thème suivan
 /* ---------- Menu de thèmes ----------
    Appui long (400 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
    Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
-const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", halloween: "Halloween", christmas: "Noël" };
-Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas",
+const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", halloween: "Halloween", christmas: "Noël", easter: "Pâques" };
+Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas", "Pâques": "Easter",
     "Appui long : choisir un thème": "Long-press: choose a theme" });
 const DELAI_MENU_THEME = 400;
 const menuTheme = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
@@ -249,6 +269,75 @@ function fermerMenuTheme() {
     document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeToggle")) fermerMenuTheme(); }, true);
     document.addEventListener("keydown", e => { if (e.key === "Escape" && menuTheme.ouvert) fermerMenuTheme(); });
     window.addEventListener("blur", () => { if (menuTheme.ouvert) fermerMenuTheme(); menuTheme.appui = false; menuTheme.fait = false; });
+})();
+
+/* ---------- Menu de langues ----------
+   Même geste que le menu de thèmes : appui long (400 ms) sur le bouton de langue, une liste s'ouvre, le doigt glisse, on relâche sur une langue pour la choisir.
+   Un appui court bascule toujours directement d'une langue à l'autre. Pour ajouter une langue : une ligne dans LANGUES (+ ses traductions dans EN/équivalent). */
+const LANGUES = [{ code: "fr", abr: "FR", nom: "Français" }, { code: "en", abr: "EN", nom: "English" }];
+const menuLangue = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
+const optLangueSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".lang-opt") : null; };
+
+function ouvrirMenuLangue() {
+    fermerMenuTheme();
+    const m = $("langMenu");
+    m.innerHTML = LANGUES.map(l => `<div class="theme-opt lang-opt${l.code === langue ? " actuel" : ""}" role="option" data-k="${l.code}" aria-selected="${l.code === langue}"><span class="theme-ico"><b class="lang-code">${l.abr}</b></span><span class="theme-nom">${l.nom}</span></div>`).join("");
+    m.hidden = false;
+    menuLangue.ouvert = true;
+    $("langToggle").setAttribute("aria-expanded", "true");
+    document.querySelectorAll(".astuce-theme").forEach(a => a.remove());
+    vibrer(12);
+}
+
+function fermerMenuLangue() {
+    clearTimeout(menuLangue.minuteur);
+    menuLangue.ouvert = false;
+    $("langMenu").hidden = true;
+    $("langToggle").setAttribute("aria-expanded", "false");
+}
+
+(function () {
+    const bt = $("langToggle"), m = $("langMenu");
+    bt.addEventListener("pointerdown", e => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (menuLangue.ouvert) return;
+        menuLangue.appui = true; menuLangue.x = e.clientX; menuLangue.y = e.clientY;
+        clearTimeout(menuLangue.minuteur);
+        menuLangue.minuteur = setTimeout(() => { menuLangue.fait = true; ouvrirMenuLangue(); }, DELAI_MENU_THEME);
+    });
+    window.addEventListener("pointermove", e => {
+        if (!menuLangue.appui) return;
+        if (!menuLangue.ouvert) { if (Math.hypot(e.clientX - menuLangue.x, e.clientY - menuLangue.y) > 12) clearTimeout(menuLangue.minuteur); return; }
+        const opt = optLangueSous(e.clientX, e.clientY), ancien = m.querySelector(".survol");
+        if (ancien === opt) return;
+        if (ancien) ancien.classList.remove("survol");
+        if (opt) { opt.classList.add("survol"); vibrer(6); }
+    }, true);
+    window.addEventListener("pointerup", e => {
+        if (!menuLangue.appui) return;
+        menuLangue.appui = false;
+        clearTimeout(menuLangue.minuteur);
+        if (!menuLangue.ouvert) return;             // appui court : le clic normal (autre langue) s'en charge
+        const opt = optLangueSous(e.clientX, e.clientY), surBouton = document.elementFromPoint(e.clientX, e.clientY);
+        if (opt) { fermerMenuLangue(); choisirLangue(opt.dataset.k); }
+        else if (!(surBouton && surBouton.closest("#langToggle"))) fermerMenuLangue();
+        setTimeout(() => { menuLangue.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
+    }, true);
+    window.addEventListener("pointercancel", () => {
+        if (!menuLangue.appui) return;
+        menuLangue.appui = false;
+        fermerMenuLangue();
+        setTimeout(() => { menuLangue.fait = false; }, 400);
+    }, true);
+    m.addEventListener("click", e => {              // mode « toucher » : la liste est restée ouverte après un appui long
+        const opt = e.target.closest(".lang-opt");
+        if (!opt) return;
+        fermerMenuLangue();
+        choisirLangue(opt.dataset.k);
+    });
+    document.addEventListener("pointerdown", e => { if (menuLangue.ouvert && !e.target.closest("#langMenu, #langToggle")) fermerMenuLangue(); }, true);
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && menuLangue.ouvert) fermerMenuLangue(); });
+    window.addEventListener("blur", () => { if (menuLangue.ouvert) fermerMenuLangue(); menuLangue.appui = false; menuLangue.fait = false; });
 })();
 
 // Astuce du premier lancement (une seule fois) : le geste d'appui long sur le bouton de thème n'a aucun indice visible.
@@ -595,7 +684,15 @@ const ICONES_FICHE = {
 };
 let ficheCtl = null;   // contrôleur de la fiche ouverte : { fermerBulle, nettoyer }
 
+// Taille du texte des bulles : adaptée à la quantité de contenu. On part de l'échelle 1 (14 px) et on réduit par petits pas jusqu'à ce que tout rentre sans défiler.
+// ECH_MIN = plus petite échelle acceptée (en dessous, le texte devient trop petit : la bulle défile alors, en dernier recours).
+// ECH_ECART : une position moins prioritaire n'est retenue que si elle permet un texte nettement plus grand.
+const ECH_MIN = 0.72, ECH_PAS = 0.03, ECH_ECART = 0.05;
+// Un emplacement qui recouvre les cartes reçoit un malus : on réduit un peu le texte (environ 12 %) avant d'accepter de cacher les cartes.
+const ECH_MALUS_CARTES = 0.12;
+
 // Place la bulle dans la fiche, sans jamais dépasser : à gauche des boutons si la place le permet, sinon au-dessus, sinon en dessous.
+// Plusieurs emplacements sont essayés ; on garde celui qui permet le texte le plus grand (à égalité : le plus prioritaire, dans l'ordre d'origine).
 function placerBulle(scene, bulle, btn) {
     const S = scene.getBoundingClientRect();
     const rel = el => { const r = el.getBoundingClientRect(); return { l: r.left - S.left, t: r.top - S.top, r: r.right - S.left, b: r.bottom - S.top, w: r.width, h: r.height }; };
@@ -603,13 +700,22 @@ function placerBulle(scene, bulle, btn) {
     const corps = bulle.querySelector(".bulle-corps");
     const M = 8, F = 11, WMAX = 330;
     const borne = (v, mi, ma) => Math.max(mi, Math.min(v, ma));
-    const mesurer = (w, maxH) => { bulle.style.width = w + "px"; corps.style.maxHeight = Math.max(maxH, 90) + "px"; return bulle.offsetHeight; };
+    // Mesure la bulle à la largeur w dans une hauteur maxi maxH : réduit le texte tant que ça déborde ; renvoie { e: échelle retenue, h: hauteur, rentre: tout est visible }.
+    const mesurer = (w, maxH) => {
+        bulle.style.width = w + "px";
+        corps.style.maxHeight = Math.max(maxH, 90) + "px";
+        let e = 1;
+        bulle.style.setProperty("--e", e);
+        const deborde = () => corps.scrollHeight > corps.clientHeight + 1;
+        while (deborde() && e > ECH_MIN + 1e-6) { e = Math.max(ECH_MIN, +(e - ECH_PAS).toFixed(3)); bulle.style.setProperty("--e", e); }
+        return { e, h: bulle.offsetHeight, rentre: !deborde() };
+    };
     let mode, left, top, w, h, p;
     if (btn.classList.contains("rkbtn")) {                // bouton de rang (en bas à gauche) : mini-fenêtre au-dessus, sinon en dessous
         w = Math.min(S.width - 2 * M, 270); left = borne(B.l, M, S.width - M - w);
-        const dispoH = B.t - F - M, naturelle = mesurer(w, 9999);
-        if (dispoH >= naturelle || dispoH >= 110) { mode = "h"; h = mesurer(w, dispoH); top = B.t - F - h; }
-        else { mode = "b"; top = B.b + F; h = mesurer(w, S.height - top - M); }
+        const dispoH = B.t - F - M, naturelle = mesurer(w, 9999).h;
+        if (dispoH >= naturelle || dispoH >= 110) { mode = "h"; h = mesurer(w, dispoH).h; top = B.t - F - h; }
+        else { mode = "b"; top = B.b + F; h = mesurer(w, S.height - top - M).h; }
         p = borne(B.l + B.w / 2 - left, 18, w - 18);
         bulle.className = "bulle " + mode;
         bulle.style.left = left + "px"; bulle.style.top = top + "px";
@@ -617,23 +723,33 @@ function placerBulle(scene, bulle, btn) {
         return;
     }
     const col = rel(scene.querySelector(".fiche-boutons")), C = rel(scene.querySelector(".fiche-cartes"));
+    // Emplacements possibles, du plus prioritaire au moins prioritaire.
+    const cands = [];
     const dispoG = col.l - F - 2 * M;
-    if (dispoG >= 190) {                       // à gauche, au niveau du bouton
-        mode = "g"; w = Math.min(dispoG, WMAX); left = col.l - F - w;
-        const bas = C.t - 6;                              // la bulle reste au-dessus des cartes
-        h = mesurer(w, bas - M);
-        top = borne(B.t + B.h / 2 - h / 2, M, Math.max(M, bas - h));
+    if (dispoG >= 190) {                       // à gauche des boutons, au niveau du bouton
+        const wG = Math.min(dispoG, WMAX), leftG = col.l - F - wG;
+        cands.push({ mode: "g", w: wG, left: leftG, bas: C.t - 6, maxH: C.t - 6 - M });             // au-dessus des cartes
+        cands.push({ mode: "g", w: wG, left: leftG, bas: S.height - M, maxH: S.height - 2 * M, malus: ECH_MALUS_CARTES });    // si le texte est trop long : peut recouvrir le haut des cartes
+    }
+    const wV = Math.min(S.width - 2 * M, WMAX), leftV = borne(B.l + B.w / 2 - wV / 2, M, S.width - M - wV);
+    const dispoH = col.t - F - M, dispoB = S.height - (col.b + F) - M;
+    if (dispoH >= 110) cands.push({ mode: "h", w: wV, left: leftV, maxH: dispoH });   // au-dessus des boutons
+    cands.push({ mode: "b", w: wV, left: leftV, maxH: dispoB, malus: ECH_MALUS_CARTES });   // en dessous des boutons (recouvre les cartes)
+    let best = null;
+    for (const c of cands) {
+        const r = mesurer(c.w, c.maxH);
+        const note = r.e - (c.malus || 0);
+        if (!best || (r.rentre && !best.r.rentre) || (r.rentre === best.r.rentre && note > best.note + ECH_ECART)) best = { c, r, note };
+        if (best.r.rentre && best.note === 1) break;     // texte à taille normale sans recouvrir les cartes : inutile de chercher mieux
+    }
+    const c = best.c;
+    h = mesurer(c.w, c.maxH).h;                // remesure l'emplacement retenu (le dernier essai n'est pas forcément le meilleur)
+    mode = c.mode; w = c.w; left = c.left;
+    if (mode === "g") {
+        top = borne(B.t + B.h / 2 - h / 2, M, Math.max(M, c.bas - h));
         p = borne(B.t + B.h / 2 - top, 18, h - 18);
     } else {
-        w = Math.min(S.width - 2 * M, WMAX); left = borne(B.l + B.w / 2 - w / 2, M, S.width - M - w);
-        const dispoH = col.t - F - M;
-        const dispoB = S.height - (col.b + F) - M;
-        const naturelle = mesurer(w, 9999);               // hauteur complète de la bulle
-        if (dispoH >= 110 && (naturelle <= dispoH || naturelle > dispoB)) {   // au-dessus des boutons (défilement interne si besoin)
-            mode = "h"; h = mesurer(w, dispoH); top = col.t - F - h;
-        } else {                                          // en dessous des boutons (recouvre les cartes)
-            mode = "b"; top = col.b + F; h = mesurer(w, dispoB);
-        }
+        top = mode === "h" ? col.t - F - h : col.b + F;
         p = borne(B.l + B.w / 2 - left, 18, w - 18);
     }
     bulle.className = "bulle " + mode;
@@ -753,6 +869,8 @@ async function ouvrirFiche(n) {
     // quelle que soit la position du doigt à l'écran. Un appui simple ferme la fiche (ci-dessus) ; le clic qui suit un appui long est ignoré.
     const DELAI_FOCUS = 400;
     let focusTm = null, retourTm = null, focusFait = false, fx = 0, fy = 0;
+    // Réglages du focus des cartes : marge minimale avec les bords de l'écran (avant : 12 px) et décalage vers le haut du centre (avant : 0 ; le bas de l'écran est souvent gêné par la barre de l'appli / du téléphone).
+    const MARGE_FOCUS_CARTES = 6, MONTE_FOCUS_CARTES = 20;
     // Focus des cartes : on mesure les cartes à leur place normale, puis on calcule le décalage (--dx, --dy) et le grossissement (--sc)
     // qui les amènent au centre de l'écran (plein écran moins une marge, grossissement max x3). Le déplacement est animé par style.css.
     const debutFocusCartes = () => {
@@ -764,11 +882,11 @@ async function ouvrirFiche(n) {
         C.style.transition = "none"; C.style.transform = "none";     // mesure sans l'effet d'une animation en cours
         const r = C.getBoundingClientRect();
         C.style.transform = ""; C.style.transition = "";
-        const W = window.innerWidth, H = window.innerHeight, M = 12;
-        const sc = Math.max(1, Math.min((W - 2 * M) / r.width, (H - 2 * M) / r.height, 3));
+        const W = window.innerWidth, H = window.innerHeight, M = MARGE_FOCUS_CARTES, UP = MONTE_FOCUS_CARTES;
+        const sc = Math.max(1, Math.min((W - 2 * M) / r.width, (H - 2 * (M + UP)) / r.height, 3));   // même rapport largeur/hauteur : l'image n'est ni zoomée ni recadrée
         C.style.setProperty("--sc", sc.toFixed(3));
         C.style.setProperty("--dx", (W / 2 - (r.left + r.width / 2)).toFixed(1) + "px");
-        C.style.setProperty("--dy", (H / 2 - (r.top + r.height / 2)).toFixed(1) + "px");
+        C.style.setProperty("--dy", (H / 2 - UP - (r.top + r.height / 2)).toFixed(1) + "px");
     };
     // Focus de l'illustration : le cadre grandit de ZOOM_FOCUS (1.10), sans dépasser l'écran (marge 8 px). Valeur par défaut aussi dans style.css (--zoom-focus).
     const ZOOM_FOCUS = 1.10;
@@ -867,7 +985,7 @@ document.addEventListener("toggle", e => {
         assets(code).then(a => { FICHE_OK[code] = fichePossible(a); majBoutonsDetails(); });
     });
 }, true);
-document.addEventListener("contextmenu", e => { if (e.target.closest("button[data-f], .ico-btn, .fiche-fond, #themeToggle, .theme-menu")) e.preventDefault(); });
+document.addEventListener("contextmenu", e => { if (e.target.closest("button[data-f], .ico-btn, .fiche-fond, #themeToggle, #langToggle, .theme-menu")) e.preventDefault(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !(ficheCtl && ficheCtl.fermerBulle())) fermerFiche(); });   // Échap : ferme la bulle, puis la fiche
 
 function carteFaction(n) {

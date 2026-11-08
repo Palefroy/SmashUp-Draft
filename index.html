@@ -30,12 +30,14 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
     <svg class="scene-svg-top-left" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
         <g stroke="#ff9436" stroke-width="1" fill="none" opacity="0.32">
             <path d="M0 0L250 30M0 0L220 95M0 0L175 165M0 0L105 220M0 0L35 250M45 5Q38 25 35 38Q22 40 5 45M90 11Q75 40 65 65Q45 72 13 90M140 17Q115 62 95 95Q62 115 19 140M195 23Q158 82 130 125Q85 155 26 195"/>
-            <line x1="95" y1="95" x2="95" y2="158" stroke="#ffb366" stroke-width="1.2" opacity="0.8"/>
         </g>
+        <g class="araignee">
+        <line x1="95" y1="95" x2="95" y2="158" stroke="#ffb366" stroke-width="1.2" opacity="0.26"/>
         <g transform="translate(95,165)" fill="#09040e" stroke="#ff7b1c" stroke-width="0.8">
             <circle cx="0" cy="-4" r="3.5"/><ellipse cx="0" cy="3" rx="5.5" ry="6.5"/>
             <path d="M-3 -2Q-12 -10 -16 -3M-4 0Q-14 -3 -18 5M-4 3Q-14 4 -16 12M-3 6Q-10 12 -12 18M3 -2Q12 -10 16 -3M4 0Q14 -3 18 5M4 3Q14 4 16 12M3 6Q10 12 12 18" fill="none" stroke-width="1.2"/>
             <circle cx="-1.5" cy="-5.5" r="0.8" fill="#f30" stroke="none"/><circle cx="1.5" cy="-5.5" r="0.8" fill="#f30" stroke="none"/>
+        </g>
         </g>
     </svg>
     <svg class="scene-svg-top-right" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +46,7 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
         <circle cx="170" cy="68" r="7" fill="#c95b18" opacity="0.25"/><circle cx="198" cy="92" r="10" fill="#c95b18" opacity="0.2"/><circle cx="175" cy="98" r="5" fill="#c95b18" opacity="0.2"/>
         <path d="M105 92Q135 80 165 88Q205 78 245 92Q265 98 235 104Q175 108 115 102Z" fill="#12071f" opacity="0.82"/>
         <path d="M140 62Q175 54 215 62Q240 66 210 71Q170 73 140 68Z" fill="#190a29" opacity="0.7"/>
-        <path d="M155 78c-5-6-12-4-16 2 5-1 9 1 12 4 2-2 4-2 8 0 3-3 7-5 12-4-4-6-11-8-16-2ZM115 52c-4-4-9-3-12 1 4-1 7 1 9 3 1.5-1.5 3-1.5 6 0 2-2 5-4 9-3-3-4-8-5-12-1ZM225 118c-3-3-7-2-9 1 3-1 5 1 7 2 1-1 2-1 4 0 1.5-1 4-3 7-2-2-3-6-4-9-1Z" fill="#0b0412"/>
+        <g class="vol vol-1"><path class="aile" d="M155 78c-5-6-12-4-16 2 5-1 9 1 12 4 2-2 4-2 8 0 3-3 7-5 12-4-4-6-11-8-16-2Z" fill="#0b0412"/></g><g class="vol vol-2"><path class="aile" d="M115 52c-4-4-9-3-12 1 4-1 7 1 9 3 1.5-1.5 3-1.5 6 0 2-2 5-4 9-3-3-4-8-5-12-1Z" fill="#0b0412"/></g><g class="vol vol-3"><path class="aile" d="M225 118c-3-3-7-2-9 1 3-1 5 1 7 2 1-1 2-1 4 0 1.5-1 4-3 7-2-2-3-6-4-9-1Z" fill="#0b0412"/></g>
         <path d="M300 0L140 20M300 0L170 85M300 0L215 145M300 0L275 190M245 7Q252 28 300 42M195 14Q212 58 300 90" stroke="#ff9436" stroke-width="0.9" fill="none" opacity="0.28"/>
     </svg>
     <svg class="scene-svg-bottom" viewBox="0 0 1200 280" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
@@ -62,6 +64,7 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
         <path d="M1055 94c3-7 10-9 15-5l5-1-4 3c1 5-3 10-9 11l-6 5 2-6c-2-2-3-4-3-7Z" fill="#050208"/>
         <rect x="0" y="140" width="1200" height="140" fill="url(#fg)"/>
         <path d="M0 280L0 232Q300 212 600 235T1200 225L1200 280Z" fill="#07020c"/>
+        <g class="brume" fill="#8a52a0" opacity="0.16"><ellipse cx="300" cy="236" rx="260" ry="15"/><ellipse cx="760" cy="243" rx="320" ry="13"/><ellipse cx="1090" cy="234" rx="200" ry="11"/></g>
         <g fill="#12081c" stroke="#2a143d" stroke-width="1">
             <path d="M320 245L320 202A16 16 0 0 1 352 202L352 245Z"/><path d="M336 210v18M329 216h14" stroke="#07020c" stroke-width="2"/>
             <path d="M860 245L865 198A18 15 0 0 1 898 202L892 245Z"/><polygon points="780,242 780,210 770,210 770,202 780,202 780,190 788,190 788,202 798,202 798,210 788,210 788,242"/>
@@ -97,15 +100,18 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
         <path d="M0 20Q150 68 300 24Q450 68 600 24Q750 68 900 24Q1050 68 1200 20" fill="none" stroke="#2b1d0c" stroke-width="2"/>
         <path d="M160 22v40M440 20v34M760 20v36M1040 22v40" stroke="#d4af37" stroke-width="1.5"/>
         <circle cx="160" cy="74" r="13" fill="url(#rb)"/><circle cx="440" cy="64" r="11" fill="url(#gb)"/><circle cx="760" cy="66" r="11" fill="url(#rb)"/><circle cx="1040" cy="74" r="13" fill="url(#gb)"/>
-        <g class="glow-anim" fill="url(#bg)">
-            <circle cx="75" cy="42" r="16"/><circle cx="225" cy="42" r="16"/><circle cx="375" cy="44" r="16"/><circle cx="525" cy="44" r="16"/><circle cx="675" cy="44" r="16"/><circle cx="825" cy="44" r="16"/><circle cx="975" cy="42" r="16"/><circle cx="1125" cy="42" r="16"/>
+        <g class="lueur-a" fill="url(#bg)">
+            <circle cx="75" cy="42" r="16"/><circle cx="375" cy="44" r="16"/><circle cx="675" cy="44" r="16"/><circle cx="975" cy="42" r="16"/>
+        </g>
+        <g class="lueur-b" fill="url(#bg)">
+            <circle cx="225" cy="42" r="16"/><circle cx="525" cy="44" r="16"/><circle cx="825" cy="44" r="16"/><circle cx="1125" cy="42" r="16"/>
         </g>
     </svg>
     <svg class="scene-svg-bottom" viewBox="0 0 1200 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
         <defs><radialGradient id="ww" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff4b8"/><stop offset="55%" stop-color="#fa3"/><stop offset="100%" stop-color="#f70" stop-opacity="0"/></radialGradient></defs>
         <path d="M0 270V195Q240 155 520 195T1020 180T1200 195V270Z" fill="#0d3320"/>
         <path d="M60 145L35 205h50ZM110 130L80 210h60ZM280 150l-25 55h50ZM890 135l-30 70h60ZM945 140l-30 70h60Z" fill="#092617"/>
-        <path d="M1068 122Q1058 98 1072 80Q1086 62 1074 42" stroke="#dce8ee" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.28"/>
+        <path class="fumee" d="M1068 122Q1058 98 1072 80Q1086 62 1074 42" stroke="#dce8ee" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.28"/>
         <g transform="translate(985,130)">
             <rect x="76" y="-8" width="14" height="28" fill="#59281e"/><path d="M74 -8h18v5H74z" fill="#eef6f9"/>
             <polygon points="12,38 55,2 98,38 98,95 12,95" fill="#4a2511" stroke="#2b1306" stroke-width="1.5"/>
@@ -131,6 +137,82 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
     </svg>
 </div>
 
+<div id="scene-easter" class="theme-scene" aria-hidden="true">
+    <div class="scene-petales"></div>
+    <svg class="scene-svg-top-right" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="e-sol" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fffbe6"/><stop offset="50%" stop-color="#ffe680"/><stop offset="100%" stop-color="#ffd24d" stop-opacity="0"/></radialGradient>
+            <g id="e-fl"><g fill="#ffc7dc" stroke="#e58bb2" stroke-width="0.6"><ellipse cx="0" cy="-5" rx="3.2" ry="4.7"/><ellipse cx="0" cy="-5" rx="3.2" ry="4.7" transform="rotate(72)"/><ellipse cx="0" cy="-5" rx="3.2" ry="4.7" transform="rotate(144)"/><ellipse cx="0" cy="-5" rx="3.2" ry="4.7" transform="rotate(216)"/><ellipse cx="0" cy="-5" rx="3.2" ry="4.7" transform="rotate(288)"/></g><circle r="1.9" fill="#ffd95e"/></g>
+        </defs>
+        <circle cx="86" cy="52" r="58" fill="url(#e-sol)" opacity="0.5" class="glow-anim"/>
+        <circle cx="86" cy="52" r="26" fill="url(#e-sol)"/>
+        <g transform="translate(130,78)"><g class="nuage" fill="#fff" opacity="0.88"><ellipse cx="0" cy="8" rx="30" ry="9"/><circle cx="-12" cy="0" r="10"/><circle cx="4" cy="-5" r="13"/><circle cx="19" cy="1" r="9"/></g></g>
+        <g transform="translate(40,118)"><g class="nuage nuage-2" fill="#fff" opacity="0.75"><ellipse cx="0" cy="6" rx="20" ry="6"/><circle cx="-8" cy="0" r="7"/><circle cx="4" cy="-3" r="9"/><circle cx="13" cy="1" r="6"/></g></g>
+        <g stroke="#7b5740" stroke-width="3.4" stroke-linecap="round" fill="none"><path d="M300 12C262 20 232 40 206 76S160 118 126 126"/><path d="M252 28C248 50 240 66 228 82"/><path d="M222 58C205 56 190 62 178 76"/><path d="M178 104C164 94 148 94 134 102" stroke-width="2.6"/></g>
+        <g><use href="#e-fl" transform="translate(262,26) scale(1)"/><use href="#e-fl" transform="translate(243,46) scale(.8)"/><use href="#e-fl" transform="translate(228,68) scale(1.1)"/><use href="#e-fl" transform="translate(208,90) scale(.9)"/><use href="#e-fl" transform="translate(190,106) scale(.75)"/><use href="#e-fl" transform="translate(238,88) scale(.7)"/><use href="#e-fl" transform="translate(178,76) scale(.8)"/><use href="#e-fl" transform="translate(150,98) scale(.7)"/><use href="#e-fl" transform="translate(134,108) scale(.62)"/><use href="#e-fl" transform="translate(280,44) scale(.6)"/></g>
+        <g fill="#ff9fc2"><circle cx="216" cy="50" r="2.4"/><circle cx="198" cy="64" r="2.2"/><circle cx="165" cy="86" r="2.2"/><circle cx="251" cy="62" r="2"/></g>
+    </svg>
+    <svg class="scene-svg-top-left" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <path id="e-poe" d="M0 -11C6.5 -11 10 -2 10 4.5A10 10 0 0 1 -10 4.5C-10 -2 -6.5 -11 0 -11Z" stroke="#000" stroke-opacity=".13" stroke-width="0.8"/>
+            <path id="e-pzz" d="M-8.6 2l2.9-3 2.9 3 2.9-3 2.9 3 2.9-3 2.9 3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="e-ppt"><path d="M-9.4 0H9.4" stroke="#fff" stroke-opacity=".7" stroke-width="2.2"/><circle cx="-4" cy="-5" r="1.3" fill="#fff"/><circle cx="3" cy="-6.2" r="1.2" fill="#fff"/><circle cx="-1" cy="7.5" r="1.3" fill="#fff"/></g>
+            <g id="e-pbd"><path d="M-9.6 3.5H9.6" stroke="#fff" stroke-width="2.6"/><path d="M-9 -3H9" stroke="#fff" stroke-opacity=".56" stroke-width="1.6"/></g>
+        </defs>
+        <g class="oeuf-pendu" style="transform-origin:34px 0;animation-delay:-0.5s;animation-duration:6.5s"><line x1="34" y1="0" x2="34" y2="40" stroke="#d9b8cc" stroke-width="1.2"/><g transform="translate(34,56) scale(1.3)"><use href="#e-poe" fill="#ffb3cf"/><use href="#e-pzz"/></g></g>
+        <g class="oeuf-pendu" style="transform-origin:74px 0;animation-delay:-2.6s;animation-duration:7.5s"><line x1="74" y1="0" x2="74" y2="70" stroke="#d9b8cc" stroke-width="1.2"/><g transform="translate(74,86) scale(1.3)"><use href="#e-poe" fill="#a9e5c4"/><use href="#e-ppt"/></g></g>
+        <g class="oeuf-pendu" style="transform-origin:112px 0;animation-delay:-4.1s;animation-duration:6s"><line x1="112" y1="0" x2="112" y2="34" stroke="#d9b8cc" stroke-width="1.2"/><g transform="translate(112,50) scale(1.3)"><use href="#e-poe" fill="#cdb8f5"/><use href="#e-pbd"/></g></g>
+        <g transform="translate(170,70) rotate(12)"><g class="vol-pap vol-a" style="animation-delay:-1s"><g class="ailes"><ellipse cx="-7" cy="-5" rx="7" ry="5.5" fill="#ffb347" transform="rotate(-20 -7 -5)"/><ellipse cx="7" cy="-5" rx="7" ry="5.5" fill="#ffb347" transform="rotate(20 7 -5)"/><ellipse cx="-5.5" cy="4" rx="5" ry="4" fill="#ffd54a" transform="rotate(25 -5.5 4)"/><ellipse cx="5.5" cy="4" rx="5" ry="4" fill="#ffd54a" transform="rotate(-25 5.5 4)"/></g><path d="M0 -8V8" stroke="#5a3b57" stroke-width="1.6" stroke-linecap="round"/><path d="M0 -8Q-3 -13 -6 -13M0 -8Q3 -13 6 -13" stroke="#5a3b57" stroke-width="0.8" fill="none"/></g></g>
+        <g transform="translate(208,142) rotate(-18)"><g class="vol-pap vol-b" style="animation-delay:-4s"><g class="ailes"><ellipse cx="-7" cy="-5" rx="7" ry="5.5" fill="#c58cf0" transform="rotate(-20 -7 -5)"/><ellipse cx="7" cy="-5" rx="7" ry="5.5" fill="#c58cf0" transform="rotate(20 7 -5)"/><ellipse cx="-5.5" cy="4" rx="5" ry="4" fill="#f6a5d2" transform="rotate(25 -5.5 4)"/><ellipse cx="5.5" cy="4" rx="5" ry="4" fill="#f6a5d2" transform="rotate(-25 5.5 4)"/></g><path d="M0 -8V8" stroke="#5a3b57" stroke-width="1.6" stroke-linecap="round"/><path d="M0 -8Q-3 -13 -6 -13M0 -8Q3 -13 6 -13" stroke="#5a3b57" stroke-width="0.8" fill="none"/></g></g>
+    </svg>
+    <svg class="scene-svg-bottom" viewBox="0 0 1200 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <path id="e-oe" d="M0 -11C6.5 -11 10 -2 10 4.5A10 10 0 0 1 -10 4.5C-10 -2 -6.5 -11 0 -11Z" stroke="#000" stroke-opacity=".13" stroke-width="0.8"/>
+            <path id="e-zz" d="M-8.6 2l2.9-3 2.9 3 2.9-3 2.9 3 2.9-3 2.9 3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="e-pt"><path d="M-9.4 0H9.4" stroke="#fff" stroke-opacity=".7" stroke-width="2.2"/><circle cx="-4" cy="-5" r="1.3" fill="#fff"/><circle cx="3" cy="-6.2" r="1.2" fill="#fff"/><circle cx="-1" cy="7.5" r="1.3" fill="#fff"/><circle cx="5.2" cy="5" r="1.2" fill="#fff"/></g>
+            <g id="e-bd"><path d="M-9.6 3.5H9.6" stroke="#fff" stroke-width="2.6"/><path d="M-9 -3H9" stroke="#fff" stroke-opacity=".56" stroke-width="1.6"/></g>
+            <g id="e-tu"><path d="M0 0V-26" stroke="#4e9a57" stroke-width="2.2" stroke-linecap="round"/><path d="M0 -3Q-11 -8 -10 -22Q-2 -14 0 -3Z" fill="#5aa862"/><path d="M0 -26Q-8 -27 -7 -38Q-3 -34 0 -37Q3 -34 7 -38Q8 -27 0 -26Z" stroke="#000" stroke-opacity=".13" stroke-width="0.7"/><path d="M0 -26Q-3 -30 0 -37Q3 -30 0 -26Z" fill="#fff" fill-opacity=".33"/></g>
+            <g id="e-ma"><path d="M0 0V-20" stroke="#4e9a57" stroke-width="1.8" stroke-linecap="round"/><g transform="translate(0,-23)" fill="#fff" stroke="#e7d9ef" stroke-width="0.6"><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4"/><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4" transform="rotate(60)"/><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4" transform="rotate(120)"/><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4" transform="rotate(180)"/><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4" transform="rotate(240)"/><ellipse cx="0" cy="-5.5" rx="2.6" ry="4.4" transform="rotate(300)"/><circle r="2.8" fill="#ffd54a" stroke="none"/></g></g>
+            <linearGradient id="e-h1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c6e9b4"/><stop offset="100%" stop-color="#a5d894"/></linearGradient>
+            <linearGradient id="e-h2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9bd98f"/><stop offset="100%" stop-color="#7ec97f"/></linearGradient>
+            <linearGradient id="e-h3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6fbe72"/><stop offset="100%" stop-color="#58a863"/></linearGradient>
+        </defs>
+        <path d="M0 270V172Q220 136 470 168T900 156T1200 176V270Z" fill="url(#e-h1)"/>
+        <path d="M0 270V205Q300 168 600 204T1200 192V270Z" fill="url(#e-h2)"/>
+        <!-- lapin assis, regarde vers la gauche (l'oreille gauche remue de temps en temps) -->
+        <g transform="translate(722,205)">
+            <ellipse cx="0" cy="-20" rx="22" ry="19" fill="#fdf7ef" stroke="#dccfc0" stroke-width="1"/>
+            <ellipse cx="9" cy="-13" rx="14" ry="13" fill="#fffaf3" stroke="#dccfc0" stroke-width="1"/>
+            <circle cx="29" cy="-14" r="6" fill="#fff" stroke="#dccfc0" stroke-width="1"/>
+            <ellipse cx="-15" cy="-3" rx="8" ry="4" fill="#fffaf3" stroke="#dccfc0" stroke-width="1"/>
+            <ellipse cx="-8" cy="-67" rx="4.6" ry="14" transform="rotate(10 -8 -67)" fill="#fdf7ef" stroke="#dccfc0" stroke-width="1"/>
+            <ellipse cx="-8" cy="-66" rx="2.2" ry="9.5" transform="rotate(10 -8 -66)" fill="#ffc4d6"/>
+            <g class="oreille"><ellipse cx="-19" cy="-68" rx="4.6" ry="15" transform="rotate(-8 -19 -68)" fill="#fdf7ef" stroke="#dccfc0" stroke-width="1"/>
+            <ellipse cx="-19" cy="-67" rx="2.2" ry="10" transform="rotate(-8 -19 -67)" fill="#ffc4d6"/></g>
+            <circle cx="-16" cy="-44" r="12" fill="#fffaf3" stroke="#dccfc0" stroke-width="1"/>
+            <circle cx="-21" cy="-47" r="1.7" fill="#3a2b33"/>
+            <circle cx="-27.4" cy="-43" r="1.9" fill="#ff9fb8"/>
+            <path d="M-26 -39q4 3 8 0" stroke="#c9a9a0" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+            <path d="M-5 -35l5 6 5-6-5-3Z" fill="#e8688f"/><path d="M-5 -35l-5-3v6ZM5 -35l5-3v6Z" fill="#ff8fb0"/>
+        </g>
+        <!-- panier d'oeufs -->
+        <g transform="translate(590,214)">
+            <path d="M-24 -22C-24 -58 24 -58 24 -22" fill="none" stroke="#8b5a2b" stroke-width="3"/>
+            <g transform="translate(-13,-27) rotate(-10) scale(1.0)"><use href="#e-oe" fill="#ffb3cf"/><use href="#e-zz"/></g>
+            <g transform="translate(2,-30) rotate(6) scale(1.05)"><use href="#e-oe" fill="#a9e5c4"/><use href="#e-pt"/></g>
+            <g transform="translate(15,-26) rotate(14) scale(1.0)"><use href="#e-oe" fill="#cdb8f5"/><use href="#e-bd"/></g>
+            <path d="M-26 -22H26L20 0H-20Z" fill="#cf9a5e" stroke="#8b5a2b" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M-23 -15H23M-21 -8H21M-14 -22V0M-4 -22V0M6 -22V0M16 -22V0" stroke="#a97235" stroke-width="1"/>
+            <path d="M-26 -22H26" stroke="#8b5a2b" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <path d="M0 270V235Q320 214 640 238T1200 226V270Z" fill="url(#e-h3)"/>
+        <g stroke="#4e9a57" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"><path d="M22 262l-3-9M30 262l1-8M410 266l-3-9M418 266l2-8M880 264l-3-9M889 264l2-8M1090 262l-3-9M1100 262l2-8"/></g>
+        <g transform="translate(60,240) scale(0.9)"><g class="balance" style="animation-delay:0.0s"><use href="#e-tu" fill="#ff7aa8"/></g></g><g transform="translate(150,232) scale(1.02)"><g class="balance" style="animation-delay:3.45s"><use href="#e-tu" fill="#ffb347"/></g></g><g transform="translate(238,240) scale(1.1400000000000001)"><g class="balance" style="animation-delay:2.9s"><use href="#e-tu" fill="#c58cf0"/></g></g><g transform="translate(330,232) scale(0.9)"><g class="balance" style="animation-delay:2.3499999999999996s"><use href="#e-tu" fill="#ff6f91"/></g></g><g transform="translate(418,240) scale(1.02)"><g class="balance" style="animation-delay:1.7999999999999998s"><use href="#e-tu" fill="#ffd54a"/></g></g><g transform="translate(470,232) scale(1.1400000000000001)"><g class="balance" style="animation-delay:1.25s"><use href="#e-tu" fill="#f68fb7"/></g></g><g transform="translate(548,240) scale(0.9)"><g class="balance" style="animation-delay:0.6999999999999997s"><use href="#e-tu" fill="#ff7aa8"/></g></g><g transform="translate(622,232) scale(1.02)"><g class="balance" style="animation-delay:0.14999999999999947s"><use href="#e-tu" fill="#ffb347"/></g></g><g transform="translate(705,240) scale(1.1400000000000001)"><g class="balance" style="animation-delay:3.5999999999999996s"><use href="#e-tu" fill="#c58cf0"/></g></g><g transform="translate(768,232) scale(0.9)"><g class="balance" style="animation-delay:3.05s"><use href="#e-tu" fill="#ff6f91"/></g></g><g transform="translate(842,240) scale(1.02)"><g class="balance" style="animation-delay:2.5s"><use href="#e-tu" fill="#ffd54a"/></g></g><g transform="translate(930,232) scale(1.1400000000000001)"><g class="balance" style="animation-delay:1.9499999999999993s"><use href="#e-tu" fill="#f68fb7"/></g></g><g transform="translate(1010,240) scale(0.9)"><g class="balance" style="animation-delay:1.3999999999999995s"><use href="#e-tu" fill="#ff7aa8"/></g></g><g transform="translate(1095,232) scale(1.02)"><g class="balance" style="animation-delay:0.8499999999999996s"><use href="#e-tu" fill="#ffb347"/></g></g><g transform="translate(1160,240) scale(1.1400000000000001)"><g class="balance" style="animation-delay:0.29999999999999893s"><use href="#e-tu" fill="#c58cf0"/></g></g>
+        <g transform="translate(105,242) scale(1.0)"><g class="balance" style="animation-delay:0.0s"><use href="#e-ma"/></g></g><g transform="translate(285,236) scale(0.9)"><g class="balance" style="animation-delay:4.2s"><use href="#e-ma"/></g></g><g transform="translate(498,246) scale(1.0)"><g class="balance" style="animation-delay:3.4s"><use href="#e-ma"/></g></g><g transform="translate(662,243) scale(0.85)"><g class="balance" style="animation-delay:2.5999999999999996s"><use href="#e-ma"/></g></g><g transform="translate(812,248) scale(1.0)"><g class="balance" style="animation-delay:1.7999999999999998s"><use href="#e-ma"/></g></g><g transform="translate(975,240) scale(0.9)"><g class="balance" style="animation-delay:1.0s"><use href="#e-ma"/></g></g><g transform="translate(1130,246) scale(0.95)"><g class="balance" style="animation-delay:0.1999999999999993s"><use href="#e-ma"/></g></g>
+        <g transform="translate(190,250) rotate(-14) scale(1.0)"><use href="#e-oe" fill="#ffb3cf"/><use href="#e-zz"/></g><g transform="translate(380,252) rotate(10) scale(1.0)"><use href="#e-oe" fill="#a9e5c4"/><use href="#e-pt"/></g><g transform="translate(452,255) rotate(-8) scale(0.9)"><use href="#e-oe" fill="#cdb8f5"/><use href="#e-bd"/></g><g transform="translate(575,257) rotate(16) scale(0.95)"><use href="#e-oe" fill="#ffe27a"/><use href="#e-zz"/></g><g transform="translate(738,252) rotate(-12) scale(1.0)"><use href="#e-oe" fill="#9fd6ff"/><use href="#e-pt"/></g><g transform="translate(880,256) rotate(8) scale(0.95)"><use href="#e-oe" fill="#ffb3cf"/><use href="#e-bd"/></g><g transform="translate(1055,252) rotate(-10) scale(1.0)"><use href="#e-oe" fill="#a9e5c4"/><use href="#e-zz"/></g><g transform="translate(30,255) rotate(12) scale(0.9)"><use href="#e-oe" fill="#cdb8f5"/><use href="#e-pt"/></g>
+    </svg>
+</div>
+
 <div class="app-content">
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Change theme" data-ttl="Changer le thème" aria-haspopup="listbox" aria-expanded="false">
         <svg id="icon-sun" style="display:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -141,11 +223,13 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
         <svg id="icon-wood" style="display:none" viewBox="0 0 24 24"><path d="M8 6 L18 4 A4.5 6.5 0 0 1 18 17 L8 19" fill="none" stroke="currentColor"/><ellipse cx="8" cy="12.5" rx="4.8" ry="6.5" fill="none" stroke="currentColor"/><ellipse cx="8" cy="12.5" rx="2.4" ry="3.3" fill="none" stroke="currentColor"/><path d="M8 12.5 L4 11 M8 12.5 L10 17.5 M13 9.5 h4 M14 14 h3.5" fill="none" stroke="currentColor"/></svg>
         <svg id="icon-halloween" style="display:none" viewBox="0 0 24 24"><path d="M12 2c-1 0-2 2-2 3v1c-4.4 0-8 3.1-8 7s3.6 7 8 7 8-3.1 8-7-3.6-7-8-7V5c0-1-1-3-2-3zM9 13l1 2 1-2zm6 0l-1 2-1-2zm-6 4l1.5 1 1.5-1 1.5 1 1.5-1"/></svg>
         <svg id="icon-christmas" style="display:none" viewBox="0 0 24 24"><path d="M12 2L20 10H16L22 18H2L8 10H4ZM10 18v4h4v-4Z"/></svg>
+        <svg id="icon-easter" style="display:none" viewBox="0 0 24 24"><path d="M12 2.5c3.6 0 6.5 5.6 6.5 10.3a6.5 6.5 0 0 1-13 0C5.5 8.1 8.4 2.5 12 2.5z"/><path d="M6.4 13.2l2.1-1.8 2.2 1.8 2.2-1.8 2.2 1.8 2.1-1.8"/><path d="M7.6 17.4h8.8"/></svg>
     </button>
-    <button class="theme-toggle lang-toggle" onclick="toggleLangue()" title="Langue / Language">
+    <button class="theme-toggle lang-toggle" id="langToggle" onclick="toggleLangue()" title="Langue / Language" aria-haspopup="listbox" aria-expanded="false">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
     </button>
     <div id="themeMenu" class="theme-menu" role="listbox" hidden></div>
+    <div id="langMenu" class="theme-menu lang-menu" role="listbox" hidden></div>
 
     <div class="header-container">
         <h2 data-t="Tirage Smash Up">Smash Up Draw</h2>
