@@ -371,15 +371,16 @@ body { padding-bottom: 80px; }
 /* Bouton « Tirer les Factions » : un peu plus grand, un peu moins d'espace en dessous (avant : padding 15px 30px, 18px, marge 20px). */
 .btn-tirer { padding: 18px 38px; font-size: 20px; margin-bottom: 8px; }
 
-/* Focus sur l'illustration (appui long) : zoom léger de l'image dans son cadre, animé comme le focus des cartes.
-   Réglage : --zoom-focus (1 = aucun zoom ; au-delà de 1.15 les bords sont rognés). */
-.fiche-fond { --zoom-focus: 1.12; }
-.fiche-art img { transform-origin: 50% 50%; transition: transform .32s cubic-bezier(.2,.8,.25,1); }
-.fiche-fond.focus .fiche-art img { transform: scale(var(--zoom-focus)); }
-@media (prefers-reduced-motion: reduce) { .fiche-art img { transition: none; } }
+/* Focus sur l'illustration (appui long) : le cadre ENTIER (image + bords arrondis) grandit légèrement, sans aucun zoom dans l'image (le cadrage reste identique).
+   Réglage : --zoom-focus (1 = taille normale). script.js le limite pour garder une marge de 8 px avec les bords de l'écran. */
+.fiche-fond { --zoom-focus: 1.10; }
+.fiche-art { transform-origin: 50% 50%; transition: border-radius .18s, opacity .2s, visibility .2s, transform .32s cubic-bezier(.2,.8,.25,1); }
+.fiche-fond.focus .fiche-art { transform: scale(var(--zoom-focus)); }
+.fiche-fond.focus .fiche { overflow: visible; }   /* sinon le cadre agrandi serait rogné par le panneau */
+@media (prefers-reduced-motion: reduce) { .fiche-art { transition: border-radius .18s, opacity .2s, visibility .2s; } }
 
 /* Bulles d'astuce (partagées : « i » du draft et astuce du bouton de thème). --pointe = distance de la flèche au bord droit. */
-.astuce { position: absolute; z-index: 31; box-sizing: border-box; width: max-content; max-width: min(230px, calc(100vw - 40px)); padding: 9px 12px; border-radius: 12px; background: rgba(20,20,28,.97); color: #f1f1f1; border: 1px solid rgba(255,211,106,.55); box-shadow: 0 8px 24px rgba(0,0,0,.5); font: 500 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; text-shadow: none; --pointe: 16px; }
+.astuce { position: absolute; z-index: 31; box-sizing: border-box; width: max-content; max-width: min(230px, calc(100vw - 40px)); padding: 9px 12px; border-radius: 12px; background: rgba(20,20,28,.97); color: #f1f1f1; border: 1px solid rgba(255,211,106,.55); box-shadow: 0 8px 24px rgba(0,0,0,.5); font: 500 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; text-shadow: none; --pointe: 7px; }
 .astuce[hidden] { display: none; }
 .astuce::before { content: ""; position: absolute; top: -6px; right: var(--pointe); width: 10px; height: 10px; background: rgba(20,20,28,.97); border-left: 1px solid rgba(255,211,106,.55); border-top: 1px solid rgba(255,211,106,.55); transform: rotate(45deg); }
 .astuce.sortie { opacity: 0; transition: opacity .25s; }
@@ -389,7 +390,8 @@ body { padding-bottom: 80px; }
 /* Petit « i » en haut à droite de la zone des factions (Draft / Pick / Pick & Ban) */
 #resultat { position: relative; }
 .draft-tete { padding: 0 30px; }   /* réserve la place du « i » de chaque côté : le titre reste centré */
-.btn-info { all: unset; box-sizing: border-box; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid currentColor; color: var(--text-color); opacity: .75; font: italic 700 15px/1 Georgia, "Times New Roman", serif; text-shadow: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-info { all: unset; box-sizing: border-box; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; display: flex; color: var(--text-color); opacity: .7; text-shadow: none; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .15s; }
+.btn-info svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn-info::before { content: ""; position: absolute; inset: -9px; }   /* zone de toucher élargie (44 px) */
 .btn-info { box-shadow: none !important; }   /* pas de lueur de survol des thèmes Halloween / Noël sur ce petit rond */
 .btn-info:hover, .btn-info[aria-expanded="true"] { opacity: 1; }
@@ -397,7 +399,7 @@ body { padding-bottom: 80px; }
 .astuce-info { top: 42px; right: 8px; }
 
 /* Astuce du premier lancement, sous le bouton de thème */
-.astuce-theme { top: 54px; right: 4px; --pointe: 21px; }
+.astuce-theme { top: 54px; right: 4px; --pointe: 20px; }
 
 /* Menu de thèmes : appui long sur le bouton de thème, glisser le doigt, relâcher sur un thème pour le choisir.
    Chaque ligne porte data-theme : elle reprend donc les vraies couleurs de son thème (fond, texte, bouton, panneau). */
@@ -421,4 +423,5 @@ body { padding-bottom: 80px; }
 /* PWA (iPhone, barre d'état "black-translucent" + encoche) : marges de sécurité. Valent 0 partout ailleurs. */
 body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: calc(20px + env(safe-area-inset-left, 0px)); padding-right: calc(20px + env(safe-area-inset-right, 0px)); padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 .tabs-bar { padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-.fiche-fond { padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px)); }
+/* Fenêtre des détails remontée d'environ 20 px : marge basse = marge haute + 40 px (le centrage vertical monte de la moitié). */
+.fiche-fond { padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }

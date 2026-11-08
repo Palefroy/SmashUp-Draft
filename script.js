@@ -142,11 +142,23 @@ function themeDeSaison(date = new Date()) {
     return "light";
 }
 
+// Ordre de priorité : 1) choix de l'utilisateur (mémorisé)  2) thème de saison (Halloween / Noël)  3) réglage du téléphone ou du navigateur (sombre → "dark", sinon "light").
+// iPhone et Android donnent tous deux ce réglage via prefers-color-scheme (PWA et navigateur).
+const mqSombre = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+function themeParDefaut() {
+    const saison = themeDeSaison();
+    if (saison !== "light") return saison;
+    return mqSombre && mqSombre.matches ? "dark" : "light";
+}
+const themeChoisi = () => { const c = LS.get("smashup_theme"); return themesList.includes(c) ? c : null; };
+
 function chargerTheme() {
-    const choisi = LS.get("smashup_theme");
-    const theme = themesList.includes(choisi) ? choisi : themeDeSaison();
+    const theme = themeChoisi() || themeParDefaut();
     document.documentElement.setAttribute("data-theme", theme);
     majIconeTheme(theme);
+    // Le téléphone passe en sombre/clair pendant que l'appli est ouverte : le thème suit, tant que l'utilisateur n'a rien choisi (rien n'est enregistré).
+    const suivre = () => { if (themeChoisi()) return; const th = themeParDefaut(); document.documentElement.setAttribute("data-theme", th); majIconeTheme(th); };
+    if (mqSombre) { if (mqSombre.addEventListener) mqSombre.addEventListener("change", suivre); else if (mqSombre.addListener) mqSombre.addListener(suivre); }
 }
 
 function appliquerTheme(theme) {                  // choix de l'utilisateur : mémorisé, il l'emporte désormais sur le thème saisonnier
@@ -758,6 +770,16 @@ async function ouvrirFiche(n) {
         C.style.setProperty("--dx", (W / 2 - (r.left + r.width / 2)).toFixed(1) + "px");
         C.style.setProperty("--dy", (H / 2 - (r.top + r.height / 2)).toFixed(1) + "px");
     };
+    // Focus de l'illustration : le cadre grandit de ZOOM_FOCUS (1.10), sans dépasser l'écran (marge 8 px). Valeur par défaut aussi dans style.css (--zoom-focus).
+    const ZOOM_FOCUS = 1.10;
+    const debutFocusArt = () => {
+        const A = scene.querySelector(".fiche-art");
+        if (A) {
+            const w = A.getBoundingClientRect().width;
+            f.style.setProperty("--zoom-focus", Math.max(1, Math.min(ZOOM_FOCUS, (window.innerWidth - 16) / w)).toFixed(3));
+        }
+        f.classList.add("focus");
+    };
     const finFocus = () => {
         clearTimeout(focusTm);
         const enCartes = f.classList.contains("focus-cartes");
@@ -785,7 +807,7 @@ async function ouvrirFiche(n) {
         if (!surArt && !surCartes) return;
         fx = e.clientX; fy = e.clientY;
         clearTimeout(focusTm);
-        focusTm = setTimeout(() => { focusFait = true; if (surCartes) debutFocusCartes(); else f.classList.add("focus"); }, DELAI_FOCUS);
+        focusTm = setTimeout(() => { focusFait = true; if (surCartes) debutFocusCartes(); else debutFocusArt(); }, DELAI_FOCUS);
     });
     f.addEventListener("pointermove", e => { if (!focusFait && Math.hypot(e.clientX - fx, e.clientY - fy) > 12) clearTimeout(focusTm); });   // le doigt bouge (défilement) avant le focus : pas de focus
     f.addEventListener("touchmove", bloquerGeste, { passive: false });
@@ -914,7 +936,7 @@ function afficherResultats(groupes, premier) {
 Object.assign(EN, { "Aide": "Help", "Appuie longtemps sur une faction pour voir ses détails.": "Press and hold a faction to see its details." });
 let tmInfo = null;
 function htmlInfo() {
-    return `<button type="button" class="btn-info" onclick="basculerInfo()" aria-label="${t("Aide")}" aria-expanded="false">i</button>` +
+    return `<button type="button" class="btn-info" onclick="basculerInfo()" aria-label="${t("Aide")}" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-5M12 7.8h.01"/></svg></button>` +
         `<div class="astuce astuce-info" role="status" hidden>${t("Appuie longtemps sur une faction pour voir ses détails.")}</div>`;
 }
 function fermerInfo() {
