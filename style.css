@@ -1,7 +1,7 @@
 /* Appli : pas de sélection de texte, pas de zoom (pincer, double appui), pas de surbrillance au toucher. Les champs de saisie restent éditables. */
 html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 input, textarea { -webkit-user-select: text; user-select: text; }
-:root {
+:root, [data-theme="light"] {
     --taille-icone: 56px;   /* taille du rond d'icône : seule valeur à changer */
     --bg-color: #f4f4f9;
     --bg-image: none;
@@ -365,6 +365,58 @@ body { padding-bottom: 80px; }
 .seg button.on { background: var(--btn-primary); opacity: 1; box-shadow: inset 0 0 0 2px rgba(255,255,255,.6); }
 .seg input[type="number"] { width: 44px; font-size: 13px; padding: 4px; }
 .seg input[type="number"].on { outline: 2px solid var(--btn-primary); }
+
+/* ===== Ajouts : bouton Tirer, bulle « i », zoom du focus, menu de thèmes ===== */
+
+/* Bouton « Tirer les Factions » : un peu plus grand, un peu moins d'espace en dessous (avant : padding 15px 30px, 18px, marge 20px). */
+.btn-tirer { padding: 18px 38px; font-size: 20px; margin-bottom: 8px; }
+
+/* Focus sur l'illustration (appui long) : zoom léger de l'image dans son cadre, animé comme le focus des cartes.
+   Réglage : --zoom-focus (1 = aucun zoom ; au-delà de 1.15 les bords sont rognés). */
+.fiche-fond { --zoom-focus: 1.12; }
+.fiche-art img { transform-origin: 50% 50%; transition: transform .32s cubic-bezier(.2,.8,.25,1); }
+.fiche-fond.focus .fiche-art img { transform: scale(var(--zoom-focus)); }
+@media (prefers-reduced-motion: reduce) { .fiche-art img { transition: none; } }
+
+/* Bulles d'astuce (partagées : « i » du draft et astuce du bouton de thème). --pointe = distance de la flèche au bord droit. */
+.astuce { position: absolute; z-index: 31; box-sizing: border-box; width: max-content; max-width: min(230px, calc(100vw - 40px)); padding: 9px 12px; border-radius: 12px; background: rgba(20,20,28,.97); color: #f1f1f1; border: 1px solid rgba(255,211,106,.55); box-shadow: 0 8px 24px rgba(0,0,0,.5); font: 500 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; text-shadow: none; --pointe: 16px; }
+.astuce[hidden] { display: none; }
+.astuce::before { content: ""; position: absolute; top: -6px; right: var(--pointe); width: 10px; height: 10px; background: rgba(20,20,28,.97); border-left: 1px solid rgba(255,211,106,.55); border-top: 1px solid rgba(255,211,106,.55); transform: rotate(45deg); }
+.astuce.sortie { opacity: 0; transition: opacity .25s; }
+@media (prefers-reduced-motion: no-preference) { .astuce:not([hidden]):not(.sortie) { animation: astuceIn .16s ease-out; } }
+@keyframes astuceIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* Petit « i » en haut à droite de la zone des factions (Draft / Pick / Pick & Ban) */
+#resultat { position: relative; }
+.draft-tete { padding: 0 30px; }   /* réserve la place du « i » de chaque côté : le titre reste centré */
+.btn-info { all: unset; box-sizing: border-box; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid currentColor; color: var(--text-color); opacity: .75; font: italic 700 15px/1 Georgia, "Times New Roman", serif; text-shadow: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-info::before { content: ""; position: absolute; inset: -9px; }   /* zone de toucher élargie (44 px) */
+.btn-info { box-shadow: none !important; }   /* pas de lueur de survol des thèmes Halloween / Noël sur ce petit rond */
+.btn-info:hover, .btn-info[aria-expanded="true"] { opacity: 1; }
+.btn-info:focus-visible { outline: 2px solid #ffd54a; outline-offset: 2px; }
+.astuce-info { top: 42px; right: 8px; }
+
+/* Astuce du premier lancement, sous le bouton de thème */
+.astuce-theme { top: 54px; right: 4px; --pointe: 21px; }
+
+/* Menu de thèmes : appui long sur le bouton de thème, glisser le doigt, relâcher sur un thème pour le choisir.
+   Chaque ligne porte data-theme : elle reprend donc les vraies couleurs de son thème (fond, texte, bouton, panneau). */
+#themeToggle { touch-action: none; }
+.theme-menu { position: absolute; top: 52px; right: 4px; z-index: 30; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: min(250px, calc(100vw - 40px)); padding: 8px; border-radius: 16px; background: rgba(20,20,28,.97); border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 34px rgba(0,0,0,.55); text-shadow: none; transform-origin: top right; }
+.theme-menu[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) { .theme-menu:not([hidden]) { animation: menuThemeIn .14s ease-out; } }
+@keyframes menuThemeIn { from { opacity: 0; transform: scale(.92) translateY(-6px); } to { opacity: 1; transform: none; } }
+.theme-opt { position: relative; box-sizing: border-box; display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border-color); background-color: var(--bg-color); background-image: var(--bg-image); color: var(--text-color); text-shadow: var(--text-shadow); font: 600 15px/1 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; cursor: pointer; transition: transform .1s, box-shadow .1s; -webkit-user-select: none; user-select: none; }
+.theme-opt.survol { transform: scale(1.04); box-shadow: 0 0 0 3px #ffd54a, 0 6px 16px rgba(0,0,0,.5); z-index: 1; }
+@media (hover: hover) { .theme-opt:hover { transform: scale(1.04); box-shadow: 0 0 0 3px #ffd54a, 0 6px 16px rgba(0,0,0,.5); z-index: 1; } }
+.theme-ico { flex: none; display: flex; }
+.theme-opt svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+.theme-nom { flex: 1; min-width: 0; }
+.theme-opt.actuel .theme-nom::after { content: " ✓"; }
+.theme-ech { flex: none; display: flex; align-items: center; gap: 5px; }
+.theme-ech i { display: block; box-sizing: border-box; width: 20px; height: 14px; border-radius: 4px; }
+.theme-ech i:first-child { background: var(--btn-primary); border: var(--btn-border); box-shadow: var(--btn-shadow); }
+.theme-ech i:last-child { background: var(--panel-bg); border: 2px solid var(--border-color); }
 
 /* PWA (iPhone, barre d'état "black-translucent" + encoche) : marges de sécurité. Valent 0 partout ailleurs. */
 body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: calc(20px + env(safe-area-inset-left, 0px)); padding-right: calc(20px + env(safe-area-inset-right, 0px)); padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }

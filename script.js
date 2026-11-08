@@ -102,6 +102,7 @@ function initialiser() {
     chargerHistorique();
     parserCSV();
     appliquerLangue();
+    setTimeout(afficherAstuceTheme, 900);
 }
 
 /* ---------- Langue ---------- */
@@ -125,18 +126,138 @@ function appliquerLangue() {
 }
 
 /* ---------- Thème ---------- */
+// Thème par défaut selon la période de l'année (date de l'appareil). Utilisé TANT QUE l'utilisateur n'a jamais choisi de thème lui-même :
+// il n'est jamais enregistré (smashup_theme n'est écrit que sur un choix de l'utilisateur), donc l'appli ne reste pas en Noël en mars.
+// Pour changer une période : modifier [mois, jour] ci-dessous. Une période qui passe le nouvel an (fin avant début) est gérée.
+const PERIODES_THEME = [
+    { theme: "halloween", debut: [10, 15], fin: [11, 2] },   // 15 octobre → 2 novembre
+    { theme: "christmas", debut: [12, 1], fin: [1, 6] }      // 1er décembre → 6 janvier
+];
+function themeDeSaison(date = new Date()) {
+    const v = (date.getMonth() + 1) * 100 + date.getDate();
+    for (const p of PERIODES_THEME) {
+        const d = p.debut[0] * 100 + p.debut[1], f = p.fin[0] * 100 + p.fin[1];
+        if (d <= f ? (v >= d && v <= f) : (v >= d || v <= f)) return p.theme;
+    }
+    return "light";
+}
+
 function chargerTheme() {
-    const theme = LS.get("smashup_theme") || "light";
+    const choisi = LS.get("smashup_theme");
+    const theme = themesList.includes(choisi) ? choisi : themeDeSaison();
     document.documentElement.setAttribute("data-theme", theme);
     majIconeTheme(theme);
 }
 
-function toggleTheme() {
+function appliquerTheme(theme) {                  // choix de l'utilisateur : mémorisé, il l'emporte désormais sur le thème saisonnier
+    document.documentElement.setAttribute("data-theme", theme);
+    LS.set("smashup_theme", theme);
+    majIconeTheme(theme);
+}
+
+function toggleTheme() {                          // clic simple : thème suivant
+    if (menuTheme.fait) return;                   // clic qui suit un appui long (menu de thèmes) : ignoré
+    if (menuTheme.ouvert) return fermerMenuTheme();
     const current = document.documentElement.getAttribute("data-theme");
-    const next = themesList[(themesList.indexOf(current) + 1) % themesList.length];
-    document.documentElement.setAttribute("data-theme", next);
-    LS.set("smashup_theme", next);
-    majIconeTheme(next);
+    appliquerTheme(themesList[(themesList.indexOf(current) + 1) % themesList.length]);
+}
+
+/* ---------- Menu de thèmes ----------
+   Appui long (400 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
+   Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
+const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", halloween: "Halloween", christmas: "Noël" };
+Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas",
+    "Appui long : choisir un thème": "Long-press: choose a theme" });
+const DELAI_MENU_THEME = 400;
+const menuTheme = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
+const vibrer = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
+const optSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".theme-opt") : null; };
+
+function ouvrirMenuTheme() {
+    const m = $("themeMenu"), actuel = document.documentElement.getAttribute("data-theme");
+    m.innerHTML = themesList.map(k => `<div class="theme-opt${k === actuel ? " actuel" : ""}" role="option" data-theme="${k}" data-k="${k}" aria-selected="${k === actuel}"><span class="theme-ico"></span><span class="theme-nom">${esc(t(NOMS_THEMES[k]))}</span><span class="theme-ech" aria-hidden="true"><i></i><i></i></span></div>`).join("");
+    m.querySelectorAll(".theme-opt").forEach(o => {
+        const svg = $("icon-" + iconMap[o.dataset.k]).cloneNode(true);
+        svg.removeAttribute("id"); svg.style.display = "block";
+        o.querySelector(".theme-ico").appendChild(svg);
+    });
+    m.hidden = false;
+    menuTheme.ouvert = true;
+    $("themeToggle").setAttribute("aria-expanded", "true");
+    document.querySelectorAll(".astuce-theme").forEach(a => a.remove());   // l'astuce du premier lancement n'a plus de raison d'être
+    vibrer(12);
+}
+
+function fermerMenuTheme() {
+    clearTimeout(menuTheme.minuteur);
+    menuTheme.ouvert = false;
+    $("themeMenu").hidden = true;
+    $("themeToggle").setAttribute("aria-expanded", "false");
+}
+
+(function () {
+    const bt = $("themeToggle"), m = $("themeMenu");
+    bt.addEventListener("pointerdown", e => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (menuTheme.ouvert) return;
+        menuTheme.appui = true; menuTheme.x = e.clientX; menuTheme.y = e.clientY;
+        clearTimeout(menuTheme.minuteur);
+        menuTheme.minuteur = setTimeout(() => { menuTheme.fait = true; ouvrirMenuTheme(); }, DELAI_MENU_THEME);
+    });
+    window.addEventListener("pointermove", e => {
+        if (!menuTheme.appui) return;
+        if (!menuTheme.ouvert) { if (Math.hypot(e.clientX - menuTheme.x, e.clientY - menuTheme.y) > 12) clearTimeout(menuTheme.minuteur); return; }
+        const opt = optSous(e.clientX, e.clientY), ancien = m.querySelector(".survol");
+        if (ancien === opt) return;
+        if (ancien) ancien.classList.remove("survol");
+        if (opt) { opt.classList.add("survol"); vibrer(6); }
+    }, true);
+    window.addEventListener("pointerup", e => {
+        if (!menuTheme.appui) return;
+        menuTheme.appui = false;
+        clearTimeout(menuTheme.minuteur);
+        if (!menuTheme.ouvert) return;             // appui court : le clic normal (thème suivant) s'en charge
+        const opt = optSous(e.clientX, e.clientY), surBouton = document.elementFromPoint(e.clientX, e.clientY);
+        if (opt) { appliquerTheme(opt.dataset.k); fermerMenuTheme(); }
+        else if (!(surBouton && surBouton.closest("#themeToggle"))) fermerMenuTheme();
+        setTimeout(() => { menuTheme.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
+    }, true);
+    window.addEventListener("pointercancel", () => {
+        if (!menuTheme.appui) return;
+        menuTheme.appui = false;
+        fermerMenuTheme();
+        setTimeout(() => { menuTheme.fait = false; }, 400);
+    }, true);
+    m.addEventListener("click", e => {             // mode « toucher » : la liste est restée ouverte après un appui long
+        const opt = e.target.closest(".theme-opt");
+        if (!opt) return;
+        appliquerTheme(opt.dataset.k);
+        fermerMenuTheme();
+    });
+    document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeToggle")) fermerMenuTheme(); }, true);
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && menuTheme.ouvert) fermerMenuTheme(); });
+    window.addEventListener("blur", () => { if (menuTheme.ouvert) fermerMenuTheme(); menuTheme.appui = false; menuTheme.fait = false; });
+})();
+
+// Astuce du premier lancement (une seule fois) : le geste d'appui long sur le bouton de thème n'a aucun indice visible.
+function afficherAstuceTheme() {
+    if (LS.get("smashup_astuce_theme")) return;
+    LS.set("smashup_astuce_theme", "1");
+    if (menuTheme.appui || menuTheme.ouvert) return;               // l'utilisateur utilise déjà le bouton : inutile
+    const a = document.createElement("div");
+    a.className = "astuce astuce-theme";
+    a.setAttribute("role", "status");
+    a.textContent = t("Appui long : choisir un thème");
+    document.querySelector(".app-content").appendChild(a);
+    let tm = null;
+    const retirer = () => {
+        clearTimeout(tm);
+        document.removeEventListener("pointerdown", retirer, true);
+        a.classList.add("sortie");
+        setTimeout(() => a.remove(), 280);
+    };
+    tm = setTimeout(retirer, 5500);
+    document.addEventListener("pointerdown", retirer, true);
 }
 
 function majIconeTheme(theme) {
@@ -724,7 +845,7 @@ document.addEventListener("toggle", e => {
         assets(code).then(a => { FICHE_OK[code] = fichePossible(a); majBoutonsDetails(); });
     });
 }, true);
-document.addEventListener("contextmenu", e => { if (e.target.closest("button[data-f], .ico-btn, .fiche-fond")) e.preventDefault(); });
+document.addEventListener("contextmenu", e => { if (e.target.closest("button[data-f], .ico-btn, .fiche-fond, #themeToggle, .theme-menu")) e.preventDefault(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !(ficheCtl && ficheCtl.fermerBulle())) fermerFiche(); });   // Échap : ferme la bulle, puis la fiche
 
 function carteFaction(n) {
@@ -789,6 +910,41 @@ function afficherResultats(groupes, premier) {
     sauverHistorique();
 }
 
+/* ---------- Bulle « i » du draft (indice de l'appui long sur une faction) ---------- */
+Object.assign(EN, { "Aide": "Help", "Appuie longtemps sur une faction pour voir ses détails.": "Press and hold a faction to see its details." });
+let tmInfo = null;
+function htmlInfo() {
+    return `<button type="button" class="btn-info" onclick="basculerInfo()" aria-label="${t("Aide")}" aria-expanded="false">i</button>` +
+        `<div class="astuce astuce-info" role="status" hidden>${t("Appuie longtemps sur une faction pour voir ses détails.")}</div>`;
+}
+function fermerInfo() {
+    clearTimeout(tmInfo);
+    const b = document.querySelector("#resultat .btn-info"), a = document.querySelector("#resultat .astuce-info");
+    if (a) a.hidden = true;
+    if (b) b.setAttribute("aria-expanded", "false");
+}
+function basculerInfo() {
+    const b = document.querySelector("#resultat .btn-info"), a = document.querySelector("#resultat .astuce-info");
+    if (!b || !a) return;
+    const ouvrir = a.hidden;
+    fermerInfo();
+    if (!ouvrir) return;
+    a.hidden = false;
+    b.setAttribute("aria-expanded", "true");
+    tmInfo = setTimeout(fermerInfo, 7000);         // se referme seule
+}
+// Ouverte automatiquement une seule fois, au premier écran de choix du premier draft ; ensuite, seulement quand on touche le « i ».
+function astucePremierDraft() {
+    if (LS.get("smashup_astuce_info")) return;
+    LS.set("smashup_astuce_info", "1");
+    basculerInfo();
+}
+// Un appui n'importe où ailleurs referme la bulle (sans empêcher le geste : un appui sur une faction fonctionne normalement).
+document.addEventListener("pointerdown", e => {
+    const a = document.querySelector("#resultat .astuce-info");
+    if (a && !a.hidden && !e.target.closest(".btn-info")) fermerInfo();
+}, true);
+
 /* ---------- Draft / Pick / Pick & Ban ---------- */
 function demarrerDraft(pioche, nbJ, mode, premier, taille) {
     const rot = Array.from({ length: nbJ }, (_, k) => (premier + k) % nbJ);   // le joueur qui commence passe en premier
@@ -813,10 +969,11 @@ function rendreDraft() {
     const d = draft;
     if (d.mode === "draft") return rendreMain();
     const [j, type] = d.ordre[d.etape];
-    $("resultat").innerHTML = `<b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small><div class="draft-pool">` +
+    $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
         d.pool.map((n, i) => `<button class="${type === "ban" ? "btn-danger" : ""}" data-f="${encodeURIComponent(n)}" onclick="choisirDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
         (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
         d.pris.map((g, i) => `<div><b>${nomJ(i)}</b> : ${g.map(t).join(" & ") || "—"}</div>`).join("");
+    astucePremierDraft();
 }
 
 function choisirDraft(i) {
@@ -833,9 +990,10 @@ function rendreMain() {
         $("resultat").innerHTML = `<p>${t("Passe l'écran à")} <b>${nomJ(j)}</b></p><button onclick="draft.ecran='choix';rendreDraft()">${t("Je suis")} ${nomJ(j)}</button>`;
         return;
     }
-    $("resultat").innerHTML = `<b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small><div class="draft-pool">` +
+    $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small></div><div class="draft-pool">` +
         d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
         `</div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
+    astucePremierDraft();
 }
 
 function basculerDraft(i) {
