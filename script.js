@@ -116,9 +116,17 @@ const PERIODES_THEME = [
     { theme: "christmas", debut: [12, 1], fin: [1, 6] },     // 1er décembre → 6 janvier
     { theme: "japan", debut: [3, 20], fin: [4, 10] }         // saison des cerisiers en fleurs (20 mars → 10 avril) ; Pâques reste prioritaire si les dates se recoupent
 ];
-// Nouvel An chinois : date variable, lue dans le calendrier chinois du téléphone (Intl) : du 25 du 12e mois lunaire au 15 du 1er mois (fête des lanternes).
+// Nouvel An chinois : dates 2026-2040 en dur (tableau ci-dessous), puis calendrier chinois du téléphone au-delà.
+const NOUVEL_AN_CHINOIS = { 2026: [2, 17], 2027: [2, 6], 2028: [1, 26], 2029: [2, 13], 2030: [2, 3], 2031: [1, 23], 2032: [2, 11], 2033: [1, 31], 2034: [2, 19], 2035: [2, 8], 2036: [1, 28], 2037: [2, 15], 2038: [2, 4], 2039: [1, 24], 2040: [2, 12] };
+const CHINE_AVANT = 5, CHINE_APRES = 15;   // jours avant le Nouvel An et après (fête des lanternes) : à modifier ici
 function nouvelAnChinois(date) {
-    try {
+    const j = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    for (const an of [date.getFullYear(), date.getFullYear() - 1]) {   // l'année précédente couvre le début d'année
+        const d = NOUVEL_AN_CHINOIS[an];
+        if (d) { const ecart = Math.round((j - new Date(an, d[0] - 1, d[1])) / 864e5); if (ecart >= -CHINE_AVANT && ecart <= CHINE_APRES) return true; }
+    }
+    if (NOUVEL_AN_CHINOIS[date.getFullYear()]) return false;
+    try {   // années hors tableau : calendrier chinois du téléphone
         const p = new Intl.DateTimeFormat("en-u-ca-chinese", { month: "numeric", day: "numeric" }).formatToParts(date);
         const m = parseInt(p.find(x => x.type === "month").value, 10), d = parseInt(p.find(x => x.type === "day").value, 10);
         return (m === 12 && d >= 25) || (m === 1 && d <= 15);
