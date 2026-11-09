@@ -16,34 +16,9 @@
     ["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));   // iOS (PWA)
 })();
 
-const donneesCSV = `Smash Up|(2013)|1|Aliens;Dinosaures;Ninjas;Pirates;Robots;Petit Peuple;Sorciers;Zombies
-Smash Up : Même Pas Mort|(2013)|1|Cavalerie Ours;Fantômes;Plantes Carnivores;Steampunks
-Smash Up : Cthulhu Fhtagn !|(2014)|1|Grands Anciens;Innsmouth;Serviteurs de Cthulhu;Université Miskatonic
-Smash Up : Séries B|(2014)|1|Métamorphes;Singes Cyborgs;Super Espions;Voyageurs du Temps
-Smash Up : Monstres Sacrés|(2015)|1|Fourmis Géantes;Loups-Garous;Savants Fous;Vampires
-Smash Up : Trop Minions|(2015)|1|Chatons;Fées;Poneys Magiques;Princesses
-Smash Up : La Grosse Boîte pour Geek|(2015)|0|Geeks
-Smash Up : Munchkin|(2016)|1|Elfes;Guerriers;Halfelins;Magiciens;Nains;Orques;Prêtres;Voleurs
-Smash Up : Ressemblances Fortuites|(2017)|1|Changeformers;Chevaliers des Étoiles;Squatteurs de Trône;Voyageurs de l'Espace
-Smash Up : Vous l'aurez voulu !|(2017)|1|Dragons;Mythologies Grecques;Requins;Super-Héros;Tornades
-Smash Up : Conflit de Générations|(2017)|1|Explorateurs;Grands-Mères;Oursons;Rockstars
-Smash Up : Rois du Japon|(2018)|1|Kaijū;Monstrapoches;Petites Magiciennes;Super Combattants
-Smash Up : Ces Années-Là|(2019)|0|Danseurs Disco;Justiciers;Maîtres Kung-Fu;Routiers
-Smash Up : Vous en voulez encore ?|(2020)|0|Anciens Égyptiens;Cow-Boys;Samouraïs;Vikings
-Smash Up : L'Énorme Boîte pour Geek|(2020)|0|Dream Team
-Smash Up : Tournée Mondiale - Incident Diplomatique|(2021)|0|Luchadors;Mousquetaires;Police Montée;Sumos
-Smash Up Knights of the Round Table|(2021 VO)|0|Knights of the Round Table
-Smash Up : Marvel|(2022)|1|Avengers;Hydra;Kree;Masters of Evil;S.H.I.E.L.D.;Sinister Six;Spider-Verse;Ultimates
-Smash Up : Tournée Mondiale - Choc des Cultures|(2022)|1|Anciens Incas;Contes d'Anansi;Contes de Grimm;Contes Féeriques Russes;Voyageurs Polynésiens
-Mini-extension Smash Up : Faction Moutons|(2022)|1|Moutons
-Smash Up - Disney|(2022 VO)|0|Aladdin;Beauty and the Beast;Big Hero 6;Frozen;Mulan;The Lion King;The Nightmare Before Christmas;Wreck-It Ralph
-Mini-extension Smash Up : Faction Pingouins|(2023)|0|Pingouins
-Smash Up Teens|(2023 VO)|0|Teens
-Smash Up Fait son Cinéma|(2024)|0|Traqueurs de Spectres;Extramorphes;Hommes d'Action;Retourneurs du Futur
-Smash Up : Édition Anniversaire|(2025)|1|Champions du Monde;Gobelins;Sirènes;Squelettes
-Smash Up Half the Battle|(2025 VO)|0|Adolescent Epic Geckos;G.I. Gerald;Pearl and the Images;Rulers of the Cosmos
-Smash Up Slashers|(2025 VO)|0|Slashers
-Smash Up Clowns|(2025 VO)|0|Clowns`;
+// Données des extensions / factions / cartes spéciales : data/factions.js (chargé avant ce fichier).
+const FAC = window.FACTIONS || {};
+const donneesCSV = FAC.csv || "", CODES = FAC.codes || {}, ANNEE_EN = FAC.anneeEn || {}, SPECIALES = FAC.speciales || {};
 
 const DOSSIER_ILLUS = "img/illus/", DOSSIER_CARDS = "img/cards/";   // grandes illustrations et montage des 3 cartes : <dossier>/<CODE>.<format>
 // Formats d'image acceptés (extensions en minuscules), essayés dans cet ordre : le premier fichier trouvé est utilisé. Les formats peuvent être mélangés.
@@ -54,13 +29,10 @@ const FORMATS_IMG = [".webp", ".jpg", ".jpeg", ".png", ".avif"];
 const FICHES = {};
 for (const [type, parCode] of Object.entries(window.DATA || {}))
     for (const [code, v] of Object.entries(parCode)) (FICHES[code] = FICHES[code] || {})[type === "cartes" ? "cards" : type === "titans" ? "titan" : type] = v;
-// Cartes spéciales (data/speciales.js) : pseudo-fiches (MONSTRES, TRESORS, DEMENCE) ouvertes par le même ouvrirFiche() que les factions.
-const SPECIALES = (window.DATA && window.DATA.speciales) || {};
+// Cartes spéciales (data/factions.js) : pseudo-fiches (MONSTRES, TRESORS, DEMENCE) ouvertes par le même ouvrirFiche() que les factions.
 const codeDe = n => CODES[n] || (SPECIALES[n] ? n : undefined);   // nom de faction -> code ; un code de carte spéciale est son propre code
 const nomSpecial = c => { const o = (SPECIALES[c] || {}).nom || {}; return o[langue] || o.fr || c; };
 const DOSSIER_ICO = "img/ico/";   // icônes : img/ico/<CODE>.<format>
-const CODES = {"Aliens":"ALI","Dinosaures":"DIN","Ninjas":"NIN","Pirates":"PIR","Robots":"ROB","Petit Peuple":"PTP","Sorciers":"SOR","Zombies":"ZOM","Cavalerie Ours":"CAO","Fantômes":"FAN","Plantes Carnivores":"PLC","Steampunks":"STE","Grands Anciens":"GRA","Innsmouth":"INN","Serviteurs de Cthulhu":"SDC","Université Miskatonic":"MIS","Métamorphes":"MET","Singes Cyborgs":"SIC","Super Espions":"SUE","Voyageurs du Temps":"VDT","Fourmis Géantes":"FOU","Loups-Garous":"LOU","Savants Fous":"SAF","Vampires":"VAM","Chatons":"CHA","Fées":"FEE","Poneys Magiques":"PON","Princesses":"PRI","Geeks":"GEE","Elfes":"ELF","Guerriers":"GUE","Halfelins":"HAL","Magiciens":"MAG","Nains":"NAI","Orques":"ORQ","Prêtres":"PRE","Voleurs":"VOL","Changeformers":"CHF","Chevaliers des Étoiles":"CDE","Squatteurs de Trône":"SDT","Voyageurs de l'Espace":"VDE","Dragons":"DRA","Mythologies Grecques":"MYG","Requins":"REQ","Super-Héros":"SUH","Tornades":"TOR","Explorateurs":"EXP","Grands-Mères":"GME","Oursons":"OUR","Rockstars":"ROK","Kaijū":"KAI","Monstrapoches":"MON","Petites Magiciennes":"PMA","Super Combattants":"SUC","Danseurs Disco":"DIS","Justiciers":"JUS","Maîtres Kung-Fu":"KUN","Routiers":"ROU","Anciens Égyptiens":"EGY","Cow-Boys":"COW","Samouraïs":"SAM","Vikings":"VIK","Dream Team":"DRE","Luchadors":"LUC","Mousquetaires":"MOU","Police Montée":"POM","Sumos":"SUM","Knights of the Round Table":"KRT","Avengers":"AVE","Hydra":"HYD","Kree":"KRE","Masters of Evil":"MOE","S.H.I.E.L.D.":"SHI","Sinister Six":"SIS","Spider-Verse":"SPI","Ultimates":"ULT","Anciens Incas":"AIN","Contes d'Anansi":"ANA","Contes de Grimm":"GRI","Contes Féeriques Russes":"CFR","Voyageurs Polynésiens":"VPO","Moutons":"MOT","Aladdin":"ALA","Beauty and the Beast":"BAB","Big Hero 6":"BIG","Frozen":"FRO","Mulan":"MUL","The Lion King":"LIK","The Nightmare Before Christmas":"NBC","Wreck-It Ralph":"WIR","Pingouins":"PIN","Teens":"TEE","Traqueurs de Spectres":"TDS","Extramorphes":"EXT","Hommes d'Action":"HDA","Retourneurs du Futur":"RDF","Champions du Monde":"CDM","Gobelins":"GOB","Sirènes":"SIR","Squelettes":"SQU","Adolescent Epic Geckos":"GEC","G.I. Gerald":"GIG","Pearl and the Images":"PEA","Rulers of the Cosmos":"RTC","Slashers":"SLA","Clowns":"CLO"};
-const ANNEE_EN = {"Smash Up":"(2012)","Smash Up : Même Pas Mort":"(2013)","Smash Up : Cthulhu Fhtagn !":"(2013)","Smash Up : Séries B":"(2014)","Smash Up : Monstres Sacrés":"(2014)","Smash Up : Trop Minions":"(2015)","Smash Up : La Grosse Boîte pour Geek":"(2014)","Smash Up : Munchkin":"(2015)","Smash Up : Ressemblances Fortuites":"(2016)","Smash Up : Vous l'aurez voulu !":"(2016)","Smash Up : Conflit de Générations":"(2017)","Smash Up : Rois du Japon":"(2017)","Smash Up : Ces Années-Là":"(2018)","Smash Up : Vous en voulez encore ?":"(2018)","Smash Up : L'Énorme Boîte pour Geek":"(2018)","Smash Up : Tournée Mondiale - Incident Diplomatique":"(2019)","Smash Up : Tournée Mondiale - Choc des Cultures":"(2019)","Mini-extension Smash Up : Faction Moutons":"(2017)","Mini-extension Smash Up : Faction Pingouins":"(2019)","Smash Up Fait son Cinéma":"(2024)","Smash Up : Édition Anniversaire":"(2022)","Smash Up : Marvel":"(2020)"};   // années de sortie originales
 const EN = {"Cartes spéciales": "Special cards", "Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
 Object.assign(EN, {
     "Nombre de joueurs": "Number of players", "Mode": "Mode", "Draft": "Draft",
@@ -520,7 +492,7 @@ function genererHTMLFactions() {
         });
         html += `</div></details>`;
     }
-    html += `<details class="ext-details" open><summary><input type="checkbox" id="ext_custom" onclick="toggleExtension(event,'ext_custom')">${t("Personnalisé")}</summary><div class="factions-list"><div id="customList"></div><input type="text" id="customNom" placeholder="${t("Nouvelle faction")}" maxlength="30"><button class="btn-compact" onclick="ajouterCustom()">+</button></div></details>`;
+    html += `<details class="ext-details"><summary><input type="checkbox" id="ext_custom" onclick="toggleExtension(event,'ext_custom')">${t("Personnalisé")}</summary><div class="factions-list"><div id="customList"></div><input type="text" id="customNom" placeholder="${t("Nouvelle faction")}" maxlength="30"><button class="btn-compact" onclick="ajouterCustom()">+</button></div></details>`;
     html += htmlSpeciales();
     $("optionsExtensions").innerHTML = html;
     Object.keys(SPECIALES).forEach(c => assets(c).then(a => { FICHE_OK[c] = fichePossible(a); majBoutonsDetails(); }));   // « Détails » caché si aucune image n'existe encore
@@ -535,8 +507,8 @@ function texteNotes(code) { const o = (FICHES[code] || {}).notes || {}; return o
 function htmlSpeciales() {
     const codes = Object.keys(SPECIALES);
     if (!codes.length) return "";
-    const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns">${texteNotes(c) ? `<button type="button" class="btn-det btn-notes-spec" data-spec="${esc(c)}">${t("Notes")}</button>` : ""}<button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
-    return `<details class="ext-details ext-speciales" open><summary>« ${t("Cartes spéciales")} »</summary><div class="factions-list">${lignes}</div></details>`;
+    const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns">${texteNotes(c) ? `<button type="button" class="btn-notes-spec" data-spec="${esc(c)}">${t("Notes")}</button>` : ""}<button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
+    return `<details class="ext-details ext-speciales"><summary>${t("Cartes spéciales")}</summary><div class="factions-list">${lignes}</div></details>`;
 }
 function ouvrirNotesSpeciale(code) {
     const txt = texteNotes(code);
@@ -585,7 +557,7 @@ function chargerPreferencesFactions() {
     document.querySelectorAll(".faction-cb").forEach(cb => {
         cb.checked = Array.isArray(list) ? list.includes(cb.value) : cb.getAttribute("data-default") === "true";
     });
-    document.querySelectorAll(".ext-details").forEach(d => updateMasterCb(d.querySelector("summary input").id));
+    document.querySelectorAll(".ext-details").forEach(d => { const c = d.querySelector("summary input"); if (c) updateMasterCb(c.id); });   // l'encadré « Cartes spéciales » n'a pas de case
 }
 
 function toggleExtension(event, extId) {
@@ -939,17 +911,19 @@ async function ouvrirFiche(n) {
         C.style.setProperty("--dx", (W / 2 - (r.left + r.width / 2)).toFixed(1) + "px");
         C.style.setProperty("--dy", (H / 2 - UP - (r.top + r.height / 2)).toFixed(1) + "px");
     };
-    // Focus de l'illustration : le cadre grandit de ZOOM_FOCUS (1.10), sans dépasser l'écran (marge 8 px). Valeur par défaut aussi dans style.css (--zoom-focus).
-    const ZOOM_FOCUS = 1.10, DESCENTE_FOCUS = 12;   // DESCENTE_FOCUS : px dont l'illustration descend en même temps qu'elle grossit (0 = centrée comme avant)
+    // Focus de l'illustration : le cadre grandit de ZOOM_FOCUS (1.10) ET se recentre verticalement sur l'écran (comme les cartes en focus : centre moins MONTE_FOCUS_ART),
+    // puis le résultat est borné pour que le cadre ne dépasse jamais du haut ni du bas du téléphone (marges MARGE_HAUT_FOCUS / MARGE_BAS_FOCUS).
+    // Si le cadre est plus haut que l'écran, le zoom est réduit. Valeur par défaut du zoom aussi dans style.css (--zoom-focus).
+    const ZOOM_FOCUS = 1.10, MONTE_FOCUS_ART = 12, MARGE_HAUT_FOCUS = 20, MARGE_BAS_FOCUS = 10;
     const debutFocusArt = () => {
         const A = scene.querySelector(".fiche-art");
         if (A) {
-            const r = A.getBoundingClientRect();
-            const z = Math.max(1, Math.min(ZOOM_FOCUS, (window.innerWidth - 16) / r.width));
-            const bas = r.top + r.height / 2 + r.height * z / 2;                                   // bord bas de l'illustration agrandie
-            const d = Math.max(0, Math.min(DESCENTE_FOCUS, window.innerHeight - 8 - bas));      // jamais plus bas que 8 px du bord de l'écran
+            const W = window.innerWidth, H = window.innerHeight, r = A.getBoundingClientRect();
+            const z = Math.max(0.5, Math.min(ZOOM_FOCUS, (W - 16) / r.width, (H - MARGE_HAUT_FOCUS - MARGE_BAS_FOCUS) / r.height));
+            const demi = r.height * z / 2;
+            const cible = Math.max(MARGE_HAUT_FOCUS + demi, Math.min(H - MARGE_BAS_FOCUS - demi, H / 2 - MONTE_FOCUS_ART));   // centre visé, borné
             f.style.setProperty("--zoom-focus", z.toFixed(3));
-            f.style.setProperty("--descente-focus", d.toFixed(1) + "px");
+            f.style.setProperty("--descente-focus", (cible - (r.top + r.height / 2)).toFixed(1) + "px");
         }
         f.classList.add("focus");
     };
@@ -1038,8 +1012,8 @@ document.addEventListener("toggle", e => {
     const d = e.target;
     if (!d.classList || !d.classList.contains("ext-details") || !d.open) return;
     d.querySelectorAll(".btn-det").forEach(b => {
-        const code = CODES[decodeURIComponent(b.dataset.det)];
-        assets(code).then(a => { FICHE_OK[code] = fichePossible(a); majBoutonsDetails(); });
+        const code = codeDe(decodeURIComponent(b.dataset.det));
+        if (code) assets(code).then(a => { FICHE_OK[code] = fichePossible(a); majBoutonsDetails(); });
     });
 }, true);
 document.addEventListener("contextmenu", e => { if (e.target.closest("button[data-f], .ico-btn, .fiche-fond, #themeToggle, #langToggle, .theme-menu")) e.preventDefault(); });

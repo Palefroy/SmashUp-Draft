@@ -323,13 +323,13 @@ DATA.notes = {
   // Clowns
   CLO: { fr: "", en: "", statut: "" },
 
-  // ----- Cartes spéciales (voir data/speciales.js) : texte vide = pas de bouton « Notes » -----
+  // ----- Cartes spéciales (voir data/factions.js) : texte vide = pas de bouton « Notes » -----
   // Monstres
-  MONSTRES: { fr: "", en: "", statut: "" },
+  MONSTRES: { fr: "• 20 cartes disponibles — extension Munchkin\n• Apparaissent automatiquement sur certaines bases et augmentent leur seuil de conquête\n• Lorsqu'ils sont détruits, rapportent des trésors selon leur valeur\n• Si une base est conquise, les trésors des monstres survivants sont partagés entre les joueurs présents", en: "• 20 cards available — Munchkin expansion\n• Appear automatically on some bases and raise their breakpoint\n• When destroyed, they reward treasures according to their value\n• If a base scores, the treasures of the surviving monsters are shared among the players present", statut: "a-verifier" },
 
   // Trésors
-  TRESORS: { fr: "", en: "", statut: "" },
+  TRESORS: { fr: "• 22 cartes disponibles — extension Munchkin (3 créatures et 19 actions)\n• Récompenses obtenues principalement en détruisant des monstres\n• Jouées comme des créatures ou des actions classiques\n• Permettent d'obtenir des effets supplémentaires et de renforcer son jeu", en: "• 22 cards available — Munchkin expansion (3 minions and 19 actions)\n• Rewards mainly obtained by destroying monsters\n• Played like regular minions or actions\n• Grant extra effects and strengthen your game", statut: "a-verifier" },
 
   // Démences
-  DEMENCE: { fr: "", en: "", statut: "" },
+  DEMENCE: { fr: "• 30 cartes disponibles — extension Cthulhu Fhtagn !\n• Cartes communes accessibles grâce aux capacités de certaines factions\n• Chaque carte permet de piocher 2 cartes ou de retourner dans la pioche commune\n• Chaque paire conservée en fin de partie fait perdre 1 PV", en: "• 30 cards available — Cthulhu Fhtagn! expansion\n• Shared cards obtained through the abilities of certain factions\n• Each card lets you draw 2 cards or return to the shared deck\n• Each pair kept at the end of the game costs 1 VP", statut: "a-verifier" },
 };

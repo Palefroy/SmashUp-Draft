@@ -321,7 +321,7 @@ DATA.cartes = {
   // Clowns
   CLO: [],
 
-  // ----- Cartes spéciales (voir data/speciales.js) -----
+  // ----- Cartes spéciales (voir data/factions.js) -----
   MONSTRES: [],
   TRESORS: [],
   DEMENCE: [],
