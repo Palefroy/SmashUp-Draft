@@ -426,7 +426,7 @@ body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: ca
 .tabs-bar { padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 /* Fenêtre des détails remontée de --monte-fiche (avant : 20 px ; maintenant 55 px, de quoi recouvrir à peu près le titre) : marge basse = marge haute + 2 x décalage (le centrage vertical monte de la moitié).
    Dimensions inchangées. Le plafond de hauteur ne joue que sur un écran très court : il évite que le haut de la fenêtre sorte de l'écran. */
-.fiche-fond { --monte-fiche: 55px; padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(26px + 2 * var(--monte-fiche) + env(safe-area-inset-bottom, 0px)); }
+.fiche-fond { --monte-fiche: 47px; padding-top: calc(26px + env(safe-area-inset-top, 0px)); padding-bottom: calc(26px + 2 * var(--monte-fiche) + env(safe-area-inset-bottom, 0px)); }
 .fiche { max-height: min(86vh, calc(100vh - 2 * var(--monte-fiche) - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))); }
 
 /* ===== Menu de langues : même geste que le menu de thèmes (appui long, glisser, relâcher). Les lignes reprennent le thème courant. ===== */
@@ -515,3 +515,24 @@ body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: ca
     .oreille { transform-origin: -19px -55px; animation: oreille 7s ease-in-out infinite; }
     @keyframes oreille { 0%,86%,100% { transform: rotate(0); } 90% { transform: rotate(-10deg); } 94% { transform: rotate(3deg); } 97% { transform: rotate(-4deg); } }
 }
+
+/* ===== Deuxième illustration : clic sur l'illustration = la carte se retourne (recto = illustration 1, verso = illustration 2 seule) ===== */
+.fiche-art.flip { perspective: 1400px; cursor: pointer; }
+.flip-in { position: relative; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3,.7,.25,1); }
+.fiche-art.retourne .flip-in { transform: rotateY(180deg); }
+.flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-dos { position: absolute; inset: 0; transform: rotateY(180deg); }
+.flip-dos img { height: 100%; min-height: 0; object-fit: cover; }
+/* Verso : boutons, cartes, bulle et dégradé disparaissent, le panneau devient transparent (mise en page inchangée) */
+.fiche-fond.verso .fiche-cartes, .fiche-fond.verso .bulle { opacity: 0; visibility: hidden; }
+.fiche-fond.verso .fiche-art::after { opacity: 0; }
+.fiche-fond.verso .fiche { background: transparent; border-color: transparent; box-shadow: none; }
+/* Pastille « 2e illustration » : icône retourner + 2 points (point jaune = face affichée) */
+.flip-badge { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 999px; background: rgba(14,16,24,.62); border: 1px solid rgba(255,255,255,.28); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none; line-height: 0; transition: opacity .15s; }
+.flip-badge svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.flip-badge i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); }
+.flip-badge i:first-of-type { background: #ffd36a; }
+.fiche-art.retourne .flip-badge i:first-of-type { background: rgba(255,255,255,.35); }
+.fiche-art.retourne .flip-badge i:last-of-type { background: #ffd36a; }
+.fiche-fond.focus .flip-badge, .fiche-fond.focus-cartes .flip-badge { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .flip-in { transition: none; } }

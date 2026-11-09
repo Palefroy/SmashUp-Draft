@@ -631,11 +631,11 @@ function assets(code) {
     if (!code) return Promise.resolve({});
     return ASSETS[code] || (ASSETS[code] = (async () => {
         const f = FICHES[code] || {};
-        const [illus, cards, ...ind] = await Promise.all([
-            chargerImgAuto(DOSSIER_ILLUS, code), chargerImgAuto(DOSSIER_CARDS, code),
+        const [illus, illus2, cards, ...ind] = await Promise.all([
+            chargerImgAuto(DOSSIER_ILLUS, code), chargerImgAuto(DOSSIER_ILLUS, code + "2"), chargerImgAuto(DOSSIER_CARDS, code),
             ...(f.cards || []).map(x => chargerImg(DOSSIER_CARDS + x))]);
         PRET[code] = true;
-        return { illus, cards, ind: ind.length && ind.every(Boolean) ? ind : null };
+        return { illus, illus2, cards, ind: ind.length && ind.every(Boolean) ? ind : null };
     })());
 }
 const fichePossible = a => !!(a.illus || a.cards || a.ind);
@@ -809,7 +809,11 @@ async function ouvrirFiche(n) {
     };
     const dispo = [ti && "titan", st.length && "stats", no && "notes"].filter(Boolean);   // ordre des boutons, de haut en bas : Titan, Stats, Notes
 
-    const art = a.illus ? `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>` : "";
+    // Deuxième illustration (img/illus/<CODE>2.<format>) : un clic sur l'illustration retourne la carte ; au verso, seule l'illustration 2 est visible.
+    const flipable = !!(a.illus && a.illus2);
+    const art = !a.illus ? "" : flipable
+        ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><span class="flip-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2M18.5 2v4h-4M5.5 22v-4h4"/></svg><i></i><i></i></span></div>`
+        : `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>`;
     const rang = rkVars ? `<button type="button" class="rkbtn rk-${esc(d.rank.code)}" data-b="rank" aria-expanded="false" style="${esc(rkVars)}"><span class="rk-ico" aria-hidden="true">${esc(rk.icone || "🏅")}</span><span>${esc(rk.tier)} Tier</span></button>` : "";
     const nbBtn = Math.max(dispo.length, rang ? 1 : 0);   // hauteur réservée au-dessus des cartes (colonne de droite, ou rang seul)
     const boutons = dispo.length ? `<div class="fiche-boutons">${dispo.map(k => `<button type="button" class="fbtn" data-b="${k}" aria-expanded="false">${ICONES_FICHE[k]}<span>${t(k === "stats" ? "Stats" : k === "notes" ? "Notes" : "Titan")}</span></button>`).join("")}</div>` : "";
@@ -861,7 +865,8 @@ async function ouvrirFiche(n) {
         if (fermerBulle()) return;                        // clic ailleurs : ferme la bulle
         // puis, sans bulle : clic à l'extérieur OU sur l'illustration (.fiche-art) = fermeture de la fiche.
         // Boutons, bulle et 3 cartes (.fiche-cartes) sont déjà traités plus haut ou ne sont pas dans .fiche-art : ils ne ferment pas.
-        if (e.target === f || e.target.closest(".fiche-art")) fermerFiche();
+        if (e.target === f) return fermerFiche();                       // clic sur le fond sombre : fermeture
+        if (flipable && e.target.closest(".fiche-art")) { f.classList.toggle("verso"); scene.querySelector(".fiche-art").classList.toggle("retourne"); }   // clic sur l'illustration : retourne la carte (sans 2e illustration : rien ne se passe)
     });
     // Appui long sur l'illustration = mode focus : boutons, cartes et bulle sont masqués (classe .focus, voir style.css).
     // Appui long sur les 3 cartes = focus des cartes (classe .focus-cartes) : elles passent au centre de l'écran, agrandies, le reste est masqué.
@@ -870,7 +875,7 @@ async function ouvrirFiche(n) {
     const DELAI_FOCUS = 400;
     let focusTm = null, retourTm = null, focusFait = false, fx = 0, fy = 0;
     // Réglages du focus des cartes : marge minimale avec les bords de l'écran (avant : 12 px) et décalage vers le haut du centre (avant : 0 ; le bas de l'écran est souvent gêné par la barre de l'appli / du téléphone).
-    const MARGE_FOCUS_CARTES = 6, MONTE_FOCUS_CARTES = 20;
+    const MARGE_FOCUS_CARTES = 6, MONTE_FOCUS_CARTES = 12;
     // Focus des cartes : on mesure les cartes à leur place normale, puis on calcule le décalage (--dx, --dy) et le grossissement (--sc)
     // qui les amènent au centre de l'écran (plein écran moins une marge, grossissement max x3). Le déplacement est animé par style.css.
     const debutFocusCartes = () => {
