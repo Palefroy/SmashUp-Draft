@@ -54,10 +54,14 @@ const FORMATS_IMG = [".webp", ".jpg", ".jpeg", ".png", ".avif"];
 const FICHES = {};
 for (const [type, parCode] of Object.entries(window.DATA || {}))
     for (const [code, v] of Object.entries(parCode)) (FICHES[code] = FICHES[code] || {})[type === "cartes" ? "cards" : type === "titans" ? "titan" : type] = v;
+// Cartes spéciales (data/speciales.js) : pseudo-fiches (MONSTRES, TRESORS, DEMENCE) ouvertes par le même ouvrirFiche() que les factions.
+const SPECIALES = (window.DATA && window.DATA.speciales) || {};
+const codeDe = n => CODES[n] || (SPECIALES[n] ? n : undefined);   // nom de faction -> code ; un code de carte spéciale est son propre code
+const nomSpecial = c => { const o = (SPECIALES[c] || {}).nom || {}; return o[langue] || o.fr || c; };
 const DOSSIER_ICO = "img/ico/";   // icônes : img/ico/<CODE>.<format>
 const CODES = {"Aliens":"ALI","Dinosaures":"DIN","Ninjas":"NIN","Pirates":"PIR","Robots":"ROB","Petit Peuple":"PTP","Sorciers":"SOR","Zombies":"ZOM","Cavalerie Ours":"CAO","Fantômes":"FAN","Plantes Carnivores":"PLC","Steampunks":"STE","Grands Anciens":"GRA","Innsmouth":"INN","Serviteurs de Cthulhu":"SDC","Université Miskatonic":"MIS","Métamorphes":"MET","Singes Cyborgs":"SIC","Super Espions":"SUE","Voyageurs du Temps":"VDT","Fourmis Géantes":"FOU","Loups-Garous":"LOU","Savants Fous":"SAF","Vampires":"VAM","Chatons":"CHA","Fées":"FEE","Poneys Magiques":"PON","Princesses":"PRI","Geeks":"GEE","Elfes":"ELF","Guerriers":"GUE","Halfelins":"HAL","Magiciens":"MAG","Nains":"NAI","Orques":"ORQ","Prêtres":"PRE","Voleurs":"VOL","Changeformers":"CHF","Chevaliers des Étoiles":"CDE","Squatteurs de Trône":"SDT","Voyageurs de l'Espace":"VDE","Dragons":"DRA","Mythologies Grecques":"MYG","Requins":"REQ","Super-Héros":"SUH","Tornades":"TOR","Explorateurs":"EXP","Grands-Mères":"GME","Oursons":"OUR","Rockstars":"ROK","Kaijū":"KAI","Monstrapoches":"MON","Petites Magiciennes":"PMA","Super Combattants":"SUC","Danseurs Disco":"DIS","Justiciers":"JUS","Maîtres Kung-Fu":"KUN","Routiers":"ROU","Anciens Égyptiens":"EGY","Cow-Boys":"COW","Samouraïs":"SAM","Vikings":"VIK","Dream Team":"DRE","Luchadors":"LUC","Mousquetaires":"MOU","Police Montée":"POM","Sumos":"SUM","Knights of the Round Table":"KRT","Avengers":"AVE","Hydra":"HYD","Kree":"KRE","Masters of Evil":"MOE","S.H.I.E.L.D.":"SHI","Sinister Six":"SIS","Spider-Verse":"SPI","Ultimates":"ULT","Anciens Incas":"AIN","Contes d'Anansi":"ANA","Contes de Grimm":"GRI","Contes Féeriques Russes":"CFR","Voyageurs Polynésiens":"VPO","Moutons":"MOT","Aladdin":"ALA","Beauty and the Beast":"BAB","Big Hero 6":"BIG","Frozen":"FRO","Mulan":"MUL","The Lion King":"LIK","The Nightmare Before Christmas":"NBC","Wreck-It Ralph":"WIR","Pingouins":"PIN","Teens":"TEE","Traqueurs de Spectres":"TDS","Extramorphes":"EXT","Hommes d'Action":"HDA","Retourneurs du Futur":"RDF","Champions du Monde":"CDM","Gobelins":"GOB","Sirènes":"SIR","Squelettes":"SQU","Adolescent Epic Geckos":"GEC","G.I. Gerald":"GIG","Pearl and the Images":"PEA","Rulers of the Cosmos":"RTC","Slashers":"SLA","Clowns":"CLO"};
 const ANNEE_EN = {"Smash Up":"(2012)","Smash Up : Même Pas Mort":"(2013)","Smash Up : Cthulhu Fhtagn !":"(2013)","Smash Up : Séries B":"(2014)","Smash Up : Monstres Sacrés":"(2014)","Smash Up : Trop Minions":"(2015)","Smash Up : La Grosse Boîte pour Geek":"(2014)","Smash Up : Munchkin":"(2015)","Smash Up : Ressemblances Fortuites":"(2016)","Smash Up : Vous l'aurez voulu !":"(2016)","Smash Up : Conflit de Générations":"(2017)","Smash Up : Rois du Japon":"(2017)","Smash Up : Ces Années-Là":"(2018)","Smash Up : Vous en voulez encore ?":"(2018)","Smash Up : L'Énorme Boîte pour Geek":"(2018)","Smash Up : Tournée Mondiale - Incident Diplomatique":"(2019)","Smash Up : Tournée Mondiale - Choc des Cultures":"(2019)","Mini-extension Smash Up : Faction Moutons":"(2017)","Mini-extension Smash Up : Faction Pingouins":"(2019)","Smash Up Fait son Cinéma":"(2024)","Smash Up : Édition Anniversaire":"(2022)","Smash Up : Marvel":"(2020)"};   // années de sortie originales
-const EN = {"Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
+const EN = {"Cartes spéciales": "Special cards", "Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
 Object.assign(EN, {
     "Nombre de joueurs": "Number of players", "Mode": "Mode", "Draft": "Draft",
     "Factions proposées par joueur": "Factions offered per player",
@@ -517,11 +521,32 @@ function genererHTMLFactions() {
         html += `</div></details>`;
     }
     html += `<details class="ext-details" open><summary><input type="checkbox" id="ext_custom" onclick="toggleExtension(event,'ext_custom')">${t("Personnalisé")}</summary><div class="factions-list"><div id="customList"></div><input type="text" id="customNom" placeholder="${t("Nouvelle faction")}" maxlength="30"><button class="btn-compact" onclick="ajouterCustom()">+</button></div></details>`;
+    html += htmlSpeciales();
     $("optionsExtensions").innerHTML = html;
+    Object.keys(SPECIALES).forEach(c => assets(c).then(a => { FICHE_OK[c] = fichePossible(a); majBoutonsDetails(); }));   // « Détails » caché si aucune image n'existe encore
     majBoutonsDetails();
     customs = jsonLS("smashup_custom", []);
     customs.forEach(n => factionExt[n] = "Personnalisé");
     rendreCustoms();
+}
+
+// Encadré « Cartes spéciales » (sous « Personnalisé ») : pas de case à cocher, aucune incidence sur le tirage. Bouton « Notes » seulement si un texte existe.
+function texteNotes(code) { const o = (FICHES[code] || {}).notes || {}; return o[langue] || o.fr || o.en || ""; }
+function htmlSpeciales() {
+    const codes = Object.keys(SPECIALES);
+    if (!codes.length) return "";
+    const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns">${texteNotes(c) ? `<button type="button" class="btn-det btn-notes-spec" data-spec="${esc(c)}">${t("Notes")}</button>` : ""}<button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
+    return `<details class="ext-details ext-speciales" open><summary>« ${t("Cartes spéciales")} »</summary><div class="factions-list">${lignes}</div></details>`;
+}
+function ouvrirNotesSpeciale(code) {
+    const txt = texteNotes(code);
+    if (!txt) return;
+    fermerFiche(true);
+    const f = document.createElement("div");
+    f.className = "fiche-fond";
+    f.innerHTML = `<div class="fiche notes-seule" role="dialog"><b>${esc(nomSpecial(code))}</b><p>${esc(txt)}</p></div>`;
+    f.addEventListener("click", e => { if (e.target === f) fermerFiche(); });   // clic sur le fond sombre : fermeture (Échap aussi)
+    document.body.appendChild(f);
 }
 
 function rendreCustoms() {
@@ -656,7 +681,7 @@ function precharger(racine) {
 const FICHE_OK = {};
 function majBoutonsDetails() {
     document.querySelectorAll(".btn-det").forEach(b => {
-        const ok = FICHE_OK[CODES[decodeURIComponent(b.dataset.det)]];
+        const ok = FICHE_OK[codeDe(decodeURIComponent(b.dataset.det))];
         b.hidden = b.dataset.need === "ok" ? ok !== true : ok === false;
     });
 }
@@ -775,7 +800,7 @@ function avecChargement(code) {
 }
 
 async function ouvrirFiche(n) {
-    const code = CODES[n];
+    const code = codeDe(n);
     if (!code) return;
     const req = ++reqFiche;
     const a = await avecChargement(code);
@@ -811,8 +836,9 @@ async function ouvrirFiche(n) {
 
     // Deuxième illustration (img/illus/<CODE>2.<format>) : un clic sur l'illustration retourne la carte ; au verso, seule l'illustration 2 est visible.
     const flipable = !!(a.illus && a.illus2);
+    const badge = (cls) => `<span class="flip-badge${cls}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2M18.5 2v4h-4M5.5 22v-4h4"/></svg><i></i><i></i></span>`;   // pastille « 2e illustration »
     const art = !a.illus ? "" : flipable
-        ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><span class="flip-badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2M18.5 2v4h-4M5.5 22v-4h4"/></svg><i></i><i></i></span></div>`
+        ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><!--BADGE--></div>`
         : `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>`;
     const rang = rkVars ? `<button type="button" class="rkbtn rk-${esc(d.rank.code)}" data-b="rank" aria-expanded="false" style="${esc(rkVars)}"><span class="rk-ico" aria-hidden="true">${esc(rk.icone || "🏅")}</span><span>${esc(rk.tier)} Tier</span></button>` : "";
     const nbBtn = Math.max(dispo.length, rang ? 1 : 0);   // hauteur réservée au-dessus des cartes (colonne de droite, ou rang seul)
@@ -820,12 +846,14 @@ async function ouvrirFiche(n) {
     const ouvertCartes = a.ind ? `<div class="fiche-cartes ind">${a.ind.map(i => `<img src="${src(i)}" alt="">`).join("")}`
         : a.cards ? `<div class="fiche-cartes"><img src="${src(a.cards)}" alt="">`
         : nbBtn ? `<div class="fiche-cartes vide">` : "";
-    const cartes = ouvertCartes ? ouvertCartes + boutons + rang + "</div>" : "";
+    // Pastille : dans la zone des cartes, juste au-dessus du rang (décalée d'un cran si le rang existe) ; sans zone cartes, en bas à gauche de l'illustration.
+    const cartes = ouvertCartes ? ouvertCartes + boutons + rang + (flipable ? badge(rang ? " sur-rang" : "") : "") + "</div>" : "";
+    const artHtml = art.replace("<!--BADGE-->", flipable && !ouvertCartes ? badge(" dans-art") : "");
 
     fermerFiche(true);
     const f = document.createElement("div");
     f.className = "fiche-fond";
-    f.innerHTML = `<div class="fiche${art ? "" : " sans-art"}" style="--nb:${nbBtn}"><div class="fiche-scene">${art}${cartes}</div></div>`;
+    f.innerHTML = `<div class="fiche${art ? "" : " sans-art"}" style="--nb:${nbBtn}"><div class="fiche-scene">${artHtml}${cartes}</div></div>`;
     document.body.appendChild(f);
 
     const scene = f.querySelector(".fiche-scene"), zoneBtn = f.querySelector(".fiche-boutons");
@@ -857,6 +885,24 @@ async function ouvrirFiche(n) {
         placer();
         if (k === "rank") minuteur = setTimeout(() => { if (actif === "rank") fermerBulle(); }, DUREE_RANG);
     };
+    // Retournement : le verso (illustration 2) est affiché EN ENTIER (object-fit: contain, aucun recadrage). La hauteur du cadre passe en douceur
+    // de celle du recto à celle de l'illustration 2 (plafonnée à la hauteur maximale de la fenêtre ; au-delà, l'image est réduite, jamais coupée).
+    const artEl = scene.querySelector(".fiche-art"), flipIn = artEl && artEl.querySelector(".flip-in");
+    const recto = flipIn && flipIn.querySelector(".flip-face:not(.flip-dos)");
+    const ratio2 = a.illus2 && a.illus2.naturalHeight ? a.illus2.naturalWidth / a.illus2.naturalHeight : 0;
+    const hauteurFace = () => {
+        if (!f.classList.contains("verso") || !ratio2) return recto.offsetHeight;
+        const cap = parseFloat(getComputedStyle(f.querySelector(".fiche")).maxHeight) || window.innerHeight * 0.86;
+        return Math.min(flipIn.offsetWidth / ratio2, cap);
+    };
+    const ajusterFlip = () => { if (flipIn && flipIn.style.height) flipIn.style.height = hauteurFace() + "px"; };
+    const basculerFlip = () => {
+        if (!flipIn.style.height) { flipIn.style.height = recto.offsetHeight + "px"; void flipIn.offsetHeight; }   // point de départ en px (une hauteur "auto" ne s'anime pas)
+        f.classList.toggle("verso");
+        artEl.classList.toggle("retourne");
+        flipIn.style.height = hauteurFace() + "px";
+    };
+    const surRedim = () => { placer(); ajusterFlip(); };
     f.addEventListener("click", e => {
         if (focusFait) return;                             // clic qui suit un appui long sur l'illustration (mode focus) : ignoré
         const btn = e.target.closest(".fbtn, .rkbtn");
@@ -866,7 +912,7 @@ async function ouvrirFiche(n) {
         // puis, sans bulle : clic à l'extérieur OU sur l'illustration (.fiche-art) = fermeture de la fiche.
         // Boutons, bulle et 3 cartes (.fiche-cartes) sont déjà traités plus haut ou ne sont pas dans .fiche-art : ils ne ferment pas.
         if (e.target === f) return fermerFiche();                       // clic sur le fond sombre : fermeture
-        if (flipable && e.target.closest(".fiche-art")) { f.classList.toggle("verso"); scene.querySelector(".fiche-art").classList.toggle("retourne"); }   // clic sur l'illustration : retourne la carte (sans 2e illustration : rien ne se passe)
+        if (flipable && e.target.closest(".fiche-art")) basculerFlip();   // clic sur l'illustration : retourne la carte (sans 2e illustration : rien ne se passe)
     });
     // Appui long sur l'illustration = mode focus : boutons, cartes et bulle sont masqués (classe .focus, voir style.css).
     // Appui long sur les 3 cartes = focus des cartes (classe .focus-cartes) : elles passent au centre de l'écran, agrandies, le reste est masqué.
@@ -894,12 +940,16 @@ async function ouvrirFiche(n) {
         C.style.setProperty("--dy", (H / 2 - UP - (r.top + r.height / 2)).toFixed(1) + "px");
     };
     // Focus de l'illustration : le cadre grandit de ZOOM_FOCUS (1.10), sans dépasser l'écran (marge 8 px). Valeur par défaut aussi dans style.css (--zoom-focus).
-    const ZOOM_FOCUS = 1.10;
+    const ZOOM_FOCUS = 1.10, DESCENTE_FOCUS = 12;   // DESCENTE_FOCUS : px dont l'illustration descend en même temps qu'elle grossit (0 = centrée comme avant)
     const debutFocusArt = () => {
         const A = scene.querySelector(".fiche-art");
         if (A) {
-            const w = A.getBoundingClientRect().width;
-            f.style.setProperty("--zoom-focus", Math.max(1, Math.min(ZOOM_FOCUS, (window.innerWidth - 16) / w)).toFixed(3));
+            const r = A.getBoundingClientRect();
+            const z = Math.max(1, Math.min(ZOOM_FOCUS, (window.innerWidth - 16) / r.width));
+            const bas = r.top + r.height / 2 + r.height * z / 2;                                   // bord bas de l'illustration agrandie
+            const d = Math.max(0, Math.min(DESCENTE_FOCUS, window.innerHeight - 8 - bas));      // jamais plus bas que 8 px du bord de l'écran
+            f.style.setProperty("--zoom-focus", z.toFixed(3));
+            f.style.setProperty("--descente-focus", d.toFixed(1) + "px");
         }
         f.classList.add("focus");
     };
@@ -939,10 +989,10 @@ async function ouvrirFiche(n) {
     window.addEventListener("touchend", surToucherFin, true);
     window.addEventListener("touchcancel", surToucherFin, true);
     window.addEventListener("blur", finFocus);            // sécurité : changement d'appli/onglet pendant le focus
-    window.addEventListener("resize", placer);
+    window.addEventListener("resize", surRedim);
     ficheCtl = { fermerBulle, nettoyer: () => {
         clearTimeout(minuteur); clearTimeout(focusTm); clearTimeout(retourTm);
-        window.removeEventListener("resize", placer);
+        window.removeEventListener("resize", surRedim);
         window.removeEventListener("pointerup", finFocus, true);
         window.removeEventListener("pointercancel", surAnnulation, true);
         window.removeEventListener("touchend", surToucherFin, true);
@@ -964,7 +1014,7 @@ let lpTimer = null, lpFait = false;
 document.addEventListener("pointerdown", e => {
     lpFait = false;
     const dd = e.target.closest(".btn-det");
-    if (dd) assets(CODES[decodeURIComponent(dd.dataset.det)]);   // le chargement démarre dès l'appui
+    if (dd) assets(codeDe(decodeURIComponent(dd.dataset.det)));   // le chargement démarre dès l'appui
     const b = e.target.closest("button[data-f]");
     clearTimeout(lpTimer);
     if (b) lpTimer = setTimeout(() => { lpFait = true; ouvrirFiche(decodeURIComponent(b.dataset.f)); }, 450);
@@ -972,6 +1022,8 @@ document.addEventListener("pointerdown", e => {
 ["pointerup", "pointercancel", "pointerleave", "scroll"].forEach(ev => document.addEventListener(ev, () => clearTimeout(lpTimer), true));
 document.addEventListener("click", e => {
     if (lpFait) { lpFait = false; e.stopPropagation(); e.preventDefault(); return; }
+    const ns = e.target.closest(".btn-notes-spec");      // bouton « Notes » d'une carte spéciale
+    if (ns) { e.preventDefault(); e.stopPropagation(); ouvrirNotesSpeciale(ns.dataset.spec); return; }
     const dt = e.target.closest(".btn-det");              // bouton « Détails » (onglet Extensions) : ouvre la fiche sans cocher/décocher la faction
     if (dt) {
         e.preventDefault(); e.stopPropagation();

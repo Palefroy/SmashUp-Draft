@@ -320,4 +320,9 @@ DATA.cartes = {
 
   // Clowns
   CLO: [],
+
+  // ----- Cartes spéciales (voir data/speciales.js) -----
+  MONSTRES: [],
+  TRESORS: [],
+  DEMENCE: [],
 };

@@ -322,4 +322,14 @@ DATA.notes = {
 
   // Clowns
   CLO: { fr: "", en: "", statut: "" },
+
+  // ----- Cartes spéciales (voir data/speciales.js) : texte vide = pas de bouton « Notes » -----
+  // Monstres
+  MONSTRES: { fr: "", en: "", statut: "" },
+
+  // Trésors
+  TRESORS: { fr: "", en: "", statut: "" },
+
+  // Démences
+  DEMENCE: { fr: "", en: "", statut: "" },
 };

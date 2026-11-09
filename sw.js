@@ -13,7 +13,7 @@ const IMG_MAX = 700;   // nombre maximum d'images gardées en cache (les plus an
 
 const SITE = [
   "./", "index.html", "style.css", "script.js", "manifest.json",
-  "data/data.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js",
+  "data/data.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/speciales.js",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"
 ];
 
