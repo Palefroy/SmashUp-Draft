@@ -68,8 +68,8 @@ const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "P
 const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10 };
 let P = { ...DEFAUTS };
 
-const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "halloween", "christmas", "easter"];
-const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", halloween: "halloween", christmas: "christmas", easter: "easter" };
+const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter"];
+const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", japan: "japan", china: "china", halloween: "halloween", christmas: "christmas", easter: "easter" };
 const PANNEAUX = [["paramContainer", "tabParam"], ["historiqueContainer", "tabHist"], ["extContainer", "tabExt"]];
 
 function initialiser() {
@@ -113,8 +113,17 @@ function appliquerLangue() {
 // Pour changer une période : modifier [mois, jour] ci-dessous. Une période qui passe le nouvel an (fin avant début) est gérée.
 const PERIODES_THEME = [
     { theme: "halloween", debut: [10, 15], fin: [11, 2] },   // 15 octobre → 2 novembre
-    { theme: "christmas", debut: [12, 1], fin: [1, 6] }      // 1er décembre → 6 janvier
+    { theme: "christmas", debut: [12, 1], fin: [1, 6] },     // 1er décembre → 6 janvier
+    { theme: "japan", debut: [3, 20], fin: [4, 10] }         // saison des cerisiers en fleurs (20 mars → 10 avril) ; Pâques reste prioritaire si les dates se recoupent
 ];
+// Nouvel An chinois : date variable, lue dans le calendrier chinois du téléphone (Intl) : du 25 du 12e mois lunaire au 15 du 1er mois (fête des lanternes).
+function nouvelAnChinois(date) {
+    try {
+        const p = new Intl.DateTimeFormat("en-u-ca-chinese", { month: "numeric", day: "numeric" }).formatToParts(date);
+        const m = parseInt(p.find(x => x.type === "month").value, 10), d = parseInt(p.find(x => x.type === "day").value, 10);
+        return (m === 12 && d >= 25) || (m === 1 && d <= 15);
+    } catch (e) { return false; }
+}
 // Pâques change chaque année : dimanche de Pâques calculé (calendrier grégorien, algorithme de Meeus/Jones/Butcher).
 // Thème proposé de 10 jours avant le dimanche de Pâques jusqu'au lundi de Pâques inclus (à modifier dans PAQUES_AVANT / PAQUES_APRES).
 const PAQUES_AVANT = 10, PAQUES_APRES = 1;
@@ -130,6 +139,7 @@ function ecartPaques(date) {   // nombre de jours depuis le dimanche de Pâques 
 function themeDeSaison(date = new Date()) {
     const ep = ecartPaques(date);
     if (ep >= -PAQUES_AVANT && ep <= PAQUES_APRES) return "easter";
+    if (nouvelAnChinois(date)) return "china";
     const v = (date.getMonth() + 1) * 100 + date.getDate();
     for (const p of PERIODES_THEME) {
         const d = p.debut[0] * 100 + p.debut[1], f = p.fin[0] * 100 + p.fin[1];
@@ -173,7 +183,8 @@ function toggleTheme() {                          // clic simple : thème suivan
 /* ---------- Menu de thèmes ----------
    Appui long (250 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
    Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
-const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", halloween: "Halloween", christmas: "Noël", easter: "Pâques" };
+Object.assign(EN, { "Japon": "Japan", "Chine": "China" });
+const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", japan: "Japon", china: "Chine", halloween: "Halloween", christmas: "Noël", easter: "Pâques" };
 Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas", "Pâques": "Easter",
     "Appui long : choisir un thème": "Long-press: choose a theme" });
 const DELAI_MENU_THEME = 250;   // appui long le plus court : menus thème et langue

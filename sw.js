@@ -6,14 +6,14 @@
 // Pour forcer la purge des anciens caches après une grosse mise à jour : changer VERSION ci-dessous.
 // Tous les chemins sont relatifs : le site peut vivre dans un sous-dossier (GitHub Pages : /SmashUp-Draft/).
 
-const VERSION = "v2";
+const VERSION = "v3";
 const CACHE_SITE = "smashup-site-" + VERSION;
 const CACHE_IMG = "smashup-img-" + VERSION;
 const IMG_MAX = 700;   // nombre maximum d'images gardées en cache (les plus anciennes sont supprimées)
 
 const SITE = [
   "./", "index.html", "style.css", "script.js", "manifest.json",
-  "data/data.js", "data/factions.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/fonts/CurseCasualJVE.woff2", "data/fonts/CurseCasualJVE.ttf",
+  "data/data.js", "data/factions.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/fonts/CurseCasualJVE.woff2", "data/fonts/CurseCasualJVE.ttf", "data/fonts/HennyPenny.woff2", "data/fonts/HennyPenny.ttf", "data/fonts/Shojumaru.woff2", "data/fonts/Shojumaru.ttf", "data/fonts/Fairydust.woff2", "data/fonts/Fairydust.ttf", "data/fonts/DeadheadRough.woff2", "data/fonts/DeadheadRough.ttf", "data/fonts/StickRice.woff2", "data/fonts/StickRice.ttf",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"
 ];
 
