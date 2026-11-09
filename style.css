@@ -658,3 +658,11 @@ body:has(.fiche-fond) { overflow: hidden; }
     .vague-j { animation: vague-j 9s ease-in-out infinite alternate; }
     @keyframes vague-j { from { transform: translateX(0); } to { transform: translateX(-40px); } }
 }
+
+/* ===== Ajustements du titre : taille par police + alignement avec les boutons thème / langue (légèrement au-dessus) ===== */
+h2 { font-size: 23px; position: relative; top: 3px; }                                   /* Curse Casual JVE */
+[data-theme="halloween"] h2 { font-size: 20px; }                                          /* Henny Penny */
+[data-theme="christmas"] h2 { font-size: 20px; }                                          /* Deadhead Rough */
+[data-theme="easter"] h2 { font-size: 22px; }                                             /* Fairydust */
+[data-theme="japan"] h2 { font-size: 16px; }                                              /* Shojumaru */
+[data-theme="china"] h2 { font-size: 23px; letter-spacing: 1.5px; }                       /* Stick Rice */
