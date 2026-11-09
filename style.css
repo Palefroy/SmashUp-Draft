@@ -246,7 +246,7 @@ body { padding-bottom: 80px; }
 .ico-btn { cursor: pointer; }
 .draft-pool button[data-f] { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .fiche-fond { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.62); display: flex; align-items: center; justify-content: center; padding: 26px; }
-.fiche { width: 100%; max-width: 370px; max-height: 86vh; overflow-y: auto; border-radius: 16px; background: #14141c; color: #eee; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 40px rgba(0,0,0,.6); text-align: left; scrollbar-width: none; }
+.fiche { width: 100%; max-width: 370px; max-height: 86vh; overflow: hidden; margin: 0 auto; border-radius: 16px; background: #14141c; color: #eee; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 40px rgba(0,0,0,.6); text-align: left; scrollbar-width: none; }
 .fiche::-webkit-scrollbar { display: none; }
 .fiche-art { position: relative; line-height: 0; }
 .fiche-art { min-height: calc(var(--nb, 0) * 44px + 66px); }   /* illustration assez haute pour contenir la colonne de boutons */
@@ -549,7 +549,15 @@ body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: ca
 .spec-nom { flex: 1 1 auto; min-width: 0; padding: 5px 0; }
 .spec-btns { display: flex; gap: 6px; margin-left: auto; flex: none; }
 .spec-btns .btn-det { margin: 0; }
-.btn-notes-spec { flex: none; margin: 0; padding: 3px 10px; min-height: 26px; font-size: 12px; font-weight: 600; border-radius: 4px; background: var(--btn-secondary); }
 .fiche.notes-seule { padding: 16px 18px; white-space: pre-line; font-size: 14px; line-height: 1.5; }
 .fiche.notes-seule b { display: block; margin-bottom: 8px; font-size: 16px; }
 .fiche.notes-seule p { margin: 0; }
+
+/* ===== Police du titre (stockée en local : data/fonts/) ===== */
+@font-face { font-family: "Curse Casual JVE"; src: url("data/fonts/CurseCasualJVE.woff2") format("woff2"), url("data/fonts/CurseCasualJVE.ttf") format("truetype"), url("data/fonts/curse_casual.ttf") format("truetype"); font-display: swap; }
+h2 { font-family: "Curse Casual JVE", sans-serif; font-weight: normal; line-height: 23px; }   /* line-height fixe : la hauteur du titre ne change pas avec la police */
+
+/* ===== Fiche : on ne fait pas défiler la page dessous ===== */
+.fiche-fond { touch-action: none; overscroll-behavior: contain; }
+body:has(.fiche-fond) { overflow: hidden; }
+.fiche.notes-seule { overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }

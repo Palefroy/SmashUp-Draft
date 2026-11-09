@@ -171,12 +171,12 @@ function toggleTheme() {                          // clic simple : thème suivan
 }
 
 /* ---------- Menu de thèmes ----------
-   Appui long (400 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
+   Appui long (250 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
    Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
 const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", halloween: "Halloween", christmas: "Noël", easter: "Pâques" };
 Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas", "Pâques": "Easter",
     "Appui long : choisir un thème": "Long-press: choose a theme" });
-const DELAI_MENU_THEME = 400;
+const DELAI_MENU_THEME = 250;   // appui long le plus court : menus thème et langue
 const menuTheme = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
 const vibrer = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
 const optSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".theme-opt") : null; };
@@ -248,7 +248,7 @@ function fermerMenuTheme() {
 })();
 
 /* ---------- Menu de langues ----------
-   Même geste que le menu de thèmes : appui long (400 ms) sur le bouton de langue, une liste s'ouvre, le doigt glisse, on relâche sur une langue pour la choisir.
+   Même geste que le menu de thèmes : appui long (250 ms) sur le bouton de langue, une liste s'ouvre, le doigt glisse, on relâche sur une langue pour la choisir.
    Un appui court bascule toujours directement d'une langue à l'autre. Pour ajouter une langue : une ligne dans LANGUES (+ ses traductions dans EN/équivalent). */
 const LANGUES = [{ code: "fr", abr: "FR", nom: "Français" }, { code: "en", abr: "EN", nom: "English" }];
 const menuLangue = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
@@ -502,25 +502,14 @@ function genererHTMLFactions() {
     rendreCustoms();
 }
 
-// Encadré « Cartes spéciales » (sous « Personnalisé ») : pas de case à cocher, aucune incidence sur le tirage. Bouton « Notes » seulement si un texte existe.
+// Encadré « Cartes spéciales » (sous « Personnalisé ») : pas de case à cocher, aucune incidence sur le tirage. Un seul bouton « Détails » : les notes s'ouvrent ensuite depuis la fiche.
 function texteNotes(code) { const o = (FICHES[code] || {}).notes || {}; return o[langue] || o.fr || o.en || ""; }
 function htmlSpeciales() {
     const codes = Object.keys(SPECIALES);
     if (!codes.length) return "";
-    const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns">${texteNotes(c) ? `<button type="button" class="btn-notes-spec" data-spec="${esc(c)}">${t("Notes")}</button>` : ""}<button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
+    const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns"><button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
     return `<details class="ext-details ext-speciales"><summary>${t("Cartes spéciales")}</summary><div class="factions-list">${lignes}</div></details>`;
 }
-function ouvrirNotesSpeciale(code) {
-    const txt = texteNotes(code);
-    if (!txt) return;
-    fermerFiche(true);
-    const f = document.createElement("div");
-    f.className = "fiche-fond";
-    f.innerHTML = `<div class="fiche notes-seule" role="dialog"><b>${esc(nomSpecial(code))}</b><p>${esc(txt)}</p></div>`;
-    f.addEventListener("click", e => { if (e.target === f) fermerFiche(); });   // clic sur le fond sombre : fermeture (Échap aussi)
-    document.body.appendChild(f);
-}
-
 function rendreCustoms() {
     $("customList").innerHTML = customs.map((n, i) => `<label><input type="checkbox" class="fac_ext_custom faction-cb" value="${esc(n)}" data-default="true" onchange="updateMasterCb('ext_custom');sauvegarderPreferencesFactions()"> ${esc(n)} <button class="btn-compact btn-danger" onclick="supprimerCustom(${i})">✕</button></label>`).join("");
 }
@@ -771,6 +760,19 @@ function avecChargement(code) {
     return p.finally(() => { clearTimeout(tm); if (boite) boite.remove(); });
 }
 
+// Réduit la largeur de la fiche (donc toute sa hauteur, tout est proportionnel) jusqu'à ce qu'elle tienne dans la hauteur disponible.
+function ajusterTaille(f) {
+    const fi = f.querySelector(".fiche");
+    if (!fi || fi.classList.contains("notes-seule") || f.classList.contains("verso") || f.classList.contains("focus")) return;
+    fi.style.width = "";
+    const cap = parseFloat(getComputedStyle(fi).maxHeight) || window.innerHeight * 0.86;
+    for (let k = 0; k < 4; k++) {
+        const h = fi.scrollHeight;
+        if (h <= cap + 1) break;
+        fi.style.width = Math.max(120, fi.offsetWidth * cap / h - 1) + "px";
+    }
+}
+
 async function ouvrirFiche(n) {
     const code = codeDe(n);
     if (!code) return;
@@ -827,6 +829,7 @@ async function ouvrirFiche(n) {
     f.className = "fiche-fond";
     f.innerHTML = `<div class="fiche${art ? "" : " sans-art"}" style="--nb:${nbBtn}"><div class="fiche-scene">${artHtml}${cartes}</div></div>`;
     document.body.appendChild(f);
+    ajusterTaille(f);   // la fiche tient en entier à l'écran : plus de défilement vertical
 
     const scene = f.querySelector(".fiche-scene"), zoneBtn = f.querySelector(".fiche-boutons");
     let actif = null, bulle = null, minuteur = null;
@@ -874,7 +877,7 @@ async function ouvrirFiche(n) {
         artEl.classList.toggle("retourne");
         flipIn.style.height = hauteurFace() + "px";
     };
-    const surRedim = () => { placer(); ajusterFlip(); };
+    const surRedim = () => { ajusterTaille(f); placer(); ajusterFlip(); };
     f.addEventListener("click", e => {
         if (focusFait) return;                             // clic qui suit un appui long sur l'illustration (mode focus) : ignoré
         const btn = e.target.closest(".fbtn, .rkbtn");
@@ -984,6 +987,7 @@ function fermerFiche(vite) {
     });
 }
 
+const DELAI_APPUI_FACTION = 340;   // appui long sur une faction (draft / pick / pick & ban) : entre l'ancien (450) et celui des menus (250)
 let lpTimer = null, lpFait = false;
 document.addEventListener("pointerdown", e => {
     lpFait = false;
@@ -991,13 +995,11 @@ document.addEventListener("pointerdown", e => {
     if (dd) assets(codeDe(decodeURIComponent(dd.dataset.det)));   // le chargement démarre dès l'appui
     const b = e.target.closest("button[data-f]");
     clearTimeout(lpTimer);
-    if (b) lpTimer = setTimeout(() => { lpFait = true; ouvrirFiche(decodeURIComponent(b.dataset.f)); }, 450);
+    if (b) lpTimer = setTimeout(() => { lpFait = true; ouvrirFiche(decodeURIComponent(b.dataset.f)); }, DELAI_APPUI_FACTION);
 });
 ["pointerup", "pointercancel", "pointerleave", "scroll"].forEach(ev => document.addEventListener(ev, () => clearTimeout(lpTimer), true));
 document.addEventListener("click", e => {
     if (lpFait) { lpFait = false; e.stopPropagation(); e.preventDefault(); return; }
-    const ns = e.target.closest(".btn-notes-spec");      // bouton « Notes » d'une carte spéciale
-    if (ns) { e.preventDefault(); e.stopPropagation(); ouvrirNotesSpeciale(ns.dataset.spec); return; }
     const dt = e.target.closest(".btn-det");              // bouton « Détails » (onglet Extensions) : ouvre la fiche sans cocher/décocher la faction
     if (dt) {
         e.preventDefault(); e.stopPropagation();
