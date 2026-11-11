@@ -46,16 +46,16 @@ DATA.stats = {
   STE: { creatures: 2, renforcement: 1, attache_base: 4, attache_creature: 0, deplacement: 2, destruction: 0, pioche: 0, defausse: 2, controle: 1, conquete: 0 },
 
   // Grands Anciens
-  GRA: {},
+  GRA: { creatures: 3, renforcement: 2, attache_base: 0, attache_creature: 1, deplacement: 0, destruction: 1, pioche: 2, defausse: 2, controle: 3, conquete: 1 },
 
   // Innsmouth
-  INN: {},
+  INN: { creatures: 4, renforcement: 1, attache_base: 2, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 3, defausse: 1, controle: 1, conquete: 1 },
 
   // Serviteurs de Cthulhu
-  SDC: {},
+  SDC: { creatures: 2, renforcement: 1, attache_base: 2, attache_creature: 0, deplacement: 0, destruction: 2, pioche: 2, defausse: 3, controle: 1, conquete: 2 },
 
   // Université Miskatonic
-  MIS: {},
+  MIS: { creatures: 3, renforcement: 2, attache_base: 1, attache_creature: 0, deplacement: 0, destruction: 1, pioche: 3, defausse: 2, controle: 1, conquete: 1 },
 
   // Métamorphes
   MET: { creatures: 3, renforcement: 1, attache_base: 0, attache_creature: 1, deplacement: 0, destruction: 1, pioche: 1, defausse: 0, controle: 1, conquete: 0 },
@@ -97,28 +97,28 @@ DATA.stats = {
   GEE: { creatures: 2, renforcement: 0, attache_base: 0, attache_creature: 0, deplacement: 1, destruction: 0, pioche: 2, defausse: 0, controle: 5, conquete: 0 },
 
   // Elfes
-  ELF: {},
+  ELF: { creatures: 2, renforcement: 2, attache_base: 0, attache_creature: 1, deplacement: 2, destruction: 0, pioche: 3, defausse: 1, controle: 2, conquete: 2 },
 
   // Guerriers
-  GUE: {},
+  GUE: { creatures: 3, renforcement: 3, attache_base: 0, attache_creature: 2, deplacement: 0, destruction: 2, pioche: 0, defausse: 0, controle: 1, conquete: 0 },
 
   // Halfelins
-  HAL: {},
+  HAL: { creatures: 4, renforcement: 0, attache_base: 2, attache_creature: 1, deplacement: 0, destruction: 0, pioche: 2, defausse: 2, controle: 1, conquete: 1 },
 
   // Magiciens
-  MAG: {},
+  MAG: { creatures: 3, renforcement: 2, attache_base: 1, attache_creature: 1, deplacement: 1, destruction: 2, pioche: 3, defausse: 2, controle: 2, conquete: 0 },
 
   // Nains
-  NAI: {},
+  NAI: { creatures: 2, renforcement: 2, attache_base: 1, attache_creature: 3, deplacement: 0, destruction: 0, pioche: 3, defausse: 3, controle: 1, conquete: 1 },
 
   // Orques
-  ORQ: {},
+  ORQ: { creatures: 2, renforcement: 3, attache_base: 2, attache_creature: 2, deplacement: 2, destruction: 3, pioche: 0, defausse: 0, controle: 2, conquete: 3 },
 
   // Prêtres
-  PRE: {},
+  PRE: { creatures: 2, renforcement: 1, attache_base: 1, attache_creature: 2, deplacement: 2, destruction: 0, pioche: 1, defausse: 4, controle: 3, conquete: 1 },
 
   // Voleurs
-  VOL: {},
+  VOL: { creatures: 2, renforcement: 2, attache_base: 2, attache_creature: 0, deplacement: 1, destruction: 1, pioche: 4, defausse: 2, controle: 2, conquete: 3 },
 
   // Changeformers
   CHF: { creatures: 3, renforcement: 3, attache_base: 0, attache_creature: 4, deplacement: 2, destruction: 1, pioche: 0, defausse: 0, controle: 2, conquete: 1 },
@@ -214,28 +214,28 @@ DATA.stats = {
   KRT: { creatures: 2, renforcement: 1, attache_base: 3, attache_creature: 2, deplacement: 3, destruction: 0, pioche: 2, defausse: 1, controle: 1, conquete: 0 },
 
   // Avengers
-  AVE: {},
+  AVE: { creatures: 2, renforcement: 3, attache_base: 1, attache_creature: 2, deplacement: 2, destruction: 2, pioche: 3, defausse: 2, controle: 1, conquete: 2 },
 
   // Hydra
-  HYD: {},
+  HYD: { creatures: 4, renforcement: 2, attache_base: 1, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 3, defausse: 2, controle: 0, conquete: 0 },
 
   // Kree
-  KRE: {},
+  KRE: { creatures: 2, renforcement: 4, attache_base: 0, attache_creature: 2, deplacement: 0, destruction: 0, pioche: 4, defausse: 1, controle: 0, conquete: 0 },
 
   // Masters of Evil
-  MOE: {},
+  MOE: { creatures: 2, renforcement: 2, attache_base: 2, attache_creature: 1, deplacement: 1, destruction: 3, pioche: 1, defausse: 0, controle: 1, conquete: 4 },
 
   // S.H.I.E.L.D.
-  SHI: {},
+  SHI: { creatures: 4, renforcement: 3, attache_base: 2, attache_creature: 0, deplacement: 1, destruction: 1, pioche: 2, defausse: 1, controle: 0, conquete: 1 },
 
   // Sinister Six
-  SIS: {},
+  SIS: { creatures: 2, renforcement: 2, attache_base: 4, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 1, defausse: 2, controle: 2, conquete: 3 },
 
   // Spider-Verse
-  SPI: {},
+  SPI: { creatures: 3, renforcement: 2, attache_base: 0, attache_creature: 2, deplacement: 0, destruction: 0, pioche: 3, defausse: 1, controle: 1, conquete: 3 },
 
   // Ultimates
-  ULT: {},
+  ULT: { creatures: 2, renforcement: 3, attache_base: 1, attache_creature: 0, deplacement: 4, destruction: 0, pioche: 2, defausse: 0, controle: 0, conquete: 1 },
 
   // Anciens Incas
   AIN: { creatures: 2, renforcement: 2, attache_base: 4, attache_creature: 0, deplacement: 1, destruction: 0, pioche: 4, defausse: 1, controle: 2, conquete: 1 },
@@ -256,28 +256,28 @@ DATA.stats = {
   MOT: { creatures: 2, renforcement: 0, attache_base: 0, attache_creature: 0, deplacement: 4, destruction: 0, pioche: 1, defausse: 1, controle: 2, conquete: 0 },
 
   // Aladdin
-  ALA: {},
+  ALA: { creatures: 2, renforcement: 3, attache_base: 0, attache_creature: 0, deplacement: 2, destruction: 0, pioche: 3, defausse: 3, controle: 1, conquete: 0 },
 
   // Beauty and the Beast
-  BAB: {},
+  BAB: { creatures: 4, renforcement: 2, attache_base: 2, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 3, defausse: 3, controle: 0, conquete: 1 },
 
   // Big Hero 6
-  BIG: {},
+  BIG: { creatures: 2, renforcement: 4, attache_base: 2, attache_creature: 1, deplacement: 1, destruction: 0, pioche: 1, defausse: 1, controle: 1, conquete: 1 },
 
   // Frozen
-  FRO: {},
+  FRO: { creatures: 3, renforcement: 2, attache_base: 2, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 3, defausse: 3, controle: 2, conquete: 0 },
 
   // Mulan
-  MUL: {},
+  MUL: { creatures: 3, renforcement: 4, attache_base: 1, attache_creature: 1, deplacement: 0, destruction: 3, pioche: 2, defausse: 0, controle: 1, conquete: 1 },
 
   // The Lion King
-  LIK: {},
+  LIK: { creatures: 3, renforcement: 3, attache_base: 2, attache_creature: 2, deplacement: 0, destruction: 1, pioche: 3, defausse: 2, controle: 0, conquete: 1 },
 
   // The Nightmare Before Christmas
-  NBC: {},
+  NBC: { creatures: 2, renforcement: 2, attache_base: 0, attache_creature: 4, deplacement: 0, destruction: 0, pioche: 0, defausse: 1, controle: 2, conquete: 1 },
 
   // Wreck-It Ralph
-  WIR: {},
+  WIR: { creatures: 2, renforcement: 2, attache_base: 4, attache_creature: 0, deplacement: 3, destruction: 0, pioche: 0, defausse: 1, controle: 2, conquete: 1 },
 
   // Pingouins
   PIN: { creatures: 4, renforcement: 1, attache_base: 2, attache_creature: 0, deplacement: 1, destruction: 0, pioche: 3, defausse: 0, controle: 0, conquete: 1 },
@@ -286,16 +286,16 @@ DATA.stats = {
   TEE: { creatures: 3, renforcement: 1, attache_base: 1, attache_creature: 1, deplacement: 1, destruction: 0, pioche: 2, defausse: 2, controle: 0, conquete: 0 },
 
   // Traqueurs de Spectres
-  TDS: {},
+  TDS: { creatures: 2, renforcement: 2, attache_base: 4, attache_creature: 1, deplacement: 1, destruction: 1, pioche: 3, defausse: 2, controle: 1, conquete: 2 },
 
   // Extramorphes
-  EXT: {},
+  EXT: { creatures: 4, renforcement: 1, attache_base: 2, attache_creature: 2, deplacement: 3, destruction: 3, pioche: 1, defausse: 2, controle: 1, conquete: 0 },
 
   // Hommes d'Action
-  HDA: {},
+  HDA: { creatures: 2, renforcement: 3, attache_base: 1, attache_creature: 2, deplacement: 1, destruction: 1, pioche: 2, defausse: 0, controle: 1, conquete: 3 },
 
   // Retourneurs du Futur
-  RDF: {},
+  RDF: { creatures: 3, renforcement: 3, attache_base: 0, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 2, defausse: 1, controle: 0, conquete: 1 },
 
   // Champions du Monde
   CDM: { creatures: 2, renforcement: 3, attache_base: 1, attache_creature: 2, deplacement: 1, destruction: 0, pioche: 1, defausse: 1, controle: 1, conquete: 1 },
@@ -310,20 +310,20 @@ DATA.stats = {
   SQU: { creatures: 2, renforcement: 1, attache_base: 1, attache_creature: 0, deplacement: 0, destruction: 0, pioche: 1, defausse: 2, controle: 4, conquete: 1 },
 
   // Adolescent Epic Geckos
-  GEC: {},
+  GEC: { creatures: 3, renforcement: 4, attache_base: 0, attache_creature: 1, deplacement: 2, destruction: 0, pioche: 3, defausse: 2, controle: 0, conquete: 1 },
 
   // G.I. Gerald
-  GIG: {},
+  GIG: { creatures: 4, renforcement: 4, attache_base: 0, attache_creature: 0, deplacement: 1, destruction: 1, pioche: 2, defausse: 1, controle: 0, conquete: 1 },
 
   // Pearl and the Images
-  PEA: {},
+  PEA: { creatures: 2, renforcement: 4, attache_base: 2, attache_creature: 2, deplacement: 2, destruction: 0, pioche: 2, defausse: 1, controle: 1, conquete: 2 },
 
   // Rulers of the Cosmos
-  RTC: {},
+  RTC: { creatures: 2, renforcement: 3, attache_base: 0, attache_creature: 4, deplacement: 2, destruction: 0, pioche: 2, defausse: 2, controle: 1, conquete: 1 },
 
   // Slashers
-  SLA: {},
+  SLA: { creatures: 2, renforcement: 3, attache_base: 0, attache_creature: 4, deplacement: 2, destruction: 4, pioche: 2, defausse: 2, controle: 1, conquete: 1 },
 
   // Clowns
-  CLO: {},
+  CLO: { creatures: 2, renforcement: 2, attache_base: 0, attache_creature: 0, deplacement: 1, destruction: 0, pioche: 3, defausse: 4, controle: 0, conquete: 0 },
 };
