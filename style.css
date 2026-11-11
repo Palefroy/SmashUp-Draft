@@ -205,6 +205,7 @@ li { margin: 15px auto; font-size: 18px; }
 .factions-list input[type="checkbox"] { margin-right: 10px; accent-color: var(--border-color); }
 .btn-det { flex: none; margin: 0 0 0 auto; padding: 3px 10px; min-height: 26px; font-size: 12px; font-weight: 600; border-radius: 4px; background: var(--btn-secondary); }
 .btn-det[hidden] { display: none; }
+.btn-det.chantier { opacity: .45; filter: grayscale(.6); }   /* illustration en chantier (image WORK) : bouton grisé mais cliquable */
 .factions-list .fac-row { display: flex; align-items: center; gap: 10px; margin: 3px 0; }
 .factions-list .fac-row label { flex: 0 1 auto; min-width: 0; margin: 0; padding: 5px 0; }
 [data-theme="halloween"] #resultat > ul > li::before,[data-theme="halloween"] .menu-extensions::before {
@@ -534,12 +535,10 @@ body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: ca
 .fiche-fond.verso .fiche-art::after { opacity: 0; }
 .fiche-fond.verso .fiche { background: transparent; border-color: transparent; box-shadow: none; }
 /* Pastille « 2e illustration » : icône retourner + 2 points (point jaune = face affichée). Placée dans .fiche-cartes, indentée à gauche, juste au-dessus du rang. */
-.flip-badge { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; display: flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 999px; background: rgba(14,16,24,.62); border: 1px solid rgba(255,255,255,.28); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none; line-height: 0; transition: opacity .15s; }
+.flip-badge { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; box-sizing: border-box; border-radius: 50%; background: rgba(14,16,24,.62); border: 1px solid rgba(255,255,255,.28); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none; line-height: 0; transition: opacity .15s; }
 .flip-badge.sur-rang { bottom: calc(100% + 8px + 36px + 6px); }   /* 36 px = hauteur du bouton de rang */
 .flip-badge.dans-art { left: 8px; bottom: 8px; z-index: 3; }       /* repli : fiche sans zone cartes */
 .flip-badge svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.flip-badge i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); }
-.flip-badge i:first-of-type { background: #ffd36a; }
 .fiche-fond.focus .flip-badge, .fiche-fond.focus-cartes .flip-badge { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .flip-in { transition: none; } .flip-face { transition: none; } }
 
@@ -664,5 +663,5 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 [data-theme="halloween"] h2 { font-size: 20px; }                                          /* Henny Penny */
 [data-theme="christmas"] h2 { font-size: 20px; }                                          /* Deadhead Rough */
 [data-theme="easter"] h2 { font-size: 22px; }                                             /* Fairydust */
-[data-theme="japan"] h2 { font-size: 16px; }                                              /* Shojumaru */
-[data-theme="china"] h2 { font-size: 23px; letter-spacing: 1.5px; }                       /* Stick Rice */
+[data-theme="japan"] h2 { font-size: 15px; }                                              /* Shojumaru */
+[data-theme="china"] h2 { font-size: 24.5px; letter-spacing: 1.5px; }                       /* Stick Rice */

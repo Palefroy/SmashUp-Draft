@@ -23,6 +23,7 @@ const donneesCSV = FAC.csv || "", CODES = FAC.codes || {}, ANNEE_EN = FAC.anneeE
 const DOSSIER_ILLUS = "img/illus/", DOSSIER_CARDS = "img/cards/";   // grandes illustrations et montage des 3 cartes : <dossier>/<CODE>.<format>
 // Formats d'image acceptés (extensions en minuscules), essayés dans cet ordre : le premier fichier trouvé est utilisé. Les formats peuvent être mélangés.
 // Le navigateur doit savoir afficher le format (TIFF, BMP, RAW... ne marchent pas : les convertir en WebP avant de les déposer dans img/).
+const IMG_DEFAUT = "WORK";   // nom (sans extension) de l'image « en chantier » utilisée quand l'illustration ou les cartes d'une faction n'existent pas
 const FORMATS_IMG = [".webp", ".jpg", ".jpeg", ".png", ".avif"];
 // Données des fiches : dossier data/ (un fichier JS par type : titans, notes, sources, stats, cartes), chargé via data/data.js.
 // Sans ce dossier, la page fonctionne : les modules sans données n'apparaissent simplement pas.
@@ -640,9 +641,15 @@ function assets(code) {
             chargerImgAuto(DOSSIER_ILLUS, code), chargerImgAuto(DOSSIER_ILLUS, code + "2"), chargerImgAuto(DOSSIER_CARDS, code),
             ...(f.cards || []).map(x => chargerImg(DOSSIER_CARDS + x))]);
         PRET[code] = true;
-        return { illus, illus2, cards, ind: ind.length && ind.every(Boolean) ? ind : null };
+        // Image par défaut : WORK.<format> (dans img/illus et img/cards) remplace l'image manquante. Pas de repli pour la 2e illustration.
+        const illusF = illus || await chargerImgAuto(DOSSIER_ILLUS, IMG_DEFAUT);
+        const cardsF = cards || (ind.length && ind.every(Boolean) ? null : await chargerImgAuto(DOSSIER_CARDS, IMG_DEFAUT));
+        CHANTIER[code] = !illus && !!illusF;
+        majBoutonsDetails();
+        return { illus: illusF, illus2, cards: cardsF, ind: ind.length && ind.every(Boolean) ? ind : null };
     })());
 }
+const CHANTIER = {};   // CHANTIER[code] = true : l'illustration de la faction est l'image par défaut WORK (« en chantier »)
 const fichePossible = a => !!(a.illus || a.cards || a.ind);
 
 // Préchargement : dès qu'une faction apparaît à l'écran, ses images sont chargées ; sans illustration ni cartes, le bouton est désactivé.
@@ -663,6 +670,7 @@ function majBoutonsDetails() {
     document.querySelectorAll(".btn-det").forEach(b => {
         const ok = FICHE_OK[codeDe(decodeURIComponent(b.dataset.det))];
         b.hidden = b.dataset.need === "ok" ? ok !== true : ok === false;
+        b.classList.toggle("chantier", !!CHANTIER[codeDe(decodeURIComponent(b.dataset.det))]);   // illustration en chantier : bouton grisé
     });
 }
 new MutationObserver(() => precharger($("resultat"))).observe($("resultat"), { childList: true });
@@ -829,7 +837,7 @@ async function ouvrirFiche(n) {
 
     // Deuxième illustration (img/illus/<CODE>2.<format>) : un clic sur l'illustration retourne la carte ; au verso, seule l'illustration 2 est visible.
     const flipable = !!(a.illus && a.illus2);
-    const badge = (cls) => `<span class="flip-badge${cls}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2M18.5 2v4h-4M5.5 22v-4h4"/></svg><i></i><i></i></span>`;   // pastille « 2e illustration »
+    const badge = (cls) => `<span class="flip-badge${cls}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2M18.5 2v4h-4M5.5 22v-4h4"/></svg></span>`;   // pastille « 2e illustration »
     const art = !a.illus ? "" : flipable
         ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><!--BADGE--></div>`
         : `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>`;
