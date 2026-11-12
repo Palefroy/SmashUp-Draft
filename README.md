@@ -1,2 +1,2 @@
 # SmashUp-Draft
-SmashUp Tirage
+https://palefroy.github.io/SmashUp-Draft/
