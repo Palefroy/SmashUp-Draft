@@ -447,9 +447,25 @@ function rendreHistorique() {
         const heure = new Date(h.ts).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         return `<li class="historique-item"><div class="historique-titre"><b>${L("Tirage", "Draw")} ${h.n}</b><span class="historique-heure">${heure}</span></div>` +
             h.groupes.map((g, i) => `<b>${nomJ(i, h.noms)}</b> : ${g.map(t).join(" & ")}<br>`).join("") +
-            `🎲 ${nomJ(h.premier, h.noms)} ${t("commence")}<br></li>`;
+            `🎲 ${nomJ(h.premier, h.noms)} ${t("commence")}<br>` +
+            `<button type="button" class="btn-compact btn-reafficher" onclick="reafficherTirage(${h.n})">↩️ ${L("Réafficher", "Show again")}</button></li>`;
     }).join("");
     majTabHist();
+}
+
+// Remet un tirage de l'historique à la place du résultat actuel, comme s'il venait d'être tiré :
+// les cartes factions (icônes, appui long, bouton Détails) redeviennent utilisables.
+// Ne crée pas de nouvelle entrée dans l'historique et ne change pas le compteur.
+function reafficherTirage(n) {
+    const h = historique.find(x => x.n === n);
+    if (!h) return;
+    fermerFiche(true);
+    fermerInfo();
+    draft = null;                                   // abandonne un draft / pick en cours, le cas échéant
+    dernierResultat = { groupes: h.groupes, premier: h.premier, noms: h.noms };
+    rendreResultat();
+    fermerPanneaux();
+    remonter();
 }
 
 function majTabHist() {

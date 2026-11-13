@@ -45,11 +45,34 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Préparer le projet Capacitor
+      - name: Copier les fichiers du site dans build/www
         run: |
           mkdir -p build/www
           cp index.html style.css script.js manifest.json build/www/
           cp -r data img icons build/www/
+
+      # Les images sont allégées UNIQUEMENT dans build/www (copie temporaire du build).
+      # Les fichiers du dépôt, et donc le site GitHub Pages, restent en pleine qualité.
+      # Les noms et extensions ne changent pas : aucun lien à modifier dans le code.
+      # Réglages : la taille max (ex. 1080x1080) et la qualité (-quality 65, de 1 à 100) ; le signe > ne réduit que les images plus grandes.
+      - name: Compresser les images pour l'APK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          echo "Avant : $(du -sh build/www/img | cut -f1)"
+          # Illustrations des factions
+          find build/www/img -path "*/img/illus/*" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) \
+            -exec mogrify -auto-orient -strip -resize "1080x1080>" -quality 65 {} +
+          # Montages des 3 cartes (images très larges : limite plus haute pour rester lisibles)
+          find build/www/img -path "*/img/cards/*" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) \
+            -exec mogrify -auto-orient -strip -resize "1600x1600>" -quality 70 {} +
+          # Icônes des factions (petites)
+          find build/www/img -path "*/img/ico/*" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) \
+            -exec mogrify -strip -resize "512x512>" -quality 75 {} +
+          echo "Après : $(du -sh build/www/img | cut -f1)"
+
+      - name: Préparer le projet Capacitor
+        run: |
           cp apk/capacitor.config.json build/
           cp -r apk/assets build/assets
           cd build
