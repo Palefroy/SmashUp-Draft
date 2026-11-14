@@ -60,27 +60,38 @@ const L = (fr, en) => langue === "en" ? en : fr;
 Object.assign(EN, { "Fermer": "Close", "Titan": "Titan", "Notes": "Notes", "Stats": "Stats", "Statistiques": "Statistics",
     "Détails": "Details", "Chargement…": "Loading…", "Code de complexité": "Complexity code", "S = plus complexe · D = plus simple": "S = most complex · D = simplest" });
 const t = n => langue === "en" ? (EN[n] || n.replace(" : ", ": ")) : n;
-Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Threats", "Contre": "Counters" });
+Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Threats", "Contre": "Counters",
+    "Afficher les synergies": "Show synergies", "Afficher les menaces et contres": "Show threats and counters", "Activé": "On", "Désactivé": "Off",
+    "Synergie avec ta sélection": "Synergy with your selection", "Synergie avec tes factions": "Synergy with your factions",
+    "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions" });
 
 // ---------- Combo (data/combo.js : synergies, menaces, contres, tags de style de jeu) ----------
 // DATA.combo[CODE] = { tags: [id], syn: [CODE], men: [CODE qui contrent CODE], con: [CODE que CODE contre] } ; window.COMBO_INFO = { tags: { id: { fr, en } }, expl: { "p:A|B" ou "c:A>B": { fr, en } } }
 const NOM_PAR_CODE = {};
 for (const [n, c] of Object.entries(CODES)) NOM_PAR_CODE[c] = n;
 const nomDeCode = c => t(NOM_PAR_CODE[c] || c);
-const comboDe = code => { const c = (window.DATA && DATA.combo || {})[code]; return c && (c.syn.length || c.men.length || c.con.length || c.tags.length) ? c : null; };
+// Données de combo d'une faction, filtrées par les réglages (P.syn = synergies, P.men = menaces et contres). Les deux coupés : pas de bouton Combo.
+const comboDe = code => {
+    const c = (window.DATA && DATA.combo || {})[code];
+    if (!c || (!P.syn && !P.men)) return null;
+    const v = { tags: c.tags || [], syn: P.syn ? (c.syn || []) : [], men: P.men ? (c.men || []) : [], con: P.men ? (c.con || []) : [] };
+    return v.syn.length || v.men.length || v.con.length || v.tags.length ? v : null;
+};
+// Relations entre deux codes de faction (les deux sens de la donnée sont lus : un oubli d'un côté ne fait pas disparaître la relation).
+const baseCombo = () => (window.DATA && DATA.combo) || {};
+const aSyn = (a, b) => ((baseCombo()[a] || {}).syn || []).includes(b) || ((baseCombo()[b] || {}).syn || []).includes(a);
+const contre = (a, b) => ((baseCombo()[a] || {}).con || []).includes(b) || ((baseCombo()[b] || {}).men || []).includes(a);   // a contre b
 function htmlCombo(code, cb) {
     const info = window.COMBO_INFO || { tags: {}, expl: {} };
     const lbl = o => o ? (o[langue] || o.fr || o.en || "") : "";
     const pastilles = (liste, cle) => liste.map(c => { const k = cle(c), x = info.expl[k] ? ` data-x="${esc(k)}" role="button" tabindex="0"` : ""; return `<span class="cb-chip"${x}>${esc(nomDeCode(c))}</span>`; }).join("");
-    const section = (cls, titre, liste, cle, repliable) => !liste.length ? "" : repliable
-        ? `<details class="cb-sec cb-det ${cls}"><summary>${t(titre)} <small>(${liste.length})</small></summary><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></details>`
-        : `<div class="cb-sec ${cls}"><b class="cb-h">${t(titre)}</b><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></div>`;
+    const section = (cls, titre, liste, cle, ouvert) => !liste.length ? "" :
+        `<details class="cb-sec cb-det ${cls}"${ouvert ? " open" : ""}><summary>${t(titre)} <small>(${liste.length})</small></summary><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></details>`;
     const tags = cb.tags.map(id => info.tags[id] ? `<span class="cb-chip cb-tag">${esc(lbl(info.tags[id]))}</span>` : "").join("");
-    return `<b class="bulle-titre">${t("Combo")}</b>`
-        + (tags ? `<div class="cb-chips cb-tags">${tags}</div>` : "")
-        + section("s-syn", "Synergies", cb.syn, c => "p:" + [code, c].sort().join("|"), false)
-        + section("s-men", "Menaces", cb.men, c => "c:" + c + ">" + code, true)
-        + section("s-con", "Contre", cb.con, c => "c:" + code + ">" + c, true);
+    return (tags ? `<div class="cb-chips cb-tags">${tags}</div>` : "")
+        + section("s-syn", "Synergies", cb.syn, c => "p:" + [code, c].sort().join("|"), true)      // dépliée par défaut, repliable
+        + section("s-men", "Menaces", cb.men, c => "c:" + c + ">" + code, false)
+        + section("s-con", "Contre", cb.con, c => "c:" + code + ">" + c, false);
 }
 // Clic sur une pastille avec explication : l'affiche (ou la masque) sous sa section.
 function clicPastilleCombo(e, bulle, placer) {
@@ -100,7 +111,7 @@ let draft = null, historique = [], dernierResultat = null;
 
 const MODES = ["tirage", "draft", "pick", "pickban"];
 const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "Pick & Ban" };
-const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10 };
+const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true };   // syn / men : afficher les synergies / les menaces et contres (activés par défaut)
 let P = { ...DEFAUTS };
 
 const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter"];
@@ -415,6 +426,7 @@ function setP(k, v) {
     sauvegarderParametres();
     rendreSegments();
     if (k === "nbJ") genererChampsJoueurs();
+    if ((k === "syn" || k === "men") && draft) rendreDraft();   // les halos s'ajoutent / disparaissent tout de suite
 }
 
 function setPInput(k, el, min, max) {
@@ -444,6 +456,9 @@ function rendreSegments() {
         num("inMain", P.mainK, !preK.includes(P.mainK), 3, 20, "setPInput('mainK',this,3,20)");
     $("segPool").innerHTML = btn(`Auto (${poolAuto(P.mode, P.nbJ)})`, P.poolAuto, "setP('poolAuto',true)") +
         num("inPool", P.poolVal, !P.poolAuto, 2, 60, "setPInput('poolVal',this,2,60)");
+
+    $("segSyn").innerHTML = btn(t("Activé"), P.syn, "setP('syn',true)") + btn(t("Désactivé"), !P.syn, "setP('syn',false)");
+    $("segMen").innerHTML = btn(t("Activé"), P.men, "setP('men',true)") + btn(t("Désactivé"), !P.men, "setP('men',false)");
 
     $("rowMain").classList.toggle("tab-hidden", P.mode !== "draft");
     $("rowPool").classList.toggle("tab-hidden", P.mode !== "pick" && P.mode !== "pickban");
@@ -743,6 +758,7 @@ const luminance = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 const ICONES_FICHE = {
     notes: '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
     stats: '<svg viewBox="0 0 24 24" style="stroke-width:2.6"><path d="M5.5 20v-8M12 20V4.5M18.5 20v-5"/></svg>',
+    combo: '<svg viewBox="0 0 24 24"><path d="M3 6h8v3.5a2.5 2.5 0 0 1 0 5V18H3z"/><path d="M12.5 6H21v12h-8.5v-2.84A3.5 3.5 0 0 0 12.5 8.84z"/></svg>',   // deux pièces de puzzle qui s'emboîtent
     titan: '<svg viewBox="0 0 24 24"><path d="M3.5 4.5 8 7.5h8l4.5-3-1.2 7.2c-.5 5-3.3 8.8-7.3 8.8s-6.8-3.8-7.3-8.8z"/><circle cx="9" cy="12.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="12.5" r="1.1" fill="currentColor" stroke="none"/></svg>'
 };
 let ficheCtl = null;   // contrôleur de la fiche ouverte : { fermerBulle, nettoyer }
@@ -894,7 +910,7 @@ async function ouvrirFiche(n) {
         ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><!--BADGE--></div>`
         : `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>`;
     const rang = rkVars ? `<button type="button" class="rkbtn rk-${esc(d.rank.code)}${cb ? " haut" : ""}" data-b="rank" aria-expanded="false" style="${esc(rkVars)}"><span class="rk-ico" aria-hidden="true">${esc(rk.icone || "🏅")}</span><span>${esc(rk.tier)} Tier</span></button>` : "";
-    const boutonCombo = cb ? `<button type="button" class="fbtn cmbtn" data-b="combo" aria-expanded="false"><span class="cm-ico" aria-hidden="true">🔗</span><span>${t("Combo")}</span></button>` : "";
+    const boutonCombo = cb ? `<button type="button" class="fbtn cmbtn" data-b="combo" aria-expanded="false">${ICONES_FICHE.combo}<span>${t("Combo")}</span></button>` : "";
     const nbBtn = Math.max(dispo.length, (rang ? 1 : 0) + (cb ? 1 : 0));   // hauteur réservée : colonne de droite (Titan/Stats/Notes) ou pile de gauche (rang + combo)   // hauteur réservée au-dessus des cartes (colonne de droite, ou rang seul)
     const boutons = dispo.length ? `<div class="fiche-boutons">${dispo.map(k => `<button type="button" class="fbtn" data-b="${k}" aria-expanded="false">${ICONES_FICHE[k]}<span>${t(k === "stats" ? "Stats" : k === "notes" ? "Notes" : "Titan")}</span></button>`).join("")}</div>` : "";
     const ouvertCartes = a.ind ? `<div class="fiche-cartes ind">${a.ind.map(i => `<img src="${src(i)}" alt="">`).join("")}`
@@ -1203,7 +1219,7 @@ document.addEventListener("pointerdown", e => {
 function demarrerDraft(pioche, nbJ, mode, premier, taille) {
     const rot = Array.from({ length: nbJ }, (_, k) => (premier + k) % nbJ);   // le joueur qui commence passe en premier
     const inv = [...rot].reverse();
-    draft = { mode, premier, etape: 0, sel: [], ecran: "attente", bannies: [], pris: Array.from({ length: nbJ }, () => []) };
+    draft = { mode, premier, etape: 0, sel: [], cur: null, ecran: "attente", bannies: [], pris: Array.from({ length: nbJ }, () => []) };
     if (mode === "draft") {
         const k = P.mainK;
         draft.ordre = rot;
@@ -1223,11 +1239,29 @@ function rendreDraft() {
     const d = draft;
     if (d.mode === "draft") return rendreMain();
     const [j, type] = d.ordre[d.etape];
+    // Pick / Pick & Ban : toucher une faction = aperçu (synergies, contres) ; « Valider » verrouille le choix.
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
-        d.pool.map((n, i) => `<button class="${type === "ban" ? "btn-danger" : ""}" data-f="${encodeURIComponent(n)}" onclick="choisirDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
+        d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " btn-danger" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
+        `<div class="cb-legende" id="cbLegende"></div>` +
+        `<button id="btnValider" class="${type === "ban" ? "btn-danger" : ""}" ${d.cur == null ? "disabled" : ""} onclick="validerPool()">${t("Valider")}</button>` +
         (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
         d.pris.map((g, i) => `<div><b>${nomJ(i)}</b> : ${g.map(t).join(" & ") || "—"}</div>`).join("");
     astucePremierDraft();
+    majIndicateursPool();
+}
+
+function selectionnerPool(i) {
+    const d = draft;
+    d.cur = d.cur === i ? null : i;
+    majIndicateursPool();
+}
+
+function validerPool() {
+    const d = draft;
+    if (d.cur == null) return;
+    const i = d.cur;
+    d.cur = null;
+    choisirDraft(i);
 }
 
 function choisirDraft(i) {
@@ -1238,6 +1272,44 @@ function choisirDraft(i) {
     afficherResultats(d.pris, d.premier);
 }
 
+// Légende des indicateurs affichés (une ligne sous la réserve ; vide s'il n'y a aucun indicateur : rien ne s'affiche).
+function legende(nSyn, nCtr, nThr, texteSyn) {
+    const el = $("cbLegende");
+    if (!el) return;
+    const p = [];
+    if (nSyn) p.push(`<span class="lg lg-syn"><i></i>${t(texteSyn || "Synergie avec tes factions")}</span>`);
+    if (nCtr) p.push(`<span class="lg lg-ctr"><i></i>${t("Contre une faction adverse")}</span>`);
+    if (nThr) p.push(`<span class="lg lg-thr"><i></i>${t("Menace tes factions")}</span>`);
+    el.innerHTML = p.join("");
+}
+
+// Indicateurs de la réserve (Pick / Pick & Ban), recalculés à chaque sélection. Données : DATA.combo (data/combo.js) ; faction sans donnée = aucun indicateur.
+//   anneau vert + pastille puzzle : synergie avec mes factions déjà prises (en phase Pick : + la faction en aperçu)   [réglage « synergies »]
+//   phase Pick : pastille bouclier (ambre) = cette faction contre une faction adverse déjà prise                      [réglage « menaces et contres »]
+//   phase Ban  : pastille triangle (rouge) = cette faction menace mes factions déjà prises : candidate au bannissement [réglage « menaces et contres »]
+function majIndicateursPool() {
+    const d = draft;
+    if (!d || d.mode === "draft") return;
+    const [j, type] = d.ordre[d.etape], btns = document.querySelectorAll(".draft-pool button");
+    btns.forEach((b, i) => { b.classList.toggle("sel", d.cur === i); b.classList.remove("cb-syn", "cb-ctr", "cb-thr"); });
+    const vb = $("btnValider");
+    if (vb) vb.disabled = d.cur == null;
+    const miens = d.pris[j].map(n => CODES[n]).filter(Boolean);
+    const equipe = [...miens];
+    if (type === "pick" && d.cur != null && CODES[d.pool[d.cur]]) equipe.push(CODES[d.pool[d.cur]]);
+    const adverses = d.pris.flatMap((g, k) => k === j ? [] : g.map(n => CODES[n])).filter(Boolean);
+    let nSyn = 0, nCtr = 0, nThr = 0;
+    btns.forEach((b, i) => {
+        const c = CODES[d.pool[i]];
+        if (!c) return;
+        if (P.syn && i !== d.cur && equipe.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); nSyn++; }
+        if (!P.men) return;
+        if (type === "pick" && adverses.some(o => contre(c, o))) { b.classList.add("cb-ctr"); nCtr++; }
+        else if (type === "ban" && miens.some(m => contre(c, m))) { b.classList.add("cb-thr"); nThr++; }
+    });
+    legende(nSyn, nCtr, nThr);
+}
+
 function rendreMain() {
     const d = draft, j = d.ordre[d.etape];
     if (d.ecran === "attente") {
@@ -1246,25 +1318,27 @@ function rendreMain() {
     }
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small></div><div class="draft-pool">` +
         d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
-        `</div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
+        `</div><div class="cb-legende" id="cbLegende"></div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
     astucePremierDraft();
     majHalosDraft();
 }
 
-// Halos du draft : une fois une faction cochée, les autres factions de la main s'illuminent en vert si elles font une synergie avec la sélection,
-// en rouge si elles la contrent (menace). Données : DATA.combo (data/combo.js). Sans données ou sans sélection : aucun halo.
+// Halos du draft : une fois une faction cochée, les autres factions de la main s'illuminent en vert si elles font une synergie avec la sélection.
+// Pas de menaces / contres en draft (chaque joueur choisit de son côté, sans voir les factions des autres). Réglage « synergies » : P.syn.
 function majHalosDraft() {
     const cartes = document.querySelectorAll(".carte-draft");
-    cartes.forEach(b => b.classList.remove("cb-syn", "cb-men"));
-    const d = draft, base = (window.DATA && DATA.combo) || {};
-    if (!d || d.mode !== "draft" || d.ecran !== "choix" || !d.sel.length) return;
-    const main = d.mains[d.etape], choisis = d.sel.map(i => CODES[main[i]]).filter(Boolean);
-    cartes.forEach((b, k) => {
-        const c = CODES[main[k]];
-        if (!c || d.sel.includes(k)) return;
-        if (choisis.some(x => ((base[x] || {}).syn || []).includes(c))) b.classList.add("cb-syn");
-        else if (choisis.some(x => ((base[x] || {}).men || []).includes(c))) b.classList.add("cb-men");
-    });
+    cartes.forEach(b => b.classList.remove("cb-syn"));
+    const d = draft;
+    let n = 0;
+    if (P.syn && d && d.mode === "draft" && d.ecran === "choix" && d.sel.length) {
+        const main = d.mains[d.etape], choisis = d.sel.map(i => CODES[main[i]]).filter(Boolean);
+        cartes.forEach((b, k) => {
+            const c = CODES[main[k]];
+            if (!c || d.sel.includes(k)) return;
+            if (choisis.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); n++; }
+        });
+    }
+    legende(n, 0, 0, "Synergie avec ta sélection");
 }
 
 function basculerDraft(i) {

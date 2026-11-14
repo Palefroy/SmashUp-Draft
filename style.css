@@ -296,7 +296,6 @@ body { padding-bottom: 80px; }
 .fbtn[data-b="combo"], .bulle[data-k="combo"] { --c: #d2b0ff; --cg: 170,120,255; }
 /* Bouton Combo : pile de gauche, sous le bouton de rang (le rang est remonté d'un cran : .rkbtn.haut) */
 .cmbtn { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; white-space: nowrap; }
-.cmbtn .cm-ico { flex: none; font-size: 16px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .rkbtn.haut { bottom: calc(100% + 8px + 36px + 8px); }
 .flip-badge.sur-rang.haut { bottom: calc(100% + 8px + 36px + 8px + 36px + 6px); }
 /* Bulle Combo : tags, synergies (vert), menaces (rouge, repliées), contres (jaune, repliés) */
@@ -320,12 +319,30 @@ body { padding-bottom: 80px; }
 .cb-det > summary small { font-weight: 600; opacity: .8; }
 .bulle p.cb-expl { margin-top: .5em; padding: .5em .65em; border-radius: 10px; background: rgba(255,255,255,.07); font-size: .86em; }
 /* Halos du draft : vert = synergie avec la sélection, rouge = menace (contre la sélection) */
-.carte-draft.cb-syn, .carte-draft.cb-men { position: relative; transition: box-shadow .2s; }
-.carte-draft.cb-syn { box-shadow: 0 0 0 2px #4ade80, 0 0 14px 3px rgba(74,222,128,.65); }
-.carte-draft.cb-men { box-shadow: 0 0 0 2px #f87171, 0 0 14px 3px rgba(248,113,113,.65); }
-.carte-draft.cb-syn::after, .carte-draft.cb-men::after { position: absolute; top: 3px; right: 5px; font-size: 13px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
-.carte-draft.cb-syn::after { content: "🔗"; }
-.carte-draft.cb-men::after { content: "⚠️"; }
+/* Indicateurs de synergie / matchup (draft, pick, pick & ban). Pastilles dessinées en SVG (pas d'émoji) : fond sombre + pictogramme coloré.
+   Vert = synergie (puzzle) ; ambre = contre une faction adverse (bouclier) ; rouge = menace tes factions (triangle). */
+:root {
+    --ico-syn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%234ade80' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h8v3.5a2.5 2.5 0 0 1 0 5V18H3z'/%3E%3Cpath d='M12.5 6H21v12h-8.5v-2.84A3.5 3.5 0 0 0 12.5 8.84z'/%3E%3C/g%3E%3C/svg%3E");
+    --ico-ctr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%23f2b630' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'/%3E%3C/g%3E%3C/svg%3E");
+    --ico-thr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%23f87171' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4l9 16H3z M12 10v4 M12 17h.01'/%3E%3C/g%3E%3C/svg%3E");
+}
+.carte-draft, .carte-pool { position: relative; transition: box-shadow .2s, transform .15s; }
+.carte-draft.cb-syn, .carte-pool.cb-syn { box-shadow: 0 0 0 2px #4ade80, 0 0 14px 3px rgba(74,222,128,.65); }
+.carte-pool.cb-ctr:not(.cb-syn) { box-shadow: 0 0 0 2px #f2b630; }
+.carte-pool.cb-thr:not(.cb-syn) { box-shadow: 0 0 0 2px #f87171; }
+.cb-syn::after, .cb-ctr::before, .cb-thr::before { content: ""; position: absolute; top: -7px; width: 19px; height: 19px; z-index: 2; pointer-events: none; background: center / contain no-repeat; }
+.cb-syn::after { right: -6px; background-image: var(--ico-syn); }
+.cb-ctr::before { left: -6px; background-image: var(--ico-ctr); }
+.cb-thr::before { left: -6px; background-image: var(--ico-thr); }
+.carte-pool.sel { outline: 3px solid #ffd54a; transform: scale(1.06); filter: brightness(1.15); }
+.cb-legende { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin: 2px 0 10px; font-size: 12px; opacity: .9; }
+.cb-legende:empty { display: none; }
+.cb-legende .lg { display: inline-flex; align-items: center; gap: 5px; }
+.cb-legende .lg i { flex: none; width: 17px; height: 17px; background: center / contain no-repeat; }
+.cb-legende .lg-syn i { background-image: var(--ico-syn); }
+.cb-legende .lg-ctr i { background-image: var(--ico-ctr); }
+.cb-legende .lg-thr i { background-image: var(--ico-thr); }
+.bulle-corps > .cb-sec:first-child { margin-top: 0; }
 /* Bouton de rang (S/A/B/C/D Tier) : texture métal selon le rang, couleurs fournies par data/rank.js (--r0 reflet, --r1 teinte, --r2 ombre) */
 .rkbtn { all: unset; box-sizing: border-box; position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 10px; min-height: 36px; border-radius: 12px; cursor: pointer; font: 800 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .3px; white-space: nowrap; line-height: 1.2; color: var(--rt, #111); --c: var(--r0); --cg: var(--rg);
     background: var(--tex, none), linear-gradient(145deg, var(--r0) 0%, var(--r1) 52%, var(--r2) 100%); border: 1px solid rgba(255,255,255,.5);

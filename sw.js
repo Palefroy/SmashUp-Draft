@@ -6,7 +6,7 @@
 // Pour forcer la purge des anciens caches après une grosse mise à jour : changer VERSION ci-dessous.
 // Tous les chemins sont relatifs : le site peut vivre dans un sous-dossier (GitHub Pages : /SmashUp-Draft/).
 
-const VERSION = "v3";
+const VERSION = "v4";
 const CACHE_SITE = "smashup-site-" + VERSION;
 const CACHE_IMG = "smashup-img-" + VERSION;
 const IMG_MAX = 700;   // nombre maximum d'images gardées en cache (les plus anciennes sont supprimées)
