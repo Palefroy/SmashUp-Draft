@@ -64,7 +64,7 @@ Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Thre
     "Afficher les synergies": "Show synergies", "Afficher les menaces et contres": "Show threats and counters", "Activé": "On", "Désactivé": "Off",
     "Synergie avec ta sélection": "Synergy with your selection", "Synergie avec tes factions": "Synergy with your factions",
     "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions",
-    "Afficher :": "Show:", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
+    "Afficher :": "Show:", "Rang": "Tier", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
     "Explication des modes": "What the modes mean",
     "Tirage au sort : chaque joueur reçoit ses factions au hasard, sans choisir.": "Random draw: each player is dealt factions at random, no choice involved.",
     "Draft : chaque joueur reçoit sa propre main de factions (nombre réglable) et en garde 2. Les mains sont secrètes : on se passe l'écran.": "Draft: each player gets their own hand of factions (adjustable size) and keeps 2. Hands are secret, so you pass the screen around.",
@@ -117,7 +117,7 @@ let draft = null, historique = [], dernierResultat = null;
 
 const MODES = ["tirage", "draft", "pick", "pickban"];
 const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "Pick & Ban" };
-const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true, con: true };   // syn / men / con : afficher les synergies / les menaces / les contres (activés par défaut)
+const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true, con: true, rang: false };   // syn / men / con : afficher les synergies / les menaces / les contres (activés par défaut) ; rang : mini médaille de rang sur les factions (masquée par défaut)
 let P = { ...DEFAUTS };
 
 const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter"];
@@ -476,10 +476,13 @@ function rendreSegments() {
 
 // Barre « Afficher : Synergies · Menaces · Contre » (vert / rouge / jaune), sur une seule ligne. Présente dans les paramètres ET au-dessus de la réserve / de la main
 // en Draft, Pick et Pick & Ban : les barres sont synchronisées (classe .cb-filtres).
-const FILTRES = [["syn", "Synergies"], ["men", "Menaces"], ["con", "Contre"]];
+const FILTRES = [["syn", "Synergies"], ["men", "Menaces"], ["con", "Contre"], ["rang", "Rang"]];
 const htmlFiltres = () => `<span class="cbf-lbl">${t("Afficher :")}</span>` + FILTRES.map(([k, n]) =>
     `<button type="button" class="cbf cbf-${k}${P[k] ? " on" : ""}" aria-pressed="${!!P[k]}" onclick="basculerFiltre('${k}')">${t(n)}</button>`).join("");
-function majFiltres() { document.querySelectorAll(".cb-filtres").forEach(el => { el.innerHTML = htmlFiltres(); }); }
+function majFiltres() {
+    document.querySelectorAll(".cb-filtres").forEach(el => { el.innerHTML = htmlFiltres(); });
+    document.body.classList.toggle("rang-on", !!P.rang);   // affiche / masque les mini médailles de rang (.rk-mini)
+}
 function basculerFiltre(k) {
     P[k] = !P[k];
     sauvegarderParametres();

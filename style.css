@@ -345,12 +345,14 @@ body { padding-bottom: 80px; }
 .cbf-syn { --cg: 74,222,128; }
 .cbf-men { --cg: 248,113,113; }
 .cbf-con { --cg: 242,182,48; }
+.cbf-rang { --cg: 176,132,255; }
+body.rang-on .rk-mini { display: flex; }
 #paramContainer { position: relative; }
 .astuce-modes { top: 40px; right: 8px; --pointe: 14px; max-width: min(300px, calc(100vw - 40px)); }
 .astuce-modes p { margin: 0 0 .55em; }
 .astuce-modes p:last-child { margin-bottom: 0; }
 /* Mini icône de rang (coin bas-gauche des factions du draft / pick / pick & ban) : même métal que .rkbtn, en rond, sans texte */
-.rk-mini { position: absolute; left: -5px; bottom: -5px; z-index: 2; width: 17px; height: 17px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 50%; pointer-events: none; font: normal 10px/1 "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; text-shadow: none; background: var(--tex, none), linear-gradient(145deg, var(--r0) 0%, var(--r1) 52%, var(--r2) 100%); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.5); }
+.rk-mini { position: absolute; left: -5px; bottom: -5px; z-index: 2; width: 17px; height: 17px; box-sizing: border-box; display: none; align-items: center; justify-content: center; border-radius: 50%; pointer-events: none; font: normal 10px/1 "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; text-shadow: none; background: var(--tex, none), linear-gradient(145deg, var(--r0) 0%, var(--r1) 52%, var(--r2) 100%); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.5); }
 .cb-legende { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin: 2px 0 10px; font-size: 12px; opacity: .9; }
 .cb-legende:empty { display: none; }
 .cb-legende .lg { display: inline-flex; align-items: center; gap: 5px; }
