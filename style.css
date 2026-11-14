@@ -284,7 +284,7 @@ body { padding-bottom: 80px; }
 .fiche-fond.focus-cartes { background: rgba(0,0,0,.9); }
 .fiche-fond.focus-cartes .fiche { background: transparent; border-color: transparent; box-shadow: none; overflow: visible; }
 .fiche-fond.retour-cartes .fiche { overflow: visible; }
-.fiche-fond.focus-cartes .fiche-art, .fiche-fond.focus-cartes .fiche-boutons, .fiche-fond.focus-cartes .rkbtn, .fiche-fond.focus-cartes .bulle { opacity: 0; visibility: hidden; }
+.fiche-fond.focus-cartes .fiche-art, .fiche-fond.focus-cartes .fiche-boutons, .fiche-fond.focus-cartes .rkbtn, .fiche-fond.focus-cartes .cmbtn, .fiche-fond.focus-cartes .bulle { opacity: 0; visibility: hidden; }
 .fiche-fond.focus-cartes .fiche-cartes { transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(var(--sc, 1)); }
 .fiche-cartes img { transition: box-shadow .3s; }
 .fiche-fond.focus-cartes .fiche-cartes img { box-shadow: 0 12px 40px rgba(0,0,0,.7); }
@@ -293,6 +293,39 @@ body { padding-bottom: 80px; }
 .fbtn[data-b="notes"], .bulle[data-k="notes"] { --c: #7fbcff; --cg: 90,160,255; }
 .fbtn[data-b="stats"], .bulle[data-k="stats"] { --c: #6fe3a0; --cg: 60,200,120; }
 .fbtn[data-b="titan"], .bulle[data-k="titan"] { --c: #ffd36a; --cg: 242,182,48; }
+.fbtn[data-b="combo"], .bulle[data-k="combo"] { --c: #d2b0ff; --cg: 170,120,255; }
+/* Bouton Combo : pile de gauche, sous le bouton de rang (le rang est remonté d'un cran : .rkbtn.haut) */
+.cmbtn { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; white-space: nowrap; }
+.cmbtn .cm-ico { flex: none; font-size: 16px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.rkbtn.haut { bottom: calc(100% + 8px + 36px + 8px); }
+.flip-badge.sur-rang.haut { bottom: calc(100% + 8px + 36px + 8px + 36px + 6px); }
+/* Bulle Combo : tags, synergies (vert), menaces (rouge, repliées), contres (jaune, repliés) */
+.cb-chips { display: flex; flex-wrap: wrap; gap: .32em; }
+.cb-tags { margin-bottom: .2em; }
+.cb-chip { padding: .16em .6em; border-radius: 999px; font-size: .86em; line-height: 1.3; background: rgba(var(--cg), .16); border: 1px solid rgba(var(--cg), .45); }
+.cb-chip[data-x] { cursor: pointer; background: rgba(var(--cg), .26); -webkit-tap-highlight-color: transparent; }
+.cb-chip[data-x]::after { content: "ⓘ"; margin-left: .3em; font-size: .85em; opacity: .75; }
+.cb-chip.on { background: rgba(var(--cg), .55); border-color: rgb(var(--cg)); }
+.cb-tag { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.2); }
+.cb-sec { margin-top: .6em; }
+.cb-sec.s-syn { --cg: 74,222,128; }
+.cb-sec.s-men { --cg: 248,113,113; }
+.cb-sec.s-con { --cg: 242,182,48; }
+.cb-h, .cb-det > summary { display: block; margin-bottom: .3em; font-size: .8em; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgb(var(--cg)); }
+.cb-det > summary { cursor: pointer; list-style: none; margin-bottom: 0; }
+.cb-det > summary::-webkit-details-marker { display: none; }
+.cb-det > summary::before { content: "▸"; display: inline-block; width: 1em; }
+.cb-det[open] > summary::before { content: "▾"; }
+.cb-det[open] > summary { margin-bottom: .3em; }
+.cb-det > summary small { font-weight: 600; opacity: .8; }
+.bulle p.cb-expl { margin-top: .5em; padding: .5em .65em; border-radius: 10px; background: rgba(255,255,255,.07); font-size: .86em; }
+/* Halos du draft : vert = synergie avec la sélection, rouge = menace (contre la sélection) */
+.carte-draft.cb-syn, .carte-draft.cb-men { position: relative; transition: box-shadow .2s; }
+.carte-draft.cb-syn { box-shadow: 0 0 0 2px #4ade80, 0 0 14px 3px rgba(74,222,128,.65); }
+.carte-draft.cb-men { box-shadow: 0 0 0 2px #f87171, 0 0 14px 3px rgba(248,113,113,.65); }
+.carte-draft.cb-syn::after, .carte-draft.cb-men::after { position: absolute; top: 3px; right: 5px; font-size: 13px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.carte-draft.cb-syn::after { content: "🔗"; }
+.carte-draft.cb-men::after { content: "⚠️"; }
 /* Bouton de rang (S/A/B/C/D Tier) : texture métal selon le rang, couleurs fournies par data/rank.js (--r0 reflet, --r1 teinte, --r2 ombre) */
 .rkbtn { all: unset; box-sizing: border-box; position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 10px; min-height: 36px; border-radius: 12px; cursor: pointer; font: 800 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .3px; white-space: nowrap; line-height: 1.2; color: var(--rt, #111); --c: var(--r0); --cg: var(--rg);
     background: var(--tex, none), linear-gradient(145deg, var(--r0) 0%, var(--r1) 52%, var(--r2) 100%); border: 1px solid rgba(255,255,255,.5);

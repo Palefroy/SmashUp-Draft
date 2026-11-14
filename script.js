@@ -60,6 +60,40 @@ const L = (fr, en) => langue === "en" ? en : fr;
 Object.assign(EN, { "Fermer": "Close", "Titan": "Titan", "Notes": "Notes", "Stats": "Stats", "Statistiques": "Statistics",
     "Détails": "Details", "Chargement…": "Loading…", "Code de complexité": "Complexity code", "S = plus complexe · D = plus simple": "S = most complex · D = simplest" });
 const t = n => langue === "en" ? (EN[n] || n.replace(" : ", ": ")) : n;
+Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Threats", "Contre": "Counters" });
+
+// ---------- Combo (data/combo.js : synergies, menaces, contres, tags de style de jeu) ----------
+// DATA.combo[CODE] = { tags: [id], syn: [CODE], men: [CODE qui contrent CODE], con: [CODE que CODE contre] } ; window.COMBO_INFO = { tags: { id: { fr, en } }, expl: { "p:A|B" ou "c:A>B": { fr, en } } }
+const NOM_PAR_CODE = {};
+for (const [n, c] of Object.entries(CODES)) NOM_PAR_CODE[c] = n;
+const nomDeCode = c => t(NOM_PAR_CODE[c] || c);
+const comboDe = code => { const c = (window.DATA && DATA.combo || {})[code]; return c && (c.syn.length || c.men.length || c.con.length || c.tags.length) ? c : null; };
+function htmlCombo(code, cb) {
+    const info = window.COMBO_INFO || { tags: {}, expl: {} };
+    const lbl = o => o ? (o[langue] || o.fr || o.en || "") : "";
+    const pastilles = (liste, cle) => liste.map(c => { const k = cle(c), x = info.expl[k] ? ` data-x="${esc(k)}" role="button" tabindex="0"` : ""; return `<span class="cb-chip"${x}>${esc(nomDeCode(c))}</span>`; }).join("");
+    const section = (cls, titre, liste, cle, repliable) => !liste.length ? "" : repliable
+        ? `<details class="cb-sec cb-det ${cls}"><summary>${t(titre)} <small>(${liste.length})</small></summary><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></details>`
+        : `<div class="cb-sec ${cls}"><b class="cb-h">${t(titre)}</b><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></div>`;
+    const tags = cb.tags.map(id => info.tags[id] ? `<span class="cb-chip cb-tag">${esc(lbl(info.tags[id]))}</span>` : "").join("");
+    return `<b class="bulle-titre">${t("Combo")}</b>`
+        + (tags ? `<div class="cb-chips cb-tags">${tags}</div>` : "")
+        + section("s-syn", "Synergies", cb.syn, c => "p:" + [code, c].sort().join("|"), false)
+        + section("s-men", "Menaces", cb.men, c => "c:" + c + ">" + code, true)
+        + section("s-con", "Contre", cb.con, c => "c:" + code + ">" + c, true);
+}
+// Clic sur une pastille avec explication : l'affiche (ou la masque) sous sa section.
+function clicPastilleCombo(e, bulle, placer) {
+    const p = e.target.closest(".cb-chip[data-x]");
+    if (!p) return;
+    const info = (window.COMBO_INFO || {}).expl || {}, x = info[p.dataset.x], sec = p.closest(".cb-sec"), boite = sec && sec.querySelector(".cb-expl");
+    if (!x || !boite) return;
+    const rouvre = p.classList.contains("on");
+    bulle.querySelectorAll(".cb-chip.on").forEach(c => c.classList.remove("on"));
+    bulle.querySelectorAll(".cb-expl").forEach(b => { b.hidden = true; });
+    if (!rouvre) { p.classList.add("on"); boite.textContent = x[langue] || x.fr || x.en || ""; boite.hidden = false; }
+    placer();
+}
 
 let structureExtensions = {}, compteurTirage = 1, nomsFixes = [], factionExt = {}, customs = [];
 let draft = null, historique = [], dernierResultat = null;
@@ -740,8 +774,8 @@ function placerBulle(scene, bulle, btn) {
         return { e, h: bulle.offsetHeight, rentre: !deborde() };
     };
     let mode, left, top, w, h, p;
-    if (btn.classList.contains("rkbtn")) {                // bouton de rang (en bas à gauche) : mini-fenêtre au-dessus, sinon en dessous
-        w = Math.min(S.width - 2 * M, 270); left = borne(B.l, M, S.width - M - w);
+    if (btn.classList.contains("rkbtn") || btn.classList.contains("cmbtn")) {   // boutons de gauche (rang, combo) : fenêtre au-dessus, sinon en dessous
+        w = Math.min(S.width - 2 * M, btn.classList.contains("cmbtn") ? WMAX : 270); left = borne(B.l, M, S.width - M - w);
         const dispoH = B.t - F - M, naturelle = mesurer(w, 9999).h;
         if (dispoH >= naturelle || dispoH >= 110) { mode = "h"; h = mesurer(w, dispoH).h; top = B.t - F - h; }
         else { mode = "b"; top = B.b + F; h = mesurer(w, S.height - top - M).h; }
@@ -828,6 +862,7 @@ async function ouvrirFiche(n) {
     const src = i => esc(i.src);
     const ti = d.titan && (tx(d.titan.nom) || tx(d.titan.capacite)) ? d.titan : null;
     const no = tx(d.notes);
+    const cb = comboDe(code);   // synergies / menaces / contres / tags (data/combo.js) : bouton « Combo » sous le rang
     // Stats : objet { creatures: 4, pioche: 2.5, ... } (0 à 5). Champ absent ou vide = critère non affiché.
     const sd = d.stats && typeof d.stats === "object" && !Array.isArray(d.stats) ? d.stats : {};
     const st = STATS_CRITERES.map(([k, fr, en]) => {
@@ -847,6 +882,7 @@ async function ouvrirFiche(n) {
         rank: () => `<b class="bulle-titre">${esc(rk.tier)} Tier · ${esc(rk.metal[langue] || rk.metal.fr)}</b><p>${t("Code de complexité")} : ${esc(rk.complexite[langue] || rk.complexite.fr)}</p><p class="bulle-aide">${t("S = plus complexe · D = plus simple")}</p>`,
         titan: () => `<b class="bulle-titre">${esc(tx(ti.nom) || t("Titan"))}</b><p>${esc(tx(ti.capacite))}</p>`,
         notes: () => `<b class="bulle-titre">${t("Notes")}</b><p>${esc(no)}</p>`,
+        combo: () => htmlCombo(code, cb),
         stats: () => `<b class="bulle-titre">${t("Statistiques")}</b>${st.map(x => `<div class="stat-l"><span>${esc(x.label)}</span><span class="etoiles" style="--v:${x.v}" role="img" aria-label="${x.v}/5">★★★★★</span></div>`).join("")}`
     };
     const dispo = [ti && "titan", st.length && "stats", no && "notes"].filter(Boolean);   // ordre des boutons, de haut en bas : Titan, Stats, Notes
@@ -857,14 +893,15 @@ async function ouvrirFiche(n) {
     const art = !a.illus ? "" : flipable
         ? `<div class="fiche-art flip"><div class="flip-in"><div class="flip-face"><img src="${src(a.illus)}" alt=""></div><div class="flip-face flip-dos"><img src="${src(a.illus2)}" alt=""></div></div><!--BADGE--></div>`
         : `<div class="fiche-art"><img src="${src(a.illus)}" alt=""></div>`;
-    const rang = rkVars ? `<button type="button" class="rkbtn rk-${esc(d.rank.code)}" data-b="rank" aria-expanded="false" style="${esc(rkVars)}"><span class="rk-ico" aria-hidden="true">${esc(rk.icone || "🏅")}</span><span>${esc(rk.tier)} Tier</span></button>` : "";
-    const nbBtn = Math.max(dispo.length, rang ? 1 : 0);   // hauteur réservée au-dessus des cartes (colonne de droite, ou rang seul)
+    const rang = rkVars ? `<button type="button" class="rkbtn rk-${esc(d.rank.code)}${cb ? " haut" : ""}" data-b="rank" aria-expanded="false" style="${esc(rkVars)}"><span class="rk-ico" aria-hidden="true">${esc(rk.icone || "🏅")}</span><span>${esc(rk.tier)} Tier</span></button>` : "";
+    const boutonCombo = cb ? `<button type="button" class="fbtn cmbtn" data-b="combo" aria-expanded="false"><span class="cm-ico" aria-hidden="true">🔗</span><span>${t("Combo")}</span></button>` : "";
+    const nbBtn = Math.max(dispo.length, (rang ? 1 : 0) + (cb ? 1 : 0));   // hauteur réservée : colonne de droite (Titan/Stats/Notes) ou pile de gauche (rang + combo)   // hauteur réservée au-dessus des cartes (colonne de droite, ou rang seul)
     const boutons = dispo.length ? `<div class="fiche-boutons">${dispo.map(k => `<button type="button" class="fbtn" data-b="${k}" aria-expanded="false">${ICONES_FICHE[k]}<span>${t(k === "stats" ? "Stats" : k === "notes" ? "Notes" : "Titan")}</span></button>`).join("")}</div>` : "";
     const ouvertCartes = a.ind ? `<div class="fiche-cartes ind">${a.ind.map(i => `<img src="${src(i)}" alt="">`).join("")}`
         : a.cards ? `<div class="fiche-cartes"><img src="${src(a.cards)}" alt="">`
         : nbBtn ? `<div class="fiche-cartes vide">` : "";
     // Pastille : dans la zone des cartes, juste au-dessus du rang (décalée d'un cran si le rang existe) ; sans zone cartes, en bas à gauche de l'illustration.
-    const cartes = ouvertCartes ? ouvertCartes + boutons + rang + (flipable ? badge(rang ? " sur-rang" : "") : "") + "</div>" : "";
+    const cartes = ouvertCartes ? ouvertCartes + boutons + rang + boutonCombo + (flipable ? badge(rang || cb ? " sur-rang" + (rang && cb ? " haut" : "") : "") : "") + "</div>" : "";
     const artHtml = art.replace("<!--BADGE-->", flipable && !ouvertCartes ? badge(" dans-art") : "");
 
     fermerFiche(true);
@@ -898,6 +935,7 @@ async function ouvrirFiche(n) {
         bulle.setAttribute("role", "dialog");
         bulle.innerHTML = `<i class="bulle-pointe"></i><div class="bulle-corps">${contenu[k]()}</div>`;
         scene.appendChild(bulle);
+        if (k === "combo") { bulle.addEventListener("click", e => clicPastilleCombo(e, bulle, placer)); bulle.addEventListener("toggle", () => placer(), true); }   // détails repliables / explication : on replace la bulle
         scene.classList.add("ouvert");
         btn.classList.add("actif"); btn.setAttribute("aria-expanded", "true");
         placer();
@@ -1210,6 +1248,23 @@ function rendreMain() {
         d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
         `</div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
     astucePremierDraft();
+    majHalosDraft();
+}
+
+// Halos du draft : une fois une faction cochée, les autres factions de la main s'illuminent en vert si elles font une synergie avec la sélection,
+// en rouge si elles la contrent (menace). Données : DATA.combo (data/combo.js). Sans données ou sans sélection : aucun halo.
+function majHalosDraft() {
+    const cartes = document.querySelectorAll(".carte-draft");
+    cartes.forEach(b => b.classList.remove("cb-syn", "cb-men"));
+    const d = draft, base = (window.DATA && DATA.combo) || {};
+    if (!d || d.mode !== "draft" || d.ecran !== "choix" || !d.sel.length) return;
+    const main = d.mains[d.etape], choisis = d.sel.map(i => CODES[main[i]]).filter(Boolean);
+    cartes.forEach((b, k) => {
+        const c = CODES[main[k]];
+        if (!c || d.sel.includes(k)) return;
+        if (choisis.some(x => ((base[x] || {}).syn || []).includes(c))) b.classList.add("cb-syn");
+        else if (choisis.some(x => ((base[x] || {}).men || []).includes(c))) b.classList.add("cb-men");
+    });
 }
 
 function basculerDraft(i) {
@@ -1218,6 +1273,7 @@ function basculerDraft(i) {
     document.querySelectorAll(".carte-draft").forEach((b, k) => b.classList.toggle("sel", d.sel.includes(k)));
     $("nbSel").textContent = d.sel.length;
     $("btnValider").disabled = d.sel.length !== 2;
+    majHalosDraft();
 }
 
 function validerMain() {

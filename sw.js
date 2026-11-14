@@ -13,7 +13,7 @@ const IMG_MAX = 700;   // nombre maximum d'images gardées en cache (les plus an
 
 const SITE = [
   "./", "index.html", "style.css", "script.js", "manifest.json",
-  "data/data.js", "data/factions.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/fonts/CurseCasualJVE.woff2", "data/fonts/CurseCasualJVE.ttf", "data/fonts/HennyPenny.woff2", "data/fonts/HennyPenny.ttf", "data/fonts/Shojumaru.woff2", "data/fonts/Shojumaru.ttf", "data/fonts/Fairydust.woff2", "data/fonts/Fairydust.ttf", "data/fonts/DeadheadRough.woff2", "data/fonts/DeadheadRough.ttf", "data/fonts/StickRice.woff2", "data/fonts/StickRice.ttf",
+  "data/data.js", "data/factions.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/combo.js", "data/fonts/CurseCasualJVE.woff2", "data/fonts/CurseCasualJVE.ttf", "data/fonts/HennyPenny.woff2", "data/fonts/HennyPenny.ttf", "data/fonts/Shojumaru.woff2", "data/fonts/Shojumaru.ttf", "data/fonts/Fairydust.woff2", "data/fonts/Fairydust.ttf", "data/fonts/DeadheadRough.woff2", "data/fonts/DeadheadRough.ttf", "data/fonts/StickRice.woff2", "data/fonts/StickRice.ttf",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"
 ];
 

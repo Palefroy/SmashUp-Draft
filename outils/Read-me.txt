@@ -1,0 +1,18 @@
+Quand le dépôt est mis à jour : https://github.com/daniprec/Smash-Up-Synergies
+
+Télécharger les 3 fichiers modifiés depuis GitHub (bouton « Download raw file ») : data.js, relationship-data.js et tag-data.js. Tu les déposes dans outils/source/ en écrasant les anciens. Les noms peuvent varier (data_1.js…), le script reconnaît chaque fichier à son contenu.
+Lancer python outils/build_combo.py. Il réécrit tout seul data/combo.js avec les nouvelles synergies, menaces, contres et tags. Tu n’as rien d’autre à toucher dans ton appli.
+
+Ce qui n’est pas automatique : les traductions
+
+Les nouvelles explications du podcast arrivent en anglais, et le script les affiche en anglais tant qu’elles ne sont pas traduites.
+Il t’écrit alors la liste de ce qui manque dans outils/combo_fr_manquant.json et te dit combien il y en a.
+Pour les traduire, tu m’envoies ce petit fichier (ou tu le fais toi-même) et je te rends les lignes à copier dans outils/combo_fr.json. Tu relances ensuite le script. Quand il ne reste rien, il écrit « Toutes les traductions sont présentes ».
+
+Cas particuliers
+
+- Nouvelle faction dans le dépôt : si le script affiche « NOMS INCONNUS », il manque une ligne dans la table NOM_EN en haut du script (nom anglais → code à 3 lettres). Elle est ignorée tant que tu ne l’ajoutes pas.
+- Nouveau tag : son libellé reste en anglais tant qu’il n’est pas dans combo_fr.json, rubrique tags.
+- Après la mise à jour : tu publies comme d’habitude. sw.js lit déjà combo.js en réseau d’abord, donc les joueurs ont la nouvelle version dès qu’ils sont en ligne.
+
+Lien PWA : https://danielprecioso.com/Smash-Up-Synergies/
