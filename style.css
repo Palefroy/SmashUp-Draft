@@ -732,3 +732,9 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 [data-theme="easter"] h2 { font-size: 22px; }                                             /* Fairydust */
 [data-theme="japan"] h2 { font-size: 15px; }                                              /* Shojumaru */
 [data-theme="china"] h2 { font-size: 24.5px; letter-spacing: 1.5px; }                       /* Stick Rice */
+
+/* Factions du draft / pick / pick & ban : fond translucide + fine bordure pleine (bleu = choix, rouge = ban).
+   Le centre laisse voir le panneau : on ne confond plus avec « Tirer les Factions », la sélection ni les halos de menace (rouge). */
+.carte-draft, .carte-pool { --k: 59,130,246; color: var(--text-color); text-shadow: none; background: rgba(var(--k), .2); border: 1.5px solid rgba(var(--k), .95); }
+.carte-pool.btn-danger { --k: 239,68,68; background: rgba(var(--k), .2); }
+.carte-draft.sel, .carte-pool.sel { background: rgba(var(--k), .42); }
