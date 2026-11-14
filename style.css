@@ -735,33 +735,73 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 [data-theme="japan"] h2 { font-size: 15px; }                                              /* Shojumaru */
 [data-theme="china"] h2 { font-size: 24.5px; letter-spacing: 1.5px; }                       /* Stick Rice */
 
-/* Factions du draft / pick / pick & ban : fond translucide + fine bordure pleine (bleu = choix, rouge = ban).
-   Le centre laisse voir le panneau : on ne confond plus avec « Tirer les Factions », la sélection ni les halos de menace (rouge). */
-.carte-draft, .carte-pool { --k: 59,130,246; color: var(--text-color); text-shadow: none; background: rgba(var(--k), .2); border: 1.5px solid rgba(var(--k), .95); }
-.carte-pool.btn-danger { --k: 239,68,68; background: rgba(var(--k), .2); }
-.carte-draft.sel, .carte-pool.sel { background: rgba(var(--k), .42); }
+/* ===== Couleurs adaptées au thème : cartes de faction (draft / pick / pick & ban) et fenêtres pop-up =====
+   Chaque thème fournit des couleurs en triplets RGB (pour pouvoir les rendre translucides) :
+   --k = couleur principale (celle des boutons du thème), --k2 = version plus foncée (bas du dégradé), --kb = couleur du liseré,
+   --kx = couleur de la phase Ban (jamais rouge : le rouge reste réservé aux menaces), --ka1 / --ka2 = opacité du fond (haut / bas).
+   Thèmes clairs : fond léger (texte sombre). Thèmes sombres : fond plus dense (texte clair). Le texte garde toujours la couleur du thème. */
+:root, [data-theme="light"]  { --k: 0,123,255;   --k2: 0,95,204;    --kb: 0,105,225;    --kx: 108,117,125; --ka1: .22; --ka2: .14; }
+[data-theme="dark"]          { --k: 59,130,246;  --k2: 37,99,200;   --kb: 96,165,250;   --kx: 130,140,165; --ka1: .42; --ka2: .28; }
+[data-theme="sepia"]         { --k: 142,109,77;  --k2: 110,80,52;   --kb: 142,109,77;   --kx: 112,100,88;  --ka1: .26; --ka2: .18; }
+[data-theme="parchment"]     { --k: 93,64,55;    --k2: 70,45,38;    --kb: 93,64,55;     --kx: 70,60,56;    --ka1: .26; --ka2: .18; }
+[data-theme="felt"]          { --k: 184,37,37;   --k2: 133,22,22;   --kb: 212,175,55;   --kx: 80,130,90;   --ka1: .45; --ka2: .30; }
+[data-theme="wood"]          { --k: 139,90,43;   --k2: 105,66,28;   --kb: 190,130,70;   --kx: 150,115,85;  --ka1: .45; --ka2: .30; }
+[data-theme="halloween"]     { --k: 224,83,22;   --k2: 153,41,8;    --kb: 255,155,70;   --kx: 130,80,170;  --ka1: .42; --ka2: .28; }
+[data-theme="christmas"]     { --k: 201,36,50;   --k2: 138,17,27;   --kb: 245,208,105;  --kx: 50,150,85;   --ka1: .45; --ka2: .30; }
+[data-theme="easter"]        { --k: 232,104,156; --k2: 184,64,122;  --kb: 226,155,189;  --kx: 95,170,106;  --ka1: .26; --ka2: .18; }
+[data-theme="japan"]         { --k: 215,51,59;   --k2: 156,28,36;   --kb: 240,200,110;  --kx: 90,105,200;  --ka1: .45; --ka2: .30; }
+[data-theme="china"]         { --k: 226,60,45;   --k2: 164,26,20;   --kb: 250,210,110;  --kx: 40,170,125;  --ka1: .45; --ka2: .30; }
+
+/* Factions : fond translucide en dégradé aux couleurs du thème, liseré du thème, ombre du thème. Le fond reste assez dense pour que le texte soit lisible. */
+.carte-draft, .carte-pool {
+    color: var(--text-color); text-shadow: var(--text-shadow);
+    background: linear-gradient(180deg, rgba(var(--k), var(--ka1)), rgba(var(--k2), var(--ka2)));
+    border: 1.5px solid rgba(var(--kb), .85); box-shadow: var(--btn-shadow);
+}
+.carte-draft.sel, .carte-pool.sel { background: linear-gradient(180deg, rgba(var(--k), calc(var(--ka1) + .3)), rgba(var(--k2), calc(var(--ka2) + .3))); border-color: rgba(var(--kb), 1); }
 
 /* Sélection : coche blanche dans le coin haut-droit (les cartes sélectionnées n'ont jamais de pastille de synergie) */
 .carte-draft.sel::after, .carte-pool.sel::after { content: "✓"; position: absolute; top: -7px; right: -6px; z-index: 2; width: 19px; height: 19px; border-radius: 50%; background: #fff; color: #101418; font: 800 12px/19px system-ui, sans-serif; text-align: center; text-shadow: none; pointer-events: none; }
 
-/* Phase Ban : bleu assombri (tirant sur l'ardoise), titre en bandeau sombre avec ✕, bouton « Bannir », nom barré sur la faction touchée. Aucun rouge : le rouge reste réservé aux menaces. */
-.carte-pool.ban { --k: 92,106,170; background: rgba(var(--k), .3); filter: saturate(.85); }
+/* Phase Ban : couleur « ban » du thème (distincte du choix, jamais rouge), titre en bandeau aux couleurs du thème, bouton « Bannir », nom barré sur la faction touchée. */
+.carte-pool.ban { --k: var(--kx); --k2: var(--kx); --kb: var(--kx); }
 .carte-pool.ban.sel .nom { text-decoration: line-through; text-decoration-thickness: 2px; }
-.draft-tete.ban { padding: 6px 30px; border-radius: 10px; background: rgba(20,22,34,.92); color: #f1f1f1; border: 1px solid rgba(150,160,215,.5); text-shadow: none; }
-#btnValider.btn-ban { background: linear-gradient(180deg, #4b5486 0%, #2b3158 100%); border: 1px solid rgba(170,180,230,.5); color: #fff; }
+.draft-tete.ban { padding: 6px 30px; border-radius: 10px; background: var(--summary-bg); color: var(--text-color); border: var(--panel-border); text-shadow: var(--text-shadow); }
+#btnValider.btn-ban { background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.42)), rgb(var(--kx)); border: var(--btn-border); box-shadow: var(--btn-shadow); color: #fff; }
 
 /* Ligne de complexité de la légende (bouton Rang) */
 .cb-legende .lg-rang { gap: 4px; }
 .cb-legende .rk-mini.rk-leg { position: static; display: inline-flex; width: 15px; height: 15px; font-size: 9px; }
 
-/* Carte « Reprendre la partie ? » et confirmation « Quitter la partie ? » : même DA que les bulles (fond sombre, liseré ambre, boutons en pastille lumineuse) */
-.reprise { box-sizing: border-box; max-width: 320px; margin: 4px auto; padding: 14px 16px; border-radius: 14px; background: rgba(20,20,28,.97); color: #f1f1f1; border: 1px solid rgba(255,211,106,.55); box-shadow: 0 8px 24px rgba(0,0,0,.5); font: 500 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; text-shadow: none; }
-.reprise-titre { display: block; font-size: 15px; font-weight: 800; color: #ffd36a; }
-.reprise p { margin: 6px 0 12px; opacity: .9; }
-.reprise-btns { display: flex; justify-content: center; gap: 8px; }
-.rp-btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 7px 16px; border-radius: 12px; cursor: pointer; font: 700 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; color: #f1f1f1; background: rgba(14,16,24,.74); border: 1px solid rgba(var(--cg), .5); box-shadow: 0 0 10px rgba(var(--cg), .28), 0 3px 10px rgba(0,0,0,.45); -webkit-tap-highlight-color: transparent; transition: border-color .15s, box-shadow .15s; }
-.rp-btn:hover { border-color: rgba(var(--cg), .95); }
-.rp-btn:focus-visible { outline: 2px solid rgb(var(--cg)); outline-offset: 2px; }
-.rp-ok { --cg: 242,182,48; color: #ffd36a; }
-.rp-no { --cg: 170,178,200; }
-.dlg-fond { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 26px; background: rgba(0,0,0,.62); }
+/* Fenêtres pop-up « Reprendre la partie ? » et « Quitter la partie ? » : petite fenêtre au premier plan, centrée puis relevée d'environ 5 % de la hauteur,
+   fond assombri (et légèrement flouté) autour. Couleurs prises dans le thème appliqué (panneau, liseré, boutons, texte). */
+.dlg-fond {
+    position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center;
+    padding: 26px 26px calc(26px + 10vh);   /* le surplus en bas remonte la fenêtre un peu au-dessus du centre */
+    background: rgba(0,0,0,.62); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+}
+.reprise {
+    box-sizing: border-box; width: 100%; max-width: 320px; padding: 20px 18px 16px; border-radius: 16px; text-align: center;
+    background: var(--panel-bg); color: var(--text-color); border: var(--panel-border);
+    box-shadow: var(--panel-shadow), 0 14px 40px rgba(0,0,0,.55); text-shadow: var(--text-shadow);
+    font: 500 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+/* Sur un panneau semi-transparent (sépia, parchemin…), on ajoute un fond plein dessous pour que la fenêtre reste lisible au-dessus du fond assombri */
+.dlg-fond .reprise { background-color: var(--bg-color); background-image: var(--panel-bg); }
+.reprise-titre { display: block; font-size: 17px; font-weight: 800; color: rgb(var(--kb)); }
+.reprise p { margin: 8px 0 16px; opacity: .92; }
+.reprise-btns { display: flex; justify-content: center; gap: 10px; }
+.rp-btn {
+    all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; flex: 1 1 0; min-height: 40px; padding: 8px 14px;
+    border-radius: 10px; cursor: pointer; font: 700 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
+    -webkit-tap-highlight-color: transparent; transition: filter .15s, transform .1s;
+}
+.rp-btn:hover { filter: brightness(1.1); }
+.rp-btn:active { transform: translateY(1px); }
+.rp-btn:focus-visible { outline: 2px solid rgb(var(--kb)); outline-offset: 2px; }
+.rp-ok { background: var(--btn-primary); color: #fff; border: var(--btn-border); box-shadow: var(--btn-shadow); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.rp-no { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); text-shadow: none; }
+@media (prefers-reduced-motion: no-preference) {
+    .dlg-fond { animation: fonduFiche .18s ease-out; }
+    .dlg-fond .reprise { animation: ficheIn .2s ease-out; }
+}

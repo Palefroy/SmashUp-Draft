@@ -160,7 +160,7 @@ function appliquerLangue() {
     rendreSegments();
     genererChampsJoueurs();
     rendreHistorique();
-    if (draft) rendreDraft(); else if (dernierResultat) rendreResultat(); else if (document.querySelector("#resultat .reprise")) proposerReprise();
+    if (draft) rendreDraft(); else if (dernierResultat) rendreResultat(); else if (document.querySelector(".dlg-reprise")) proposerReprise();
 }
 
 /* ---------- Thème ---------- */
@@ -1277,19 +1277,26 @@ function draftSauve() {
     if ((Date.now() - s.ts) / 36e5 > DRAFT_MAX_H) { effacerDraft(); return null; }
     return s;
 }
-// Carte « Reprendre la partie ? » affichée au lancement quand un draft était en cours.
+// Pop-up « Reprendre la partie ? » affichée au lancement quand un draft était en cours (fenêtre au premier plan, fond assombri).
+// Pas de fermeture par clic sur le fond : il faut choisir Reprendre ou Abandonner.
+function fermerReprise() { document.querySelectorAll(".dlg-fond.dlg-reprise").forEach(e => e.remove()); }
 function proposerReprise() {
     const s = draftSauve();
     if (!s) return false;
     const d = s.draft;
-    $("resultat").innerHTML = `<div class="reprise" role="dialog" aria-label="${t("Reprendre la partie ?")}"><b class="reprise-titre">${t("Reprendre la partie ?")}</b>` +
+    fermerReprise();
+    const f = document.createElement("div");
+    f.className = "dlg-fond dlg-reprise";
+    f.innerHTML = `<div class="reprise dlg" role="alertdialog" aria-modal="true" aria-label="${t("Reprendre la partie ?")}"><b class="reprise-titre">${t("Reprendre la partie ?")}</b>` +
         `<p>${t(MODE_LABEL[d.mode] || d.mode)} · ${d.pris.length} ${t("joueurs")} · ${t("étape")} ${Math.min(d.etape + 1, d.ordre.length)}/${d.ordre.length}</p>` +
         `<div class="reprise-btns"><button type="button" class="rp-btn rp-ok" onclick="reprendreDraft()">${t("Reprendre")}</button><button type="button" class="rp-btn rp-no" onclick="abandonnerDraft()">${t("Abandonner")}</button></div></div>`;
+    document.body.appendChild(f);
     return true;
 }
 function reprendreDraft() {
     const s = draftSauve();
     if (!s) return;
+    fermerReprise();
     nomsFixes = Array.isArray(s.noms) ? s.noms : [];
     draft = s.draft;
     draft.sel = []; draft.cur = null;
@@ -1298,6 +1305,7 @@ function reprendreDraft() {
     rendreDraft();
 }
 function abandonnerDraft() {
+    fermerReprise();
     effacerDraft();
     draft = null;
     $("resultat").innerHTML = "";
@@ -1342,6 +1350,7 @@ function confirmerQuitter() {
     });
     document.body.appendChild(f);
 }
+document.addEventListener("keydown", e => { if (e.key === "Escape") { const q = document.querySelector(".dlg-fond:not(.dlg-reprise)"); if (q) q.remove(); } });   // Échap sur « Quitter la partie ? » = Rester
 
 /* ---------- Draft / Pick / Pick & Ban ---------- */
 function demarrerDraft(pioche, nbJ, mode, premier, taille) {
