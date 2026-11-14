@@ -244,12 +244,13 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
     <div id="resultat"></div>
 
     <div id="paramContainer" class="menu-extensions tab-hidden" style="text-align:center">
+        <button type="button" class="btn-info" id="btnModesInfo" onclick="basculerInfoModes()" data-ttl="Explication des modes" title="What the modes mean" aria-label="What the modes mean" aria-expanded="false" aria-controls="modesInfo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-5M12 7.8h.01"/></svg></button>
+        <div class="astuce astuce-modes" id="modesInfo" role="status" hidden></div>
         <div class="param-row"><span class="lbl" data-t="Nombre de joueurs">Number of players</span><div class="seg" id="segJ"></div></div>
         <div class="param-row"><span class="lbl" data-t="Mode">Mode</span><div class="seg" id="segMode"></div></div>
         <div class="param-row tab-hidden" id="rowMain"><span class="lbl" data-t="Factions proposées par joueur">Factions offered per player</span><div class="seg" id="segMain"></div></div>
         <div class="param-row tab-hidden" id="rowPool"><span class="lbl" data-t="Taille de la réserve">Common pool size</span><div class="seg" id="segPool"></div></div>
-        <div class="param-row"><span class="lbl" data-t="Afficher les synergies">Show synergies</span><div class="seg" id="segSyn"></div></div>
-        <div class="param-row"><span class="lbl" data-t="Afficher les menaces et contres">Show threats and counters</span><div class="seg" id="segMen"></div></div>
+        <div class="param-row"><div class="cb-filtres" id="segFiltres"></div></div>
         <div id="nomsJoueursContainer"></div>
     </div>
 

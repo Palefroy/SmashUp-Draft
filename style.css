@@ -320,21 +320,35 @@ body { padding-bottom: 80px; }
 .bulle p.cb-expl { margin-top: .5em; padding: .5em .65em; border-radius: 10px; background: rgba(255,255,255,.07); font-size: .86em; }
 /* Halos du draft : vert = synergie avec la sélection, rouge = menace (contre la sélection) */
 /* Indicateurs de synergie / matchup (draft, pick, pick & ban). Pastilles dessinées en SVG (pas d'émoji) : fond sombre + pictogramme coloré.
-   Vert = synergie (puzzle) ; ambre = contre une faction adverse (bouclier) ; rouge = menace tes factions (triangle). */
+   Vert = synergie (chaîne) ; ambre = contre une faction adverse (bouclier) ; rouge = menace tes factions (triangle). */
 :root {
-    --ico-syn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%234ade80' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h8v3.5a2.5 2.5 0 0 1 0 5V18H3z'/%3E%3Cpath d='M12.5 6H21v12h-8.5v-2.84A3.5 3.5 0 0 0 12.5 8.84z'/%3E%3C/g%3E%3C/svg%3E");
+    --ico-syn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%234ade80' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/g%3E%3C/svg%3E");
     --ico-ctr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%23f2b630' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'/%3E%3C/g%3E%3C/svg%3E");
     --ico-thr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23101418'/%3E%3Cg transform='translate(4.8 4.8) scale(.6)' fill='none' stroke='%23f87171' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4l9 16H3z M12 10v4 M12 17h.01'/%3E%3C/g%3E%3C/svg%3E");
 }
 .carte-draft, .carte-pool { position: relative; transition: box-shadow .2s, transform .15s; }
 .carte-draft.cb-syn, .carte-pool.cb-syn { box-shadow: 0 0 0 2px #4ade80, 0 0 14px 3px rgba(74,222,128,.65); }
-.carte-pool.cb-ctr:not(.cb-syn) { box-shadow: 0 0 0 2px #f2b630; }
-.carte-pool.cb-thr:not(.cb-syn) { box-shadow: 0 0 0 2px #f87171; }
+.carte-draft.cb-ctr:not(.cb-syn), .carte-pool.cb-ctr:not(.cb-syn) { box-shadow: 0 0 0 2px #f2b630; }
+.carte-draft.cb-thr:not(.cb-syn), .carte-pool.cb-thr:not(.cb-syn) { box-shadow: 0 0 0 2px #f87171; }
 .cb-syn::after, .cb-ctr::before, .cb-thr::before { content: ""; position: absolute; top: -7px; width: 19px; height: 19px; z-index: 2; pointer-events: none; background: center / contain no-repeat; }
 .cb-syn::after { right: -6px; background-image: var(--ico-syn); }
 .cb-ctr::before { left: -6px; background-image: var(--ico-ctr); }
 .cb-thr::before { left: -6px; background-image: var(--ico-thr); }
 .carte-pool.sel { outline: 3px solid #ffd54a; transform: scale(1.06); filter: brightness(1.15); }
+/* Barre « Afficher : Synergies · Menaces · Contre » : une seule ligne compacte, boutons à bascule colorés (vert / rouge / jaune) */
+.cb-filtres { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 5px; font-size: 12px; }
+.cb-filtres-jeu { margin: 4px 0 8px; }
+.cb-filtres .cbf-lbl { font-weight: 700; margin-right: 2px; white-space: nowrap; }
+.cb-filtres button.cbf { all: unset; box-sizing: border-box; cursor: pointer; padding: 3px 9px; border-radius: 999px; font: 700 12px/1.25 system-ui, -apple-system, "Segoe UI", sans-serif; white-space: nowrap; color: var(--text-color); background: transparent; border: 1.5px solid rgba(var(--cg), .7); opacity: .6; box-shadow: none !important; text-shadow: none; -webkit-tap-highlight-color: transparent; transition: opacity .15s, background-color .15s; }
+.cb-filtres button.cbf.on { opacity: 1; color: #101418; background: rgb(var(--cg)); border-color: rgb(var(--cg)); }
+.cb-filtres button.cbf:focus-visible { outline: 2px solid rgb(var(--cg)); outline-offset: 2px; }
+.cbf-syn { --cg: 74,222,128; }
+.cbf-men { --cg: 248,113,113; }
+.cbf-con { --cg: 242,182,48; }
+#paramContainer { position: relative; }
+.astuce-modes { top: 40px; right: 8px; --pointe: 14px; max-width: min(300px, calc(100vw - 40px)); }
+.astuce-modes p { margin: 0 0 .55em; }
+.astuce-modes p:last-child { margin-bottom: 0; }
 .cb-legende { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin: 2px 0 10px; font-size: 12px; opacity: .9; }
 .cb-legende:empty { display: none; }
 .cb-legende .lg { display: inline-flex; align-items: center; gap: 5px; }

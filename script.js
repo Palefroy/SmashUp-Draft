@@ -63,18 +63,24 @@ const t = n => langue === "en" ? (EN[n] || n.replace(" : ", ": ")) : n;
 Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Threats", "Contre": "Counters",
     "Afficher les synergies": "Show synergies", "Afficher les menaces et contres": "Show threats and counters", "Activé": "On", "Désactivé": "Off",
     "Synergie avec ta sélection": "Synergy with your selection", "Synergie avec tes factions": "Synergy with your factions",
-    "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions" });
+    "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions",
+    "Afficher :": "Show:", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
+    "Explication des modes": "What the modes mean",
+    "Tirage au sort : chaque joueur reçoit ses factions au hasard, sans choisir.": "Random draw: each player is dealt factions at random, no choice involved.",
+    "Draft : chaque joueur reçoit sa propre main de factions (nombre réglable) et en garde 2. Les mains sont secrètes : on se passe l'écran.": "Draft: each player gets their own hand of factions (adjustable size) and keeps 2. Hands are secret, so you pass the screen around.",
+    "Pick : une réserve commune est affichée. Chacun prend une faction à tour de rôle, en serpent (1→n puis n→1), jusqu'à en avoir 2.": "Pick: a shared pool is shown. Players take one faction each in turn, snake order (1→n then n→1), until everyone has 2.",
+    "Pick & Ban : réserve commune plus grande. Chacun bannit une faction, puis chacun en choisit une ; puis on recommence dans l'ordre inverse (2 bans et 2 picks par joueur).": "Pick & Ban: larger shared pool. Everyone bans a faction, then everyone picks one; then the same again in reverse order (2 bans and 2 picks per player)." });
 
 // ---------- Combo (data/combo.js : synergies, menaces, contres, tags de style de jeu) ----------
 // DATA.combo[CODE] = { tags: [id], syn: [CODE], men: [CODE qui contrent CODE], con: [CODE que CODE contre] } ; window.COMBO_INFO = { tags: { id: { fr, en } }, expl: { "p:A|B" ou "c:A>B": { fr, en } } }
 const NOM_PAR_CODE = {};
 for (const [n, c] of Object.entries(CODES)) NOM_PAR_CODE[c] = n;
 const nomDeCode = c => t(NOM_PAR_CODE[c] || c);
-// Données de combo d'une faction, filtrées par les réglages (P.syn = synergies, P.men = menaces et contres). Les deux coupés : pas de bouton Combo.
+// Données de combo d'une faction, filtrées par les réglages (P.syn = synergies, P.men = menaces, P.con = contres). Les trois coupés : pas de bouton Combo.
 const comboDe = code => {
     const c = (window.DATA && DATA.combo || {})[code];
-    if (!c || (!P.syn && !P.men)) return null;
-    const v = { tags: c.tags || [], syn: P.syn ? (c.syn || []) : [], men: P.men ? (c.men || []) : [], con: P.men ? (c.con || []) : [] };
+    if (!c || (!P.syn && !P.men && !P.con)) return null;
+    const v = { tags: c.tags || [], syn: P.syn ? (c.syn || []) : [], men: P.men ? (c.men || []) : [], con: P.con ? (c.con || []) : [] };
     return v.syn.length || v.men.length || v.con.length || v.tags.length ? v : null;
 };
 // Relations entre deux codes de faction (les deux sens de la donnée sont lus : un oubli d'un côté ne fait pas disparaître la relation).
@@ -89,9 +95,9 @@ function htmlCombo(code, cb) {
         `<details class="cb-sec cb-det ${cls}"${ouvert ? " open" : ""}><summary>${t(titre)} <small>(${liste.length})</small></summary><div class="cb-chips">${pastilles(liste, cle)}</div><p class="cb-expl" hidden></p></details>`;
     const tags = cb.tags.map(id => info.tags[id] ? `<span class="cb-chip cb-tag">${esc(lbl(info.tags[id]))}</span>` : "").join("");
     return (tags ? `<div class="cb-chips cb-tags">${tags}</div>` : "")
-        + section("s-syn", "Synergies", cb.syn, c => "p:" + [code, c].sort().join("|"), true)      // dépliée par défaut, repliable
-        + section("s-men", "Menaces", cb.men, c => "c:" + c + ">" + code, false)
-        + section("s-con", "Contre", cb.con, c => "c:" + code + ">" + c, false);
+        + section("s-syn", "Synergies", cb.syn, c => "p:" + [code, c].sort().join("|"), true)      // toutes les sections sont dépliées par défaut (repliables)
+        + section("s-men", "Menaces", cb.men, c => "c:" + c + ">" + code, true)
+        + section("s-con", "Contre", cb.con, c => "c:" + code + ">" + c, true);
 }
 // Clic sur une pastille avec explication : l'affiche (ou la masque) sous sa section.
 function clicPastilleCombo(e, bulle, placer) {
@@ -111,7 +117,7 @@ let draft = null, historique = [], dernierResultat = null;
 
 const MODES = ["tirage", "draft", "pick", "pickban"];
 const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "Pick & Ban" };
-const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true };   // syn / men : afficher les synergies / les menaces et contres (activés par défaut)
+const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true, con: true };   // syn / men / con : afficher les synergies / les menaces / les contres (activés par défaut)
 let P = { ...DEFAUTS };
 
 const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter"];
@@ -457,12 +463,40 @@ function rendreSegments() {
     $("segPool").innerHTML = btn(`Auto (${poolAuto(P.mode, P.nbJ)})`, P.poolAuto, "setP('poolAuto',true)") +
         num("inPool", P.poolVal, !P.poolAuto, 2, 60, "setPInput('poolVal',this,2,60)");
 
-    $("segSyn").innerHTML = btn(t("Activé"), P.syn, "setP('syn',true)") + btn(t("Désactivé"), !P.syn, "setP('syn',false)");
-    $("segMen").innerHTML = btn(t("Activé"), P.men, "setP('men',true)") + btn(t("Désactivé"), !P.men, "setP('men',false)");
+    majFiltres();
+    $("modesInfo").innerHTML = ["Tirage au sort : chaque joueur reçoit ses factions au hasard, sans choisir.",
+        "Draft : chaque joueur reçoit sa propre main de factions (nombre réglable) et en garde 2. Les mains sont secrètes : on se passe l'écran.",
+        "Pick : une réserve commune est affichée. Chacun prend une faction à tour de rôle, en serpent (1→n puis n→1), jusqu'à en avoir 2.",
+        "Pick & Ban : réserve commune plus grande. Chacun bannit une faction, puis chacun en choisit une ; puis on recommence dans l'ordre inverse (2 bans et 2 picks par joueur)."]
+        .map(x => { const [titre, ...reste] = t(x).split(/ ?: /); return `<p><b>${esc(titre)}</b> : ${esc(reste.join(" : "))}</p>`; }).join("");
 
     $("rowMain").classList.toggle("tab-hidden", P.mode !== "draft");
     $("rowPool").classList.toggle("tab-hidden", P.mode !== "pick" && P.mode !== "pickban");
 }
+
+// Barre « Afficher : Synergies · Menaces · Contre » (vert / rouge / jaune), sur une seule ligne. Présente dans les paramètres ET au-dessus de la réserve / de la main
+// en Draft, Pick et Pick & Ban : les barres sont synchronisées (classe .cb-filtres).
+const FILTRES = [["syn", "Synergies"], ["men", "Menaces"], ["con", "Contre"]];
+const htmlFiltres = () => `<span class="cbf-lbl">${t("Afficher :")}</span>` + FILTRES.map(([k, n]) =>
+    `<button type="button" class="cbf cbf-${k}${P[k] ? " on" : ""}" aria-pressed="${!!P[k]}" onclick="basculerFiltre('${k}')">${t(n)}</button>`).join("");
+function majFiltres() { document.querySelectorAll(".cb-filtres").forEach(el => { el.innerHTML = htmlFiltres(); }); }
+function basculerFiltre(k) {
+    P[k] = !P[k];
+    sauvegarderParametres();
+    majFiltres();
+    if (draft) { if (draft.mode === "draft") majHalosDraft(); else majIndicateursPool(); }   // les indicateurs s'ajoutent / disparaissent tout de suite, sans recharger l'écran
+}
+// Petit « i » des paramètres : explique les 4 modes (se ferme en touchant ailleurs).
+function basculerInfoModes() {
+    const a = $("modesInfo"), b = $("btnModesInfo");
+    const ouvrir = a.hidden;
+    a.hidden = !ouvrir;
+    b.setAttribute("aria-expanded", String(ouvrir));
+}
+document.addEventListener("pointerdown", e => {
+    const a = $("modesInfo");
+    if (a && !a.hidden && !e.target.closest("#modesInfo, #btnModesInfo")) { a.hidden = true; $("btnModesInfo").setAttribute("aria-expanded", "false"); }
+}, true);
 
 function genererChampsJoueurs() {
     const c = $("nomsJoueursContainer");
@@ -590,7 +624,7 @@ function genererHTMLFactions() {
 // Encadré « Cartes spéciales » (sous « Personnalisé ») : pas de case à cocher, aucune incidence sur le tirage. Un seul bouton « Détails » : les notes s'ouvrent ensuite depuis la fiche.
 function texteNotes(code) { const o = (FICHES[code] || {}).notes || {}; return o[langue] || o.fr || o.en || ""; }
 function htmlSpeciales() {
-    const codes = Object.keys(SPECIALES);
+    const codes = Object.keys(SPECIALES).sort((a, b) => nomSpecial(a).localeCompare(nomSpecial(b), langue));   // ordre alphabétique : Démences, Monstres, Trésors
     if (!codes.length) return "";
     const lignes = codes.map(c => `<div class="fac-row"><span class="spec-nom">${esc(nomSpecial(c))}</span><span class="spec-btns"><button type="button" class="btn-det" data-det="${encodeURIComponent(c)}">${t("Détails")}</button></span></div>`).join("");
     return `<details class="ext-details ext-speciales"><summary>${t("Cartes spéciales")}</summary><div class="factions-list">${lignes}</div></details>`;
@@ -758,7 +792,7 @@ const luminance = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 const ICONES_FICHE = {
     notes: '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
     stats: '<svg viewBox="0 0 24 24" style="stroke-width:2.6"><path d="M5.5 20v-8M12 20V4.5M18.5 20v-5"/></svg>',
-    combo: '<svg viewBox="0 0 24 24"><path d="M3 6h8v3.5a2.5 2.5 0 0 1 0 5V18H3z"/><path d="M12.5 6H21v12h-8.5v-2.84A3.5 3.5 0 0 0 12.5 8.84z"/></svg>',   // deux pièces de puzzle qui s'emboîtent
+    combo: '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',   // deux maillons de chaîne
     titan: '<svg viewBox="0 0 24 24"><path d="M3.5 4.5 8 7.5h8l4.5-3-1.2 7.2c-.5 5-3.3 8.8-7.3 8.8s-6.8-3.8-7.3-8.8z"/><circle cx="9" cy="12.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="12.5" r="1.1" fill="currentColor" stroke="none"/></svg>'
 };
 let ficheCtl = null;   // contrôleur de la fiche ouverte : { fermerBulle, nettoyer }
@@ -1242,7 +1276,7 @@ function rendreDraft() {
     // Pick / Pick & Ban : toucher une faction = aperçu (synergies, contres) ; « Valider » verrouille le choix.
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
         d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " btn-danger" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
-        `<div class="cb-legende" id="cbLegende"></div>` +
+        `<div class="cb-filtres cb-filtres-jeu">${htmlFiltres()}</div><div class="cb-legende" id="cbLegende"></div>` +
         `<button id="btnValider" class="${type === "ban" ? "btn-danger" : ""}" ${d.cur == null ? "disabled" : ""} onclick="validerPool()">${t("Valider")}</button>` +
         (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
         d.pris.map((g, i) => `<div><b>${nomJ(i)}</b> : ${g.map(t).join(" & ") || "—"}</div>`).join("");
@@ -1273,20 +1307,21 @@ function choisirDraft(i) {
 }
 
 // Légende des indicateurs affichés (une ligne sous la réserve ; vide s'il n'y a aucun indicateur : rien ne s'affiche).
-function legende(nSyn, nCtr, nThr, texteSyn) {
+function legende(nSyn, nCtr, nThr, texteSyn, texteCtr, texteThr) {
     const el = $("cbLegende");
     if (!el) return;
     const p = [];
     if (nSyn) p.push(`<span class="lg lg-syn"><i></i>${t(texteSyn || "Synergie avec tes factions")}</span>`);
-    if (nCtr) p.push(`<span class="lg lg-ctr"><i></i>${t("Contre une faction adverse")}</span>`);
-    if (nThr) p.push(`<span class="lg lg-thr"><i></i>${t("Menace tes factions")}</span>`);
+    if (nCtr) p.push(`<span class="lg lg-ctr"><i></i>${t(texteCtr || "Contre une faction adverse")}</span>`);
+    if (nThr) p.push(`<span class="lg lg-thr"><i></i>${t(texteThr || "Menace tes factions")}</span>`);
     el.innerHTML = p.join("");
 }
 
 // Indicateurs de la réserve (Pick / Pick & Ban), recalculés à chaque sélection. Données : DATA.combo (data/combo.js) ; faction sans donnée = aucun indicateur.
-//   anneau vert + pastille puzzle : synergie avec mes factions déjà prises (en phase Pick : + la faction en aperçu)   [réglage « synergies »]
-//   phase Pick : pastille bouclier (ambre) = cette faction contre une faction adverse déjà prise                      [réglage « menaces et contres »]
-//   phase Ban  : pastille triangle (rouge) = cette faction menace mes factions déjà prises : candidate au bannissement [réglage « menaces et contres »]
+//   anneau vert + pastille chaîne : synergie avec mes factions déjà prises (+ la faction en aperçu)   [bouton « Synergies »]
+//   pastille bouclier (jaune)     : cette faction contre une faction adverse déjà prise              [bouton « Contre »]
+//   pastille triangle (rouge)     : cette faction menace mes factions déjà prises                    [bouton « Menaces »]
+//   Une carte n'a qu'une pastille de gauche : en phase Ban la menace prime, en phase Pick le contre prime.
 function majIndicateursPool() {
     const d = draft;
     if (!d || d.mode === "draft") return;
@@ -1294,8 +1329,7 @@ function majIndicateursPool() {
     btns.forEach((b, i) => { b.classList.toggle("sel", d.cur === i); b.classList.remove("cb-syn", "cb-ctr", "cb-thr"); });
     const vb = $("btnValider");
     if (vb) vb.disabled = d.cur == null;
-    const miens = d.pris[j].map(n => CODES[n]).filter(Boolean);
-    const equipe = [...miens];
+    const equipe = d.pris[j].map(n => CODES[n]).filter(Boolean);
     if (type === "pick" && d.cur != null && CODES[d.pool[d.cur]]) equipe.push(CODES[d.pool[d.cur]]);
     const adverses = d.pris.flatMap((g, k) => k === j ? [] : g.map(n => CODES[n])).filter(Boolean);
     let nSyn = 0, nCtr = 0, nThr = 0;
@@ -1303,9 +1337,9 @@ function majIndicateursPool() {
         const c = CODES[d.pool[i]];
         if (!c) return;
         if (P.syn && i !== d.cur && equipe.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); nSyn++; }
-        if (!P.men) return;
-        if (type === "pick" && adverses.some(o => contre(c, o))) { b.classList.add("cb-ctr"); nCtr++; }
-        else if (type === "ban" && miens.some(m => contre(c, m))) { b.classList.add("cb-thr"); nThr++; }
+        const ok = { ctr: P.con && adverses.some(o => contre(c, o)), thr: P.men && equipe.some(m => contre(c, m)) };
+        const k = (type === "ban" ? ["thr", "ctr"] : ["ctr", "thr"]).find(x => ok[x]);
+        if (k) { b.classList.add("cb-" + k); if (k === "ctr") nCtr++; else nThr++; }
     });
     legende(nSyn, nCtr, nThr);
 }
@@ -1318,27 +1352,32 @@ function rendreMain() {
     }
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small></div><div class="draft-pool">` +
         d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
-        `</div><div class="cb-legende" id="cbLegende"></div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
+        `</div><div class="cb-filtres cb-filtres-jeu">${htmlFiltres()}</div><div class="cb-legende" id="cbLegende"></div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
     astucePremierDraft();
     majHalosDraft();
 }
 
-// Halos du draft : une fois une faction cochée, les autres factions de la main s'illuminent en vert si elles font une synergie avec la sélection.
-// Pas de menaces / contres en draft (chaque joueur choisit de son côté, sans voir les factions des autres). Réglage « synergies » : P.syn.
+// Halos du draft : une fois une faction cochée, les autres factions de la main s'éclairent selon leur relation avec la sélection
+// (les factions des autres joueurs sont inconnues : « Menaces » et « Contre » se lisent par rapport à ta sélection).
+//   vert  [Synergies] : synergie avec la sélection
+//   rouge [Menaces]   : cette faction contre ta sélection (elle la menace)
+//   jaune [Contre]    : ta sélection contre cette faction
 function majHalosDraft() {
     const cartes = document.querySelectorAll(".carte-draft");
-    cartes.forEach(b => b.classList.remove("cb-syn"));
+    cartes.forEach(b => b.classList.remove("cb-syn", "cb-ctr", "cb-thr"));
     const d = draft;
-    let n = 0;
-    if (P.syn && d && d.mode === "draft" && d.ecran === "choix" && d.sel.length) {
+    let nSyn = 0, nCtr = 0, nThr = 0;
+    if (d && d.mode === "draft" && d.ecran === "choix" && d.sel.length) {
         const main = d.mains[d.etape], choisis = d.sel.map(i => CODES[main[i]]).filter(Boolean);
         cartes.forEach((b, k) => {
             const c = CODES[main[k]];
             if (!c || d.sel.includes(k)) return;
-            if (choisis.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); n++; }
+            if (P.syn && choisis.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); nSyn++; }
+            if (P.men && choisis.some(x => contre(c, x))) { b.classList.add("cb-thr"); nThr++; }
+            else if (P.con && choisis.some(x => contre(x, c))) { b.classList.add("cb-ctr"); nCtr++; }
         });
     }
-    legende(n, 0, 0, "Synergie avec ta sélection");
+    legende(nSyn, nCtr, nThr, "Synergie avec ta sélection", "Contrée par ta sélection", "Menace ta sélection");
 }
 
 function basculerDraft(i) {
