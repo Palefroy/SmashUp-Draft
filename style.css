@@ -740,25 +740,25 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
    --k = couleur principale (celle des boutons du thème), --k2 = version plus foncée (bas du dégradé), --kb = couleur du liseré,
    --kx = couleur de la phase Ban (jamais rouge : le rouge reste réservé aux menaces), --ka1 / --ka2 = opacité du fond (haut / bas).
    Thèmes clairs : fond léger (texte sombre). Thèmes sombres : fond plus dense (texte clair). Le texte garde toujours la couleur du thème. */
-:root, [data-theme="light"]  { --k: 0,123,255;   --k2: 0,95,204;    --kb: 0,105,225;    --kx: 108,117,125; --ka1: .22; --ka2: .14; }
-[data-theme="dark"]          { --k: 59,130,246;  --k2: 37,99,200;   --kb: 96,165,250;   --kx: 130,140,165; --ka1: .42; --ka2: .28; }
-[data-theme="sepia"]         { --k: 142,109,77;  --k2: 110,80,52;   --kb: 142,109,77;   --kx: 112,100,88;  --ka1: .26; --ka2: .18; }
-[data-theme="parchment"]     { --k: 93,64,55;    --k2: 70,45,38;    --kb: 93,64,55;     --kx: 70,60,56;    --ka1: .26; --ka2: .18; }
-[data-theme="felt"]          { --k: 184,37,37;   --k2: 133,22,22;   --kb: 212,175,55;   --kx: 80,130,90;   --ka1: .45; --ka2: .30; }
-[data-theme="wood"]          { --k: 139,90,43;   --k2: 105,66,28;   --kb: 190,130,70;   --kx: 150,115,85;  --ka1: .45; --ka2: .30; }
-[data-theme="halloween"]     { --k: 224,83,22;   --k2: 153,41,8;    --kb: 255,155,70;   --kx: 130,80,170;  --ka1: .42; --ka2: .28; }
-[data-theme="christmas"]     { --k: 201,36,50;   --k2: 138,17,27;   --kb: 245,208,105;  --kx: 50,150,85;   --ka1: .45; --ka2: .30; }
-[data-theme="easter"]        { --k: 232,104,156; --k2: 184,64,122;  --kb: 226,155,189;  --kx: 95,170,106;  --ka1: .26; --ka2: .18; }
-[data-theme="japan"]         { --k: 215,51,59;   --k2: 156,28,36;   --kb: 240,200,110;  --kx: 90,105,200;  --ka1: .45; --ka2: .30; }
-[data-theme="china"]         { --k: 226,60,45;   --k2: 164,26,20;   --kb: 250,210,110;  --kx: 40,170,125;  --ka1: .45; --ka2: .30; }
+:root, [data-theme="light"]  { --k: 0,123,255;   --k2: 0,95,204;    --kb: 0,105,225;    --kx: 108,117,125; --ka1: .32; --ka2: .22; }
+[data-theme="dark"]          { --k: 59,130,246;  --k2: 37,99,200;   --kb: 96,165,250;   --kx: 130,140,165; --ka1: .52; --ka2: .38; }
+[data-theme="sepia"]         { --k: 142,109,77;  --k2: 110,80,52;   --kb: 142,109,77;   --kx: 112,100,88;  --ka1: .36; --ka2: .26; }
+[data-theme="parchment"]     { --k: 93,64,55;    --k2: 70,45,38;    --kb: 93,64,55;     --kx: 70,60,56;    --ka1: .36; --ka2: .26; }
+[data-theme="felt"]          { --k: 184,37,37;   --k2: 133,22,22;   --kb: 212,175,55;   --kx: 80,130,90;   --ka1: .55; --ka2: .40; }
+[data-theme="wood"]          { --k: 139,90,43;   --k2: 105,66,28;   --kb: 190,130,70;   --kx: 150,115,85;  --ka1: .55; --ka2: .40; }
+[data-theme="halloween"]     { --k: 224,83,22;   --k2: 153,41,8;    --kb: 255,155,70;   --kx: 130,80,170;  --ka1: .52; --ka2: .38; }
+[data-theme="christmas"]     { --k: 201,36,50;   --k2: 138,17,27;   --kb: 245,208,105;  --kx: 50,150,85;   --ka1: .55; --ka2: .40; }
+[data-theme="easter"]        { --k: 232,104,156; --k2: 184,64,122;  --kb: 226,155,189;  --kx: 95,170,106;  --ka1: .36; --ka2: .26; }
+[data-theme="japan"]         { --k: 215,51,59;   --k2: 156,28,36;   --kb: 240,200,110;  --kx: 90,105,200;  --ka1: .55; --ka2: .40; }
+[data-theme="china"]         { --k: 226,60,45;   --k2: 164,26,20;   --kb: 250,210,110;  --kx: 40,170,125;  --ka1: .55; --ka2: .40; }
 
 /* Factions : fond translucide en dégradé aux couleurs du thème, liseré du thème, ombre du thème. Le fond reste assez dense pour que le texte soit lisible. */
 .carte-draft, .carte-pool {
     color: var(--text-color); text-shadow: var(--text-shadow);
     background: linear-gradient(180deg, rgba(var(--k), var(--ka1)), rgba(var(--k2), var(--ka2)));
-    border: 1.5px solid rgba(var(--kb), .85); box-shadow: var(--btn-shadow);
+    border: 2px solid rgba(var(--kb), .9); box-shadow: var(--btn-shadow);
 }
-.carte-draft.sel, .carte-pool.sel { background: linear-gradient(180deg, rgba(var(--k), calc(var(--ka1) + .3)), rgba(var(--k2), calc(var(--ka2) + .3))); border-color: rgba(var(--kb), 1); }
+.carte-draft.sel, .carte-pool.sel { background: linear-gradient(180deg, rgba(var(--k), calc(var(--ka1) + .3)), rgba(var(--k2), calc(var(--ka2) + .3))); border-width: 3px; border-color: rgba(var(--kb), 1); }
 
 /* Sélection : coche blanche dans le coin haut-droit (les cartes sélectionnées n'ont jamais de pastille de synergie) */
 .carte-draft.sel::after, .carte-pool.sel::after { content: "✓"; position: absolute; top: -7px; right: -6px; z-index: 2; width: 19px; height: 19px; border-radius: 50%; background: #fff; color: #101418; font: 800 12px/19px system-ui, sans-serif; text-align: center; text-shadow: none; pointer-events: none; }
@@ -770,8 +770,8 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 #btnValider.btn-ban { background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.42)), rgb(var(--kx)); border: var(--btn-border); box-shadow: var(--btn-shadow); color: #fff; }
 
 /* Ligne de complexité de la légende (bouton Rang) */
-.cb-legende .lg-rang { gap: 4px; }
-.cb-legende .rk-mini.rk-leg { position: static; display: inline-flex; width: 15px; height: 15px; font-size: 9px; }
+.cb-legende .lg-rang { gap: 5px; font-size: 13px; }
+.cb-legende .rk-mini.rk-leg { position: static; display: inline-flex; width: 21px; height: 21px; font-size: 13px; }
 
 /* Fenêtres pop-up « Reprendre la partie ? » et « Quitter la partie ? » : petite fenêtre au premier plan, centrée puis relevée d'environ 5 % de la hauteur,
    fond assombri (et légèrement flouté) autour. Couleurs prises dans le thème appliqué (panneau, liseré, boutons, texte). */
