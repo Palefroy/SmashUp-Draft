@@ -348,7 +348,7 @@ body { padding-bottom: 80px; }
 .cbf-rang { --cg: 176,132,255; }
 body.rang-on .rk-mini { display: flex; }
 #paramContainer { position: relative; }
-.astuce-modes { top: 40px; right: 8px; --pointe: 14px; max-width: min(300px, calc(100vw - 40px)); }
+.astuce-modes { top: 40px; left: 8px; right: 8px; width: auto; max-width: none; --pointe: 14px; }
 .astuce-modes p { margin: 0 0 .55em; }
 .astuce-modes p:last-child { margin-bottom: 0; }
 /* Mini icône de rang (coin bas-gauche des factions du draft / pick / pick & ban) : même métal que .rkbtn, en rond, sans texte */
