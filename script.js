@@ -623,6 +623,13 @@ function genererHTMLFactions() {
 
 // Encadré « Cartes spéciales » (sous « Personnalisé ») : pas de case à cocher, aucune incidence sur le tirage. Un seul bouton « Détails » : les notes s'ouvrent ensuite depuis la fiche.
 function texteNotes(code) { const o = (FICHES[code] || {}).notes || {}; return o[langue] || o.fr || o.en || ""; }
+// Mini icône de rang (complexité) dans le coin bas-gauche d'une faction du draft : même icône et mêmes couleurs que le bouton de rang des fiches, sans texte.
+function miniRang(n) {
+    const code = CODES[n], r = code && (FICHES[code] || {}).rank, rk = r && window.RANK_TIERS ? window.RANK_TIERS[r.code] : null;
+    if (!rk || !Array.isArray(rk.couleurs) || rk.couleurs.length !== 3) return "";
+    const [c0, c1, c2] = rk.couleurs;
+    return `<i class="rk-mini rk-${esc(r.code)}" style="--r0:${esc(c0)};--r1:${esc(c1)};--r2:${esc(c2)}" aria-hidden="true">${esc(rk.icone || "🏅")}</i>`;
+}
 function htmlSpeciales() {
     const codes = Object.keys(SPECIALES).sort((a, b) => nomSpecial(a).localeCompare(nomSpecial(b), langue));   // ordre alphabétique : Démences, Monstres, Trésors
     if (!codes.length) return "";
@@ -1275,7 +1282,7 @@ function rendreDraft() {
     const [j, type] = d.ordre[d.etape];
     // Pick / Pick & Ban : toucher une faction = aperçu (synergies, contres) ; « Valider » verrouille le choix.
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
-        d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " btn-danger" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") + "</div>" +
+        d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " btn-danger" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small>${miniRang(n)}</button>`).join("") + "</div>" +
         `<div class="cb-filtres cb-filtres-jeu">${htmlFiltres()}</div><div class="cb-legende" id="cbLegende"></div>` +
         `<button id="btnValider" class="${type === "ban" ? "btn-danger" : ""}" ${d.cur == null ? "disabled" : ""} onclick="validerPool()">${t("Valider")}</button>` +
         (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
@@ -1321,6 +1328,7 @@ function legende(nSyn, nCtr, nThr, texteSyn, texteCtr, texteThr) {
 //   anneau vert + pastille chaîne : synergie avec mes factions déjà prises (+ la faction en aperçu)   [bouton « Synergies »]
 //   pastille bouclier (jaune)     : cette faction contre une faction adverse déjà prise              [bouton « Contre »]
 //   pastille triangle (rouge)     : cette faction menace mes factions déjà prises                    [bouton « Menaces »]
+//   En phase Ban, la référence = mes factions + la faction touchée (aperçu), comme en Draft.
 //   Une carte n'a qu'une pastille de gauche : en phase Ban la menace prime, en phase Pick le contre prime.
 function majIndicateursPool() {
     const d = draft;
@@ -1330,18 +1338,20 @@ function majIndicateursPool() {
     const vb = $("btnValider");
     if (vb) vb.disabled = d.cur == null;
     const equipe = d.pris[j].map(n => CODES[n]).filter(Boolean);
-    if (type === "pick" && d.cur != null && CODES[d.pool[d.cur]]) equipe.push(CODES[d.pool[d.cur]]);
+    if (d.cur != null && CODES[d.pool[d.cur]]) equipe.push(CODES[d.pool[d.cur]]);   // la faction touchée compte (en Pick comme en Ban)
     const adverses = d.pris.flatMap((g, k) => k === j ? [] : g.map(n => CODES[n])).filter(Boolean);
     let nSyn = 0, nCtr = 0, nThr = 0;
     btns.forEach((b, i) => {
         const c = CODES[d.pool[i]];
         if (!c) return;
         if (P.syn && i !== d.cur && equipe.some(x => aSyn(x, c))) { b.classList.add("cb-syn"); nSyn++; }
-        const ok = { ctr: P.con && adverses.some(o => contre(c, o)), thr: P.men && equipe.some(m => contre(c, m)) };
+        // Pick : « contre » = contre une faction adverse déjà prise. Ban : on ne regarde que ma sélection (mes factions + la faction touchée), comme en Draft.
+        const ok = { ctr: P.con && (type === "ban" ? equipe.some(m => contre(m, c)) : adverses.some(o => contre(c, o))), thr: P.men && equipe.some(m => contre(c, m)) };
         const k = (type === "ban" ? ["thr", "ctr"] : ["ctr", "thr"]).find(x => ok[x]);
         if (k) { b.classList.add("cb-" + k); if (k === "ctr") nCtr++; else nThr++; }
     });
-    legende(nSyn, nCtr, nThr);
+    if (type === "ban") legende(nSyn, nCtr, nThr, "Synergie avec ta sélection", "Contrée par ta sélection", "Menace ta sélection");
+    else legende(nSyn, nCtr, nThr);
 }
 
 function rendreMain() {
@@ -1351,7 +1361,7 @@ function rendreMain() {
         return;
     }
     $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${nomJ(j)}</b> : ${t("choisis 2 factions")} <small>(<span id="nbSel">${d.sel.length}</span>/2)</small></div><div class="draft-pool">` +
-        d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small></button>`).join("") +
+        d.mains[d.etape].map((n, i) => `<button class="carte-draft${d.sel.includes(i) ? " sel" : ""}" style="animation-delay:${i * 90}ms" data-f="${encodeURIComponent(n)}" onclick="basculerDraft(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small>${miniRang(n)}</button>`).join("") +
         `</div><div class="cb-filtres cb-filtres-jeu">${htmlFiltres()}</div><div class="cb-legende" id="cbLegende"></div><button id="btnValider" ${d.sel.length === 2 ? "" : "disabled"} onclick="validerMain()">${t("Valider")}</button>`;
     astucePremierDraft();
     majHalosDraft();
