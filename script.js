@@ -64,7 +64,10 @@ Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Thre
     "Afficher les synergies": "Show synergies", "Afficher les menaces et contres": "Show threats and counters", "Activé": "On", "Désactivé": "Off",
     "Synergie avec ta sélection": "Synergy with your selection", "Synergie avec tes factions": "Synergy with your factions",
     "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions",
-    "Afficher :": "Show:", "Rang": "Tier", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
+    "Afficher :": "Show:", "Rang": "Tier", "Bannir": "Ban", "Complexe": "Complex", "Simple": "Simple",
+    "Reprendre la partie ?": "Resume the game?", "joueurs": "players", "étape": "step", "Reprendre": "Resume", "Abandonner": "Discard",
+    "Quitter la partie ?": "Leave the game?", "Ta partie est sauvegardée : tu pourras la reprendre au prochain lancement.": "Your game is saved: you can resume it next time you open the app.",
+    "Rester": "Stay", "Quitter": "Leave", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
     "Explication des modes": "What the modes mean",
     "Tirage au sort : chaque joueur reçoit ses factions au hasard, sans choisir.": "Random draw: each player is dealt factions at random, no choice involved.",
     "Draft : chaque joueur reçoit sa propre main de factions (nombre réglable) et en garde 2. Les mains sont secrètes : on se passe l'écran.": "Draft: each player gets their own hand of factions (adjustable size) and keeps 2. Hands are secret, so you pass the screen around.",
@@ -130,6 +133,7 @@ function initialiser() {
     chargerHistorique();
     parserCSV();
     appliquerLangue();
+    if (!proposerReprise()) restaurerDernierResultat();   // draft interrompu : proposition de reprise ; sinon, dernier tirage affiché
     setTimeout(afficherAstuceTheme, 900);
 }
 
@@ -156,7 +160,7 @@ function appliquerLangue() {
     rendreSegments();
     genererChampsJoueurs();
     rendreHistorique();
-    if (draft) rendreDraft(); else if (dernierResultat) rendreResultat();
+    if (draft) rendreDraft(); else if (dernierResultat) rendreResultat(); else if (document.querySelector("#resultat .reprise")) proposerReprise();
 }
 
 /* ---------- Thème ---------- */
@@ -548,6 +552,7 @@ function reafficherTirage(n) {
     fermerFiche(true);
     fermerInfo();
     draft = null;                                   // abandonne un draft / pick en cours, le cas échéant
+    effacerDraft();
     dernierResultat = { groupes: h.groupes, premier: h.premier, noms: h.noms };
     rendreResultat();
     fermerPanneaux();
@@ -581,7 +586,7 @@ function viderHistorique() {
 
 function reinitialiserTout() {
     viderHistorique();
-    ["smashup_factions", "smashup_params", "smashup_noms", "smashup_mode"].forEach(k => LS.del(k));
+    ["smashup_factions", "smashup_params", "smashup_noms", "smashup_mode", CLE_DRAFT].forEach(k => LS.del(k));
     P = { ...DEFAUTS };
     nomsFixes = [];
     $("nomsJoueursContainer").innerHTML = "";
@@ -1202,6 +1207,7 @@ function lancerTirage() {
     const pioche = melanger([...actives]);
     const premier = Math.floor(Math.random() * nbJ);
     draft = null;
+    effacerDraft();
     if (mode !== "tirage") return demarrerDraft(pioche, nbJ, mode, premier, besoin);
     afficherResultats(Array.from({ length: nbJ }, (_, i) => pioche.slice(i * 2, (i + 1) * 2)), premier);
 }
@@ -1214,6 +1220,8 @@ function rendreResultat() {
 }
 
 function afficherResultats(groupes, premier) {
+    effacerDraft();
+    libererRetour();
     const noms = groupes.map((_, i) => nomsFixes[i] || "");
     dernierResultat = { groupes, premier, noms };
     rendreResultat();
@@ -1259,6 +1267,82 @@ document.addEventListener("pointerdown", e => {
     if (a && !a.hidden && !e.target.closest(".btn-info")) fermerInfo();
 }, true);
 
+/* ---------- Sauvegarde du draft en cours, reprise, confirmation avant de quitter ---------- */
+const CLE_DRAFT = "smashup_draft", DRAFT_MAX_H = 24;   // un draft sauvegardé plus vieux que 24 h est oublié
+function sauverDraft() { if (draft) LS.set(CLE_DRAFT, JSON.stringify({ ts: Date.now(), draft, noms: nomsFixes })); }
+function effacerDraft() { LS.del(CLE_DRAFT); }
+function draftSauve() {
+    const s = jsonLS(CLE_DRAFT, null), d = s && s.draft;
+    if (!d || !Array.isArray(d.ordre) || !Array.isArray(d.pris) || typeof d.etape !== "number" || !Array.isArray(d.mode === "draft" ? d.mains : d.pool)) return null;
+    if ((Date.now() - s.ts) / 36e5 > DRAFT_MAX_H) { effacerDraft(); return null; }
+    return s;
+}
+// Carte « Reprendre la partie ? » affichée au lancement quand un draft était en cours.
+function proposerReprise() {
+    const s = draftSauve();
+    if (!s) return false;
+    const d = s.draft;
+    $("resultat").innerHTML = `<div class="reprise" role="dialog" aria-label="${t("Reprendre la partie ?")}"><b class="reprise-titre">${t("Reprendre la partie ?")}</b>` +
+        `<p>${t(MODE_LABEL[d.mode] || d.mode)} · ${d.pris.length} ${t("joueurs")} · ${t("étape")} ${Math.min(d.etape + 1, d.ordre.length)}/${d.ordre.length}</p>` +
+        `<div class="reprise-btns"><button type="button" class="rp-btn rp-ok" onclick="reprendreDraft()">${t("Reprendre")}</button><button type="button" class="rp-btn rp-no" onclick="abandonnerDraft()">${t("Abandonner")}</button></div></div>`;
+    return true;
+}
+function reprendreDraft() {
+    const s = draftSauve();
+    if (!s) return;
+    nomsFixes = Array.isArray(s.noms) ? s.noms : [];
+    draft = s.draft;
+    draft.sel = []; draft.cur = null;
+    if (draft.mode === "draft") draft.ecran = "attente";   // mains secrètes : on repart de l'écran neutre « Passe l'écran à… »
+    armerRetour();
+    rendreDraft();
+}
+function abandonnerDraft() {
+    effacerDraft();
+    draft = null;
+    $("resultat").innerHTML = "";
+    if (dernierResultat) rendreResultat();
+}
+// Dernier tirage terminé (historique) réaffiché au lancement quand aucun draft n'est à reprendre.
+function restaurerDernierResultat() {
+    const h = historique[0];
+    if (!h || dernierResultat) return;
+    dernierResultat = { groupes: h.groupes, premier: h.premier, noms: h.noms };
+    rendreResultat();
+}
+// Retour arrière (bouton du téléphone, geste) pendant un draft : on pose une entrée d'historique en plus, et le retour ouvre une confirmation.
+let gardeRetour = false, sortieVoulue = false, ignorerPop = false;
+function armerRetour() {
+    if (gardeRetour) return;
+    try { history.pushState({ su: 1 }, ""); gardeRetour = true; } catch (e) {}
+}
+function libererRetour() {   // fin du draft : on retire l'entrée en trop pour qu'un seul retour suffise à quitter
+    if (!gardeRetour) return;
+    gardeRetour = false;
+    if (history.state && history.state.su) { ignorerPop = true; history.back(); }
+}
+window.addEventListener("popstate", () => {
+    if (ignorerPop) { ignorerPop = false; return; }
+    if (sortieVoulue) { sortieVoulue = false; gardeRetour = false; history.back(); return; }   // « Quitter » : on remonte encore d'un cran
+    if (!gardeRetour) return;
+    gardeRetour = false;
+    if (draft) { armerRetour(); confirmerQuitter(); }   // on reste dans l'appli le temps de la question
+});
+function confirmerQuitter() {
+    if (document.querySelector(".dlg-fond")) return;
+    const f = document.createElement("div");
+    f.className = "dlg-fond";
+    f.innerHTML = `<div class="reprise dlg" role="alertdialog" aria-modal="true"><b class="reprise-titre">${t("Quitter la partie ?")}</b><p>${t("Ta partie est sauvegardée : tu pourras la reprendre au prochain lancement.")}</p>` +
+        `<div class="reprise-btns"><button type="button" class="rp-btn rp-ok" data-a="rester">${t("Rester")}</button><button type="button" class="rp-btn rp-no" data-a="quitter">${t("Quitter")}</button></div></div>`;
+    f.addEventListener("click", e => {
+        const a = e.target.closest("[data-a]");
+        if (!a && e.target !== f) return;
+        f.remove();
+        if (a && a.dataset.a === "quitter") { sauverDraft(); sortieVoulue = true; history.back(); }
+    });
+    document.body.appendChild(f);
+}
+
 /* ---------- Draft / Pick / Pick & Ban ---------- */
 function demarrerDraft(pioche, nbJ, mode, premier, taille) {
     const rot = Array.from({ length: nbJ }, (_, k) => (premier + k) % nbJ);   // le joueur qui commence passe en premier
@@ -1276,18 +1360,20 @@ function demarrerDraft(pioche, nbJ, mode, premier, taille) {
             // Pick & Ban : bans (ordre normal) → picks (ordre normal) → bans (ordre inversé) → picks (ordre inversé)
             : [...ban(rot), ...pick(rot), ...ban(inv), ...pick(inv)];
     }
+    armerRetour();
     rendreDraft();
 }
 
 function rendreDraft() {
+    sauverDraft();   // sauvegarde à chaque étape : si l'appli est fermée, on peut reprendre
     const d = draft;
     if (d.mode === "draft") return rendreMain();
     const [j, type] = d.ordre[d.etape];
     // Pick / Pick & Ban : toucher une faction = aperçu (synergies, contres) ; « Valider » verrouille le choix.
-    $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete"><b>${type === "ban" ? "Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
-        d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " btn-danger" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})">${t(n)}<br><small>${t(factionExt[n] || "")}</small>${miniRang(n)}</button>`).join("") + "</div>" +
+    $("resultat").innerHTML = `${htmlInfo()}<div class="draft-tete${type === "ban" ? " ban" : ""}"><b>${type === "ban" ? "✕ Ban" : "Pick"} : ${nomJ(j)}</b> <small>(${d.etape + 1}/${d.ordre.length})</small></div><div class="draft-pool">` +
+        d.pool.map((n, i) => `<button class="carte-pool${type === "ban" ? " ban" : ""}${d.cur === i ? " sel" : ""}" data-f="${encodeURIComponent(n)}" onclick="selectionnerPool(${i})"><span class="nom">${t(n)}</span><br><small>${t(factionExt[n] || "")}</small>${miniRang(n)}</button>`).join("") + "</div>" +
         `<div class="cb-filtres cb-filtres-jeu">${htmlFiltres()}</div><div class="cb-legende" id="cbLegende"></div>` +
-        `<button id="btnValider" class="${type === "ban" ? "btn-danger" : ""}" ${d.cur == null ? "disabled" : ""} onclick="validerPool()">${t("Valider")}</button>` +
+        `<button id="btnValider" class="${type === "ban" ? "btn-ban" : ""}" ${d.cur == null ? "disabled" : ""} onclick="validerPool()">${t(type === "ban" ? "Bannir" : "Valider")}</button>` +
         (d.bannies.length ? `<div><small>${t("Bannies")} : ${d.bannies.map(t).join(", ")}</small></div>` : "") +
         d.pris.map((g, i) => `<div><b>${nomJ(i)}</b> : ${g.map(t).join(" & ") || "—"}</div>`).join("");
     astucePremierDraft();
@@ -1324,6 +1410,12 @@ function legende(nSyn, nCtr, nThr, texteSyn, texteCtr, texteThr) {
     if (nSyn) p.push(`<span class="lg lg-syn"><i></i>${t(texteSyn || "Synergie avec tes factions")}</span>`);
     if (nCtr) p.push(`<span class="lg lg-ctr"><i></i>${t(texteCtr || "Contre une faction adverse")}</span>`);
     if (nThr) p.push(`<span class="lg lg-thr"><i></i>${t(texteThr || "Menace tes factions")}</span>`);
+    // Échelle de complexité (bouton « Rang » actif) : médailles de la plus complexe (S) à la plus simple (D)
+    if (P.rang && window.RANK_TIERS) {
+        const ord = r => { const i = "SABCD".indexOf(r.tier); return i < 0 ? 99 : i; };
+        const m = Object.entries(RANK_TIERS).filter(([, r]) => r && Array.isArray(r.couleurs) && r.couleurs.length === 3).sort((a, b) => ord(a[1]) - ord(b[1]));
+        if (m.length) p.push(`<span class="lg lg-rang">${t("Complexe")}${m.map(([k, r]) => `<i class="rk-mini rk-leg rk-${esc(k)}" style="--r0:${esc(r.couleurs[0])};--r1:${esc(r.couleurs[1])};--r2:${esc(r.couleurs[2])}" title="${esc(r.tier)} Tier" aria-hidden="true">${esc(r.icone || "🏅")}</i>`).join("")}${t("Simple")}</span>`);
+    }
     el.innerHTML = p.join("");
 }
 
