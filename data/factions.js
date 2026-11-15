@@ -21,18 +21,18 @@ Smash Up : Ces Années-Là|(2019)|0|Danseurs Disco;Justiciers;Maîtres Kung-Fu;R
 Smash Up : Vous en voulez encore ?|(2020)|0|Anciens Égyptiens;Cow-Boys;Samouraïs;Vikings
 Smash Up : L'Énorme Boîte pour Geek|(2020)|0|Dream Team
 Smash Up : Tournée Mondiale - Incident Diplomatique|(2021)|0|Luchadors;Mousquetaires;Police Montée;Sumos
-Smash Up Knights of the Round Table|(2021 VO)|0|Knights of the Round Table
+Smash Up : Knights of the Round Table|(2021 VO)|0|Knights of the Round Table
 Smash Up : Marvel|(2022)|1|Avengers;Hydra;Kree;Masters of Evil;S.H.I.E.L.D.;Sinister Six;Spider-Verse;Ultimates
 Smash Up : Tournée Mondiale - Choc des Cultures|(2022)|1|Anciens Incas;Contes d'Anansi;Contes de Grimm;Contes Féeriques Russes;Voyageurs Polynésiens
-Mini-extension Smash Up : Faction Moutons|(2022)|1|Moutons
-Smash Up - Disney|(2022 VO)|0|Aladdin;Beauty and the Beast;Big Hero 6;Frozen;Mulan;The Lion King;The Nightmare Before Christmas;Wreck-It Ralph
-Mini-extension Smash Up : Faction Pingouins|(2023)|0|Pingouins
-Smash Up Teens|(2023 VO)|0|Teens
-Smash Up Fait son Cinéma|(2024)|0|Traqueurs de Spectres;Extramorphes;Hommes d'Action;Retourneurs du Futur
+Smash Up : Faction Moutons|(2022)|1|Moutons
+Smash Up : Disney|(2022 VO)|0|Aladdin;Beauty and the Beast;Big Hero 6;Frozen;Mulan;The Lion King;The Nightmare Before Christmas;Wreck-It Ralph
+Smash Up : Faction Pingouins|(2023)|0|Pingouins
+Smash Up : Teens|(2023 VO)|0|Teens
+Smash Up : Fait son Cinéma|(2024)|0|Traqueurs de Spectres;Extramorphes;Hommes d'Action;Retourneurs du Futur
 Smash Up : Édition Anniversaire|(2025)|1|Champions du Monde;Gobelins;Sirènes;Squelettes
-Smash Up Half the Battle|(2025 VO)|0|Adolescent Epic Geckos;G.I. Gerald;Pearl and the Images;Rulers of the Cosmos
-Smash Up Slashers|(2025 VO)|0|Slashers
-Smash Up Clowns|(2025 VO)|0|Clowns`,
+Smash Up : Half the Battle|(2025 VO)|0|Adolescent Epic Geckos;G.I. Gerald;Pearl and the Images;Rulers of the Cosmos
+Smash Up : Slashers|(2025 VO)|0|Slashers
+Smash Up : Clowns|(2025 VO)|0|Clowns`,
 
   // Nom de la faction -> code à 3 lettres (nom des images et clé des fichiers de données)
   codes: {
@@ -71,7 +71,7 @@ Smash Up Clowns|(2025 VO)|0|Clowns`,
     "Smash Up : Monstres Sacrés": "(2014)", "Smash Up : Trop Minions": "(2015)", "Smash Up : La Grosse Boîte pour Geek": "(2014)", "Smash Up : Munchkin": "(2015)",
     "Smash Up : Ressemblances Fortuites": "(2016)", "Smash Up : Vous l'aurez voulu !": "(2016)", "Smash Up : Conflit de Générations": "(2017)", "Smash Up : Rois du Japon": "(2017)",
     "Smash Up : Ces Années-Là": "(2018)", "Smash Up : Vous en voulez encore ?": "(2018)", "Smash Up : L'Énorme Boîte pour Geek": "(2018)", "Smash Up : Tournée Mondiale - Incident Diplomatique": "(2019)",
-    "Smash Up : Tournée Mondiale - Choc des Cultures": "(2019)", "Mini-extension Smash Up : Faction Moutons": "(2017)", "Mini-extension Smash Up : Faction Pingouins": "(2019)", "Smash Up Fait son Cinéma": "(2024)",
+    "Smash Up : Tournée Mondiale - Choc des Cultures": "(2019)", "Smash Up : Faction Moutons": "(2017)", "Smash Up : Faction Pingouins": "(2019)", "Smash Up : Fait son Cinéma": "(2024)",
     "Smash Up : Édition Anniversaire": "(2022)", "Smash Up : Marvel": "(2020)",
   },
 

@@ -805,3 +805,42 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
     .dlg-fond { animation: fonduFiche .18s ease-out; }
     .dlg-fond .reprise { animation: ficheIn .2s ease-out; }
 }
+
+/* ===== À propos : crédits + application (ligne discrète en bas des Paramètres, fenêtre au style des pop-up) ===== */
+.apropos-lien { margin: 28px 0 4px; text-align: center; font-size: 12px; opacity: .5; }
+.apropos-lien button { all: unset; box-sizing: border-box; cursor: pointer; padding: 8px 9px; font: inherit; -webkit-tap-highlight-color: transparent; }
+.apropos-lien button:hover, .apropos-lien button:focus-visible { text-decoration: underline; }
+.apropos-lien:hover, .apropos-lien:focus-within { opacity: .85; }
+.dlg-apropos .reprise.apropos { max-width: 380px; max-height: min(100%, 640px); display: flex; flex-direction: column; text-align: left; }
+.apropos .reprise-titre { text-align: center; }
+.apropos p { margin: 6px 0; white-space: normal; }
+.ap-tabs { display: flex; gap: 6px; margin: 12px 0 0; }
+.ap-tab { all: unset; box-sizing: border-box; flex: 1 1 0; text-align: center; padding: 9px 6px; border-radius: 9px; cursor: pointer; font: 700 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; border: 1px solid var(--border-color); -webkit-tap-highlight-color: transparent; }
+.ap-tab.on { background: var(--btn-primary); color: #fff; border-color: transparent; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.ap-tab:focus-visible { outline: 2px solid rgb(var(--kb)); outline-offset: 2px; }
+.ap-corps { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; margin: 10px 0 14px; padding-right: 4px; }
+.ap-titre { margin: 16px 0 6px; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: rgb(var(--kb)); opacity: .85; }
+.ap-titre:first-child { margin-top: 4px; }
+.ap-l { display: flex; flex-direction: column; font-size: 14px; }
+.ap-l span { font-size: 12.5px; opacity: .78; }
+.ap-l a, .ap-lien { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ap-intro { font-size: 13px; opacity: .85; }
+.ap-avert { margin-top: 18px !important; font-size: 11px; opacity: .6; }
+.ap-carte { margin: 12px 0; padding: 12px 12px 10px; border: 1px solid var(--border-color); border-radius: 12px; }
+.ap-carte p { font-size: 13px; opacity: .85; }
+.ap-btn { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 40px; margin-top: 10px; padding: 8px 14px; border-radius: 10px; cursor: pointer; background: var(--btn-primary); color: #fff; border: var(--btn-border); box-shadow: var(--btn-shadow); text-shadow: 0 1px 2px rgba(0,0,0,.5); font: 700 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
+.ap-btn:hover { filter: brightness(1.1); }
+.ap-btn:focus-visible { outline: 2px solid rgb(var(--kb)); outline-offset: 2px; }
+.ap-btn[disabled] { opacity: .55; cursor: default; filter: none; }
+.ap-lien { display: block; text-align: center; margin-top: 10px; font-size: 12px; opacity: .75; }
+.ap-aide { margin-top: 8px !important; font-size: 12px !important; opacity: .7 !important; }
+/* Petite mention de source au pied des bulles (Combo, Notes, Stats) */
+.bulle p.bulle-credit { margin-top: .75em; font-size: .78em; font-style: italic; opacity: .55; white-space: normal; }
+
+/* ===== « i » des modes (Paramètres) : bouton à gauche (les ornements des thèmes occupent le coin haut-droit), bulle pleine largeur du panneau, plus basse, pointe alignée sur le bouton.
+   Sélecteurs avec #paramContainer : la règle générique .astuce (plus bas dans le fichier) imposait sinon width: max-content et max-width 230 px. ===== */
+#paramContainer #btnModesInfo { left: 8px; right: auto; }
+#paramContainer .astuce-modes { top: 44px; left: 8px; right: 8px; width: auto; max-width: none; padding: 8px 12px; font-size: 12.5px; line-height: 1.3; }
+#paramContainer .astuce-modes::before { right: auto; left: 8px; }   /* centre du bouton = 8 + 13 = 21 px ; bulle à 8 px ; pointe de 10 px -> left: 8 px */
+#paramContainer .astuce-modes p { margin: 0 0 .4em; }
+#paramContainer .astuce-modes p:last-child { margin-bottom: 0; }

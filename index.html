@@ -252,6 +252,7 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
         <div class="param-row tab-hidden" id="rowPool"><span class="lbl" data-t="Taille de la réserve">Common pool size</span><div class="seg" id="segPool"></div></div>
         <div class="param-row"><div class="cb-filtres" id="segFiltres"></div></div>
         <div id="nomsJoueursContainer"></div>
+        <div class="apropos-lien"><button type="button" onclick="ouvrirApropos('credits')" data-t="Crédits">Credits</button><span aria-hidden="true">·</span><button type="button" onclick="ouvrirApropos('appli')" data-t="Application">App</button></div>
     </div>
 
     <details id="historiqueContainer" class="menu-extensions tab-hidden" open>

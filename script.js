@@ -34,7 +34,7 @@ for (const [type, parCode] of Object.entries(window.DATA || {}))
 const codeDe = n => CODES[n] || (SPECIALES[n] ? n : undefined);   // nom de faction -> code ; un code de carte spéciale est son propre code
 const nomSpecial = c => { const o = (SPECIALES[c] || {}).nom || {}; return o[langue] || o.fr || c; };
 const DOSSIER_ICO = "img/ico/";   // icônes : img/ico/<CODE>.<format>
-const EN = {"Cartes spéciales": "Special cards", "Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Mini-extension Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Mini-extension Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
+const EN = {"Cartes spéciales": "Special cards", "Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up : Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
 Object.assign(EN, {
     "Nombre de joueurs": "Number of players", "Mode": "Mode", "Draft": "Draft",
     "Factions proposées par joueur": "Factions offered per player",
@@ -161,6 +161,7 @@ function appliquerLangue() {
     genererChampsJoueurs();
     rendreHistorique();
     if (draft) rendreDraft(); else if (dernierResultat) rendreResultat(); else if (document.querySelector(".dlg-reprise")) proposerReprise();
+    if (document.querySelector(".dlg-apropos")) rendreApropos();   // fenêtre « À propos » ouverte : on la réécrit dans la nouvelle langue
 }
 
 /* ---------- Thème ---------- */
@@ -946,9 +947,9 @@ async function ouvrirFiche(n) {
     const contenu = {
         rank: () => `<b class="bulle-titre">${esc(rk.tier)} Tier · ${esc(rk.metal[langue] || rk.metal.fr)}</b><p>${t("Code de complexité")} : ${esc(rk.complexite[langue] || rk.complexite.fr)}</p><p class="bulle-aide">${t("S = plus complexe · D = plus simple")}</p>`,
         titan: () => `<b class="bulle-titre">${esc(tx(ti.nom) || t("Titan"))}</b><p>${esc(tx(ti.capacite))}</p>`,
-        notes: () => `<b class="bulle-titre">${t("Notes")}</b><p>${esc(no)}</p>`,
-        combo: () => htmlCombo(code, cb),
-        stats: () => `<b class="bulle-titre">${t("Statistiques")}</b>${st.map(x => `<div class="stat-l"><span>${esc(x.label)}</span><span class="etoiles" style="--v:${x.v}" role="img" aria-label="${x.v}/5">★★★★★</span></div>`).join("")}`
+        notes: () => `<b class="bulle-titre">${t("Notes")}</b><p>${esc(no)}</p>${mentionCredit("donnees", code)}`,
+        combo: () => htmlCombo(code, cb) + mentionCredit("combo", code),
+        stats: () => `<b class="bulle-titre">${t("Statistiques")}</b>${st.map(x => `<div class="stat-l"><span>${esc(x.label)}</span><span class="etoiles" style="--v:${x.v}" role="img" aria-label="${x.v}/5">★★★★★</span></div>`).join("")}${mentionCredit("donnees", code)}`
     };
     const dispo = [ti && "titan", st.length && "stats", no && "notes"].filter(Boolean);   // ordre des boutons, de haut en bas : Titan, Stats, Notes
 
@@ -1512,5 +1513,98 @@ function validerMain() {
     draft = null;
     afficherResultats(d.pris, d.premier);
 }
+
+/* ---------- À propos : crédits + application (data/credit.js) ----------
+   Entrée discrète : ligne « Crédits · Application » tout en bas de l'onglet Paramètres (index.html, .apropos-lien).
+   Fenêtre au style des pop-up (.dlg-fond.dlg-apropos) ; Échap la ferme (gestionnaire « Quitter la partie ? » plus haut). Contenu = DATA.credit (data/credit.js) :
+   intro, sections [{ titre, lignes: [{ nom, role, url }] }], avertissement, mentions (petites lignes en pied de bulle), application { apk, versions }. */
+Object.assign(EN, { "À propos": "About", "Crédits": "Credits", "Application": "App", "Aucun crédit pour l'instant.": "No credits yet.",
+    "Tu utilises déjà l'application Android.": "You are already using the Android app.",
+    "Application Android (APK)": "Android app (APK)", "Télécharger l'APK": "Download the APK", "Toutes les versions": "All versions",
+    "Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).": "A real file to install, like any other app. Android will ask you to allow installs from your browser (unknown source).",
+    "Appli web (installation rapide)": "Web app (quick install)", "Installer l'appli web": "Install the web app", "Déjà installée ✓": "Already installed ✓",
+    "Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.": "No file to download: the app is added to your home screen from your browser and updates itself.",
+    "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil ».": "On iPhone / iPad: tap the Share button, then “Add to Home Screen”.",
+    "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».": "In your browser menu (⋮), choose “Install app” or “Add to Home screen”." });
+
+let promptInstall = null, ongletApropos = "credits";
+const CREDIT = () => (window.DATA && DATA.credit) || {};
+const txtCredit = o => o ? (typeof o === "string" ? o : (o[langue] || o.fr || o.en || "")) : "";
+const urlOk = u => typeof u === "string" && /^https?:\/\//i.test(u);
+const enAppliAndroid = () => !!window.Capacitor;   // application APK (même test que le service worker dans index.html)
+const enAppliWeb = () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch (e) { return false; } };
+const surIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+// Petite mention de source au pied d'une bulle de fiche. k = "combo" ou "donnees" (Notes + Stats). Si credit.donneesCodes est rempli, la mention « donnees » n'apparaît que pour ces factions.
+function mentionCredit(k, code) {
+    const c = CREDIT(), s = txtCredit((c.mentions || {})[k]);
+    if (!s) return "";
+    if (k === "donnees" && Array.isArray(c.donneesCodes) && c.donneesCodes.length && !c.donneesCodes.includes(code)) return "";
+    return `<p class="bulle-credit">${esc(s)}</p>`;
+}
+
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); promptInstall = e; rendreApropos(); });   // Chrome / Android / PC : installation par notre bouton
+window.addEventListener("appinstalled", () => { promptInstall = null; rendreApropos(); });
+
+function htmlCredits() {
+    const c = CREDIT(), secs = (c.sections || []).filter(x => Array.isArray(x.lignes) && x.lignes.length);
+    const corps = secs.map(x => `<h4 class="ap-titre">${esc(txtCredit(x.titre))}</h4>` + x.lignes.map(l => {
+        const nom = urlOk(l.url) ? `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nom)}</a>` : esc(l.nom), role = txtCredit(l.role);
+        return `<p class="ap-l"><b>${nom}</b>${role ? `<span>${esc(role)}</span>` : ""}</p>`;
+    }).join("")).join("");
+    return (c.intro ? `<p class="ap-intro">${esc(txtCredit(c.intro))}</p>` : "") + (corps || `<p class="ap-intro">${t("Aucun crédit pour l'instant.")}</p>`)
+        + (c.avertissement ? `<p class="ap-avert">${esc(txtCredit(c.avertissement))}</p>` : "");
+}
+
+function htmlAppli() {
+    if (enAppliAndroid()) return `<p class="ap-intro">${t("Tu utilises déjà l'application Android.")}</p>`;
+    const a = CREDIT().application || {}, ios = surIOS();
+    // 1) Application Android (fichier APK, release GitHub). Masquée sur iPhone / iPad.
+    const apk = !ios && urlOk(a.apk)
+        ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b><p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
+          + `<a class="ap-btn" href="${esc(a.apk)}" target="_blank" rel="noopener noreferrer">${t("Télécharger l'APK")}</a>`
+          + (urlOk(a.versions) ? `<a class="ap-lien" href="${esc(a.versions)}" target="_blank" rel="noopener noreferrer">${t("Toutes les versions")}</a>` : "") + `</div>` : "";
+    // 2) Appli web (PWA) : bouton d'installation du navigateur quand il existe ; sinon explication du geste à faire à la main.
+    const deja = enAppliWeb();
+    const bouton = deja ? `<button type="button" class="ap-btn" disabled>${t("Déjà installée ✓")}</button>`
+        : promptInstall ? `<button type="button" class="ap-btn" data-a="installer">${t("Installer l'appli web")}</button>` : "";
+    const aide = deja || promptInstall ? "" : `<p class="ap-aide">${t(ios ? "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil »." : "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».")}</p>`;
+    const web = `<div class="ap-carte"><b>${t("Appli web (installation rapide)")}</b><p>${t("Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.")}</p>${bouton}${aide}</div>`;
+    return apk + web;
+}
+
+function rendreApropos() {
+    const f = document.querySelector(".dlg-apropos");
+    if (!f) return;
+    const onglet = (k, lib) => `<button type="button" class="ap-tab${ongletApropos === k ? " on" : ""}" data-onglet="${k}" aria-pressed="${ongletApropos === k}">${t(lib)}</button>`;
+    f.innerHTML = `<div class="reprise apropos dlg" role="dialog" aria-modal="true" aria-label="${t("À propos")}"><b class="reprise-titre">${t("À propos")}</b>`
+        + `<div class="ap-tabs">${onglet("credits", "Crédits")}${onglet("appli", "Application")}</div>`
+        + `<div class="ap-corps">${ongletApropos === "appli" ? htmlAppli() : htmlCredits()}</div>`
+        + `<div class="reprise-btns"><button type="button" class="rp-btn rp-no" data-a="fermer">${t("Fermer")}</button></div></div>`;
+}
+function fermerApropos() { document.querySelectorAll(".dlg-fond.dlg-apropos").forEach(e => e.remove()); }
+function ouvrirApropos(onglet) {
+    ongletApropos = onglet === "appli" ? "appli" : "credits";
+    fermerApropos();
+    const f = document.createElement("div");
+    f.className = "dlg-fond dlg-apropos";
+    f.addEventListener("click", e => {
+        if (e.target === f || e.target.closest("[data-a=\"fermer\"]")) return fermerApropos();   // fond sombre ou bouton Fermer
+        const o = e.target.closest("[data-onglet]");
+        if (o) { ongletApropos = o.dataset.onglet; return rendreApropos(); }
+        if (e.target.closest("[data-a=\"installer\"]")) installerAppliWeb();
+    });
+    document.body.appendChild(f);
+    rendreApropos();
+}
+async function installerAppliWeb() {
+    if (!promptInstall) return;
+    const p = promptInstall;
+    promptInstall = null;   // l'événement ne peut servir qu'une fois
+    try { p.prompt(); await p.userChoice; } catch (e) {}
+    rendreApropos();
+}
+// Retour arrière du téléphone pendant que la fenêtre est ouverte : on la ferme (pendant un draft, le garde-fou de sortie a déjà remis son entrée d'historique).
+window.addEventListener("popstate", () => { if (document.querySelector(".dlg-apropos")) fermerApropos(); });
 
 initialiser();
