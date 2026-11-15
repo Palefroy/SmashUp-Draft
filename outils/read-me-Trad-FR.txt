@@ -1,0 +1,332 @@
+README TRADUCTION FR — Générateur Smash Up (SmashUp-Draft)
+===========================================================
+À LIRE AVANT de traduire, relire ou corriger le moindre texte français du projet
+(data/titans.js, data/combo.js, data/notes.js, et tout futur fichier de texte).
+Complète readme-ia.txt (structure du projet) : ce fichier-ci ne parle QUE de vocabulaire et de style français.
+
+L'utilisateur ne code pas et ne peut pas relire le code. Il répond en français. Réponds-lui en français.
+
+
+0. POURQUOI CE FICHIER EXISTE
+-----------------------------
+Les textes anglais (titans, notes de faction, synergies de combo) ont d'abord été traduits mot à mot depuis Internet.
+Le résultat contenait des termes qui ne sont PAS ceux des boîtes françaises (éditeur : IELLO). Exemples :
+  - « base marquée » (calque de "scored") alors qu'en français on dit « base CONQUISE » ;
+  - « serviteur » / « puissance » / « Continu » alors que les livrets IELLO disent « Créature » / « Force » / « Permanent » ;
+  - « Folie » alors que la carte s'appelle « Démence » ;
+  - des mots anglais laissés tels quels (deck, timing, matchup…) ;
+  - des fichiers qui ne s'accordaient pas entre eux (notes.js disait « créature/force », titans.js et combo.js « serviteur/puissance »).
+Une longue session de correction a été faite avec l'utilisateur. Les règles obtenues sont ci-dessous.
+Objectif : que tout futur texte français respecte la terminologie OFFICIELLE sans qu'on refasse cette session.
+
+RÈGLE D'OR : en cas de doute sur un terme, NE PAS DEVINER. Vérifier dans un livret officiel (section 2),
+et si c'est introuvable, poser la question à l'utilisateur (section 10). Ne jamais inventer un nom de carte.
+
+
+1. ORDRE DE PRIORITÉ DES SOURCES
+--------------------------------
+1) Livrets de règles français officiels IELLO (voir section 2) : source de vérité n°1.
+2) Choix explicites de l'utilisateur (section 5 : termes de « style de jeu » qui n'existent pas dans les livrets).
+3) Wikis / forums francophones (smash-up.fandom.com/fr, trictrac.net) : indicatif seulement.
+4) Réponses d'IA (moteur de recherche « mode IA », chatbots) : NON FIABLES. Elles se sont contredites et trompées
+   pendant la session (voir section 9). Ne jamais s'appuyer dessus sans recouper avec un livret.
+Si une source de rang inférieur contredit un livret IELLO, c'est le livret qui gagne.
+
+
+2. SOURCES OFFICIELLES À CONSULTER
+----------------------------------
+LIVRETS FRANÇAIS (lus en entier ou en grande partie pendant la session) :
+  - Smash Up, jeu de base, règles FR :
+      https://iello.fr/wp-content/uploads/2022/07/SMASH_UP_regles_FR.pdf
+  - Smash Up : L'Énorme Boîte pour Geek, règles FR (32 pages, la plus utile : contient TOUTES les règles publiées jusqu'alors,
+    les chapitres Titans, Démence, Marqueurs Force +1, Enterrer, Duels, « Termes et restrictions », et des clarifications
+    par faction avec des NOMS DE CARTES FRANÇAIS) :
+      https://iello.fr/regles/SU15_EnormeBoite_Rulebook_FR.pdf   (redirige vers .../wp-content/uploads/2020/10/SU15_EnormeBoite_Rulebook_FR.pdf)
+    ATTENTION : lors de la session, la lecture de ce PDF a été coupée vers la page 20 (clarifications, faction « Orques »).
+    Les pages ~20 à 32 (clarifications Pirates, Poneys, Requins, Robots, Samouraïs, Vampires, etc. + Factionpédie + Table des
+    Factions) n'ont PAS été lues : elles contiennent sans doute d'autres noms français de cartes et de titans.
+    Un futur agent devrait relire cette fin de document (recherche web ciblée ou nouveau téléchargement) avant de laisser
+    des noms de cartes en anglais.
+  - D'autres livrets IELLO sont cités par des IA (SU16_Rulebook_FR_V1_Light.pdf, SU17_Rulebook_FR_V1_Light.pdf,
+    SU5_Rulebook_FR-light-2.pdf sur iello.fr) : NON lus directement. À consulter avant de s'en servir.
+LIVRET ANGLAIS DE RÉFÉRENCE (pour comprendre le sens exact d'un terme anglais) :
+  - https://smashup-rulebook.alderac.com  (« dernier livret » d'AEG, tous les termes y sont définis)
+  - https://smashup.fandom.com (wiki anglais) ; https://rulespal.com/smash-up-titans/rulebook (texte des titans en anglais)
+
+LES TITANS N'ONT PAS (OU PAS ENTIÈREMENT) ÉTÉ PUBLIÉS EN FRANÇAIS par IELLO : le chapitre Titans de l'Énorme Boîte donne les règles
+et quelques noms, mais les capacités de la plupart des titans restent des traductions maison de ce projet.
+Elles doivent donc utiliser le vocabulaire officiel des règles (section 3), mais leur formulation n'est pas « officielle ».
+
+
+3. GLOSSAIRE OFFICIEL ANGLAIS -> FRANÇAIS (vérifié dans les livrets IELLO)
+--------------------------------------------------------------------------
+Chaque ligne ci-dessous a été lue dans un livret français officiel (jeu de base et/ou Énorme Boîte).
+
+TYPES DE CARTES ET ÉLÉMENTS
+  minion                      Créature   (JAMAIS « serviteur » ni « sbire »)
+  action                      Action
+  base                        Base
+  faction                     Faction
+  titan                       Titan
+  monster / treasure          Monstre / Trésor
+  Madness card                carte Démence ; pile = « pioche Démence »   (JAMAIS « Folie »)
+  power (valeur de la carte)  Force      (JAMAIS « puissance » ; JAMAIS « pouvoir » pour dire power)
+  breakpoint (de la base)     Résistance (de la Base)   (« seuil » = terme non officiel)
+  printed power               Force inscrite
+  starting power              Force de départ
+  +1 power counter            marqueur Force +1  (dans le jeu, les jetons PV deviennent des marqueurs Force +1 quand on les pose sur une carte)
+  VP / victory points         PV / Points de Victoire
+  Winner / Runner-up / Third  Vainqueur / Deuxième / Troisième
+  draw pile                   pioche
+  player's 40-card deck       paquet (de 40 cartes)   [le livret dit aussi « pioche » ; voir note section 6]
+  discard pile                défausse
+  base deck                   pioche Base
+  box                         boîte
+
+MOTS-CLÉS DES EFFETS (écrits avec majuscule, suivis de « : » AVEC une espace avant les deux-points)
+  Ongoing                     Permanent   (JAMAIS « Continu »)
+  Special                     Spécial
+  Talent                      Talent
+  Before scoring              « Avant la Conquête »
+  During / When scoring       « Lors de la Conquête »
+  After scoring               « Après la Conquête »
+
+LE DÉROULEMENT D'UNE BASE (piège n°1 du projet)
+  to score a base / base scores        conquérir une base / la base est conquise
+  scoring (la phase)                   la Conquête
+  "the base was scored"                « la base a été conquise »   (JAMAIS « marquée »)
+  "after this base scores"             « après que cette base a été conquise »
+  scored base                          base conquise
+  "pendant la conquête" (oral)         tournure courante entre joueurs français, comprise de tous ; OK dans les notes de style
+  Remarque : « marquer » n'est correct que pour les POINTS (« marquer 15 PV »).
+
+VERBES D'EFFET (le livret insiste : ce ne sont PAS des synonymes ; ne jamais les intervertir)
+  destroy                     détruire
+  discard                     défausser
+  move                        déplacer
+  place                       placer
+  play                        jouer
+  return (to hand)            renvoyer
+  attach / "Attach: Base"     attacher / « Attachez : Base »
+  affected                    affectée
+  directly affect             affecter directement
+  reveal                      révéler  (pour une carte enterrée : « dévoiler »)
+  shuffle                     mélanger
+  take control / give control prendre le contrôle / donner le contrôle
+  put into the box            remettre / ranger dans la boîte
+  leaves play                 quitte le jeu
+  in play                     en jeu
+  extra (minion / action)     supplémentaire : « Créature supplémentaire », « Action supplémentaire »
+  regular minion play         « au lieu de jouer votre Créature gratuite » (et « votre Action gratuite »)
+                              (JAMAIS « jeu de serviteur normal » ni « à la place de votre jeu… »)
+  standard action             Action standard
+  tie                         égalité
+  "may"                       « vous pouvez »
+
+MÉCANIQUES PARTICULIÈRES
+  Titan clash                 Choc des Titans   (JAMAIS « affrontement de titans »)
+  bury / buried card / reveal a buried card   enterrer / carte enterrée / dévoiler   (nom du mécanisme : « Enterrer » ; tag du projet : « Enterrement »)
+  duel / challenger           duel / challenger   (« devenir le challenger », « défier en duel »)
+  cards "in the box" (removed) « dans la boîte »
+  Madness / end-of-game penalty  les cartes Démence font perdre 1 PV par groupe de 2 cartes Démence à la fin de la partie
+  Setup phase                 « Mise en place » (nom OFFICIEL de la préparation d'une partie ; voir section 5 pour l'usage dans combo.js)
+
+PÉRIPHRASES À NE PLUS UTILISER
+  « serviteur », « sbire », « puissance », « Continu », « Folie », « affrontement de titans », « base marquée »,
+  « capture d'une base », « résolution d'une base » (pour scoring), « seuil de conquête », « jeton +1 » (pour un marqueur Force +1),
+  « timing » (-> « ordre de résolution »), « matchup », « deck » (-> pioche / paquet), « enfoui / enfouissement » (-> enterré / enterrement).
+
+
+4. NOMS FRANÇAIS DE CARTES / TITANS VÉRIFIÉS (livret Énorme Boîte)
+-------------------------------------------------------------------
+Ces noms sont certifiés par un livret IELLO. Ils sont déjà appliqués dans les fichiers.
+  Titans (champ nom.fr de titans.js, sinon texte français) :
+    Death on Six Legs  -> Mort à Six Pattes      (Fourmis Géantes, code FOU)
+    Creampuff Man      -> Chantilhomme           (Fantômes, FAN)
+    Very Large Boulder -> Très Gros Caillou      (Explorateurs, EXP)
+    Gorgodzolla        -> Gorgonzilla            (Kaijū, KAI)
+  Cartes (utilisés dans combo.js) :
+    Full Sail          -> Toutes Voiles Dehors   (Pirates)
+    Eldest Thing       -> Chose Très Ancienne    (Grands Anciens)
+  Autres noms FR lus dans les clarifications (disponibles si une future note en a besoin) :
+    King Rex (reste King Rex), Little Bo Peep -> Petite Bergère (Moutons), Harvester -> Récolteur (Aliens),
+    Impersonator -> Imposteur (Métamorphes ; nom anglais à confirmer), Shapeshifter -> Changeforme, Cadet (Dream Team, reste Cadet),
+    Terraforming -> Terraformation, The Price of Power -> Le Prix du Pouvoir, Mi-Go (reste Mi-Go), Shoggoth (reste Shoggoth),
+    Doppelgänger (reste).
+  Luchadors (vérifiés dans le livret IELLO « Incident Diplomatique », SU16, novembre 2026) :
+    Pin -> Tombé ; Reversal -> Revirement ; Cheap Pop -> Petite Frime ; Yellow Demon -> Démon Jaune ; Out for the Count -> Hors-Combat ;
+    Powerful Set-Up -> Prise Dominante ; Set-Up action -> « Action Prise » (une Action dont le nom contient « Prise ») ;
+    texte de présentation de la faction : « prises de préparation ». Capa Roja reste Capa Roja.
+    Autres cartes lues dans ce livret : Grand Nord Immaculé, Le Ring, Troisième Division, Marquer Son Territoire (noms de Bases/cartes FR).
+  Tout nom absent de cette liste = NON vérifié (ne pas l'inventer).
+  Noms de FACTIONS : ne JAMAIS retraduire. Ils sont déjà officiels dans data/factions.js (Petit Peuple, Contes d'Anansi,
+    Changeformers, Monstrapoches, Moutons, etc.). Les factions sans édition française gardent leur nom anglais
+    (Teens, Slashers, Clowns, Disney, etc.). Aucune retraduction : un nom de faction mal écrit casserait les codes à 3 lettres.
+
+NOMS DE CARTES NON VÉRIFIÉS : on les LAISSE EN ANGLAIS, tels quels, sans italique ni guillemets (le texte est du JS brut, aucun
+balisage n'est interprété). Exemples actuellement en anglais dans combo.js : First Mate, Flying Monkey, Knitting Circle,
+Critter Cube, Genie, Wishes, Mimic, Drone, Reversal, Goblin Recruiters, Green Goblin, Ancient Curse, The Power of Madness,
+Love Overload, Cuddle, Too Cute, Rampage, Gunfighter, Quick Draw, Sprout, Ghostly Presence, Jack-in-the-Box, etc.
+Ne pas les « traduire de tête » : plusieurs traductions proposées par des IA (ex. « Cercle de tricot », « Bestiocube ») ne sont
+confirmées par aucune source et l'IA qui les donnait s'est trompée sur « Mort à Six Pattes ». Si l'utilisateur fournit les noms
+officiels (liste ou photos de cartes), les appliquer partout (chercher/remplacer dans combo.js).
+
+
+5. CHOIX DE L'UTILISATEUR (vocabulaire de « style de jeu » qui n'existe pas dans les livrets)
+----------------------------------------------------------------------------------------------
+Ces termes servent dans combo.js (tags et explications). Ce sont des choix validés par l'utilisateur, pas des termes officiels.
+  Nuée                        swarm (tag)
+  Moteur                      engine (« moteur de trésors », « moteur de recyclage »)
+  Tour d'explosion            burst turn ; « explosion de conquête », « coup de conquête »
+  Persistance                 persistence (tag)
+  Stase                       stasis (tag ; « mettre en stase » ; marqueurs : « jetons de stase », voir section 10)
+  Contre absolu               hard counter
+  Confrontation               matchup entre deux factions (PAS « opposition » : trop proche de « duel » des Cow-Boys)
+  Contrôle de zone            area control (Petit Peuple)
+  Binômes                     linked minions (tag) ; dans le texte : « binômes de créatures »
+  Préparation                 setup (au sens combo : « leur préparation »). EXCEPTION Luchadors : une « Set-Up action » se dit « Action Prise » (officiel), jamais « action de préparation ».
+                              On dit « préparation » et NON « mise en place » dans combo.js, pour ne pas confondre avec la
+                              Mise en place officielle d'une partie. (Le verbe « mettre en place le moteur » reste correct.)
+  Recyclage / Recyclage de défausse   recursion (l'utilisateur préfère « recyclage » à « récursion »)
+  Pendant la conquête         tag « scoring specials » ; en texte : « cartes jouables pendant la conquête »
+  Main réduite                small hand (tag)
+  Synergie de défausse        discard synergy (tag)
+  Actions supplémentaires     extra actions (tag) ; jamais « Actions bonus »
+  Grosses créatures / Petites créatures / Nombre de créatures / Contrôle de créatures / Recherche de créatures /
+  Actions sur créature / Actions sur base / Réduction de force / Bonus de force / Marqueurs Force +1 / Enterrement /
+  Manipulation de pioche / Gain de PV / Pile ou face / Perturbation de la main / Avantages adverses / Retour en main /
+  Duels / Démence / Trésors / Monstres / Fusions / Sacrifice / Copie / Protection / Transformation / Vol de cartes /
+  Don de cartes / Destruction / Déplacement / Pioche / Contrôle de base / Manipulation de bases
+  (liste complète des 42 libellés de tags de window.COMBO_INFO.tags dans combo.js ; garder ces libellés comme référence.)
+« Pile ou face » est l'expression confirmée pour coin flip.
+
+
+6. RÈGLES DE STYLE
+------------------
+- Vouvoiement / impératif pluriel dans les textes de TITANS (« piochez une carte », « vous pouvez jouer »). C'est la norme des cartes.
+- notes.js mélange déjà tutoiement (« tes créatures », « ta défausse ») et vouvoiement (« Jouez des cartes »). NE PAS homogénéiser
+  sans demander : ce n'est pas un défaut de traduction, c'est l'état existant. Pour une NOUVELLE entrée, imiter le style de la
+  faction voisine, ou demander.
+- Mots-clés : « Spécial : », « Permanent : », « Talent : » avec majuscule et espace avant les deux-points. Ils s'appliquent à tout le
+  texte qui suit jusqu'au prochain mot-clé (règle officielle).
+- « OU » en capitales, comme sur les cartes, quand l'original dit "OR" pour imposer un choix.
+- Guillemets français « … » (espace insécable ou normale à l'intérieur) ; apostrophes : titans.js utilise surtout l'apostrophe droite ',
+  notes.js et combo.js l'apostrophe typographique ’. Ne pas faire de remplacement global d'apostrophes ; imiter le fichier édité.
+- Casse : on écrit en MINUSCULES « créature », « base », « force », « titan », « conquête », « action » dans le texte courant
+  (style du projet, choisi par l'utilisateur), alors que les livrets IELLO les écrivent avec majuscule (Créature, Base, Force, Titan,
+  Conquête). Exception : « marqueur Force +1 » garde son F majuscule (nom du jeton). Si l'utilisateur demande un jour la
+  typographie officielle (majuscules), c'est un remplacement global à faire sur les 3 fichiers.
+- « PV » dans les tags et notes courtes ; « Points de Victoire » en toutes lettres seulement dans un texte de règle complet.
+- Phrases courtes et naturelles, jamais de calque. Reformuler plutôt que traduire mot à mot ; ne pas recopier le texte des cartes.
+- Orthographe de « Kaijū » (avec le macron) = nom de faction dans factions.js, mais le livret IELLO écrit « Kaiju » : ne pas toucher.
+
+NOTE « deck / paquet / pioche » : on garde la distinction du projet : « paquet » = le deck de faction(s) d'un joueur (40 cartes) ;
+« pioche » = la pile où l'on pioche. « Manipulation de pioche » (deck manipulation). Le livret IELLO emploie parfois « pioche » pour les
+deux sens : en cas d'ambiguïté, choisir « pioche » quand on pioche/cherche/replace des cartes, « paquet » quand on parle de l'ensemble
+des cartes du joueur.
+
+
+7. PIÈGES D'ACCORD DE GENRE (cause d'erreurs réelles pendant la session)
+-----------------------------------------------------------------------
+« créature » est FÉMININ ; « serviteur » et « sbire » étaient MASCULINS. Quand on a remplacé l'un par l'autre, il a fallu corriger :
+  - déterminants : un -> une, le -> la, ce -> cette, aucun -> aucune, chacun -> chacune, tous -> toutes, l'un -> l'une, du -> de la, au -> à la ;
+  - adjectifs : gros -> grosses, petits -> petites, bons -> bonnes, nombreux -> nombreuses, dernier -> dernière, seul -> seule ;
+  - participes/adjectifs : détruits -> détruites, joués -> jouées, déplacés -> déplacées, présents -> présentes, défaussés -> défaussées,
+    protégé -> protégée, important -> importante, menaçants -> menaçantes, alliés -> alliées…
+  - pronoms : il/lui/celui-ci/l'un d'eux -> elle/elle/celle-ci/l'une d'elles ; « chacun » -> « chacune » ; « les tiens/siens » -> « les tiennes/siennes » ;
+    « jouez-le » -> « jouez-la » ; « un autre » -> « une autre » quand il remplace une créature.
+Attention aux accords avec un NOM PROPRE : « Chose Très Ancienne … lorsqu'ELLE est jouée » (carte féminine) mais « The Lion King … qu'IL veut »
+(faction masculine). Toujours relire chaque phrase après un remplacement de nom, même automatique : un script de remplacement ne suffit pas.
+Autre piège : un motif de remplacement peut s'accrocher à un mot déjà correct (ex. « défaussées » -> « défausséees »). Toujours relire/valider.
+
+
+8. COMMENT LES FICHIERS ONT ÉTÉ TRAITÉS (pour ne pas casser le travail fait)
+-----------------------------------------------------------------------------
+  titans.js  32 titans environ (+ nouveaux) : champs nom {fr,en}, capacite {fr,en}, statut. Vocabulaire aligné ; nom.fr renseigné pour FOU, FAN, EXP, KAI.
+  combo.js   116 explications de synergies/contres + 42 tags (window.COMBO_INFO). L'en-tête dit qu'il est GÉNÉRÉ par outils/build_combo.py :
+             si l'utilisateur relance ce script, les corrections françaises seront ÉCRASÉES. Le script n'a pas été fourni : demander à
+             l'utilisateur de l'envoyer pour y reporter ce glossaire, ou ré-appliquer la section 3/5 après chaque génération.
+  notes.js   109 factions, notes en puces (« • … ») avec « \n » entre puces. Alignées sur : créature, force, marqueur Force +1, conquête, résistance.
+  Les champs EN n'ont JAMAIS été modifiés (vérification faite : textes anglais identiques à l'octet près). Ne pas les toucher en traduisant le FR.
+  Structure, noms de champs, virgules et guillemets : voir readme-ia.txt section 4. Tout fichier modifié doit être renvoyé COMPLET.
+Vérifications à refaire après toute modification de texte (elles ont été faites ; les refaire) :
+  1) charger chaque fichier dans Node avec un faux DATA/window pour détecter une erreur de syntaxe ;
+  2) comparer les chaînes EN avant/après : doivent rester identiques ;
+  3) chercher les mots proscrits dans les chaînes FR : serviteur, sbire, puissance, Continu (en tête de mot-clé), Folie,
+     « affrontement de titans », seuil, capture, enfou, « base marquée » ;
+  4) relire à l'œil les phrases où un nom a changé de genre (section 7).
+  (Faux positifs connus à la vérif 3 : « continuellement » contient « Continu » ; « jetons de stase » est volontairement conservé.)
+
+
+9. CE QUE LES IA SE SONT TROMPÉES À DIRE (à ne pas reproduire)
+--------------------------------------------------------------
+Pendant la session, des réponses d'IA collées par l'utilisateur ont affirmé, parfois en se contredisant dans le même message :
+  - « Permanent ou à la rigueur Continu » -> FAUX, officiel : Permanent (puis une IA a écrit « jamais Continu » : OK).
+  - « serviteur » et « puissance » corrects, puis « Créature » et « Force » obligatoires -> officiel : Créature et Force.
+  - « La Mort à six pattes » -> FAUX, officiel : Mort à Six Pattes.
+  - « Titan -> minuscule » -> les livrets écrivent « Titan » avec majuscule ; le projet garde le minuscule par choix de style.
+  - « Le terme officiel de l'extension Oups, on l'a encore fait ! pour Enterrer » -> FAUX : Enterrer vient de « Vous En Voulez Encore ? »
+    (Anciens Égyptiens, Cow-Boys, Samouraïs, Vikings). Ne pas citer cette extension fantôme.
+  - « Stase est un mot-clé officiel » / « Réaction de conquête » / « point de rupture » -> non vérifiés ou inventés ; non retenus.
+  - « Bestiocube », « Cercle de tricot », « Singe volant », « Second », « Mimique »… -> non vérifiés ; non appliqués.
+Leçon : une IA qui écrit « les livrets officiels disent… » ne l'a pas forcément lu. Vérifier sur le PDF.
+
+
+10. QUE FAIRE QUAND ON A UN DOUTE
+---------------------------------
+L'utilisateur l'a demandé explicitement : poser un MAXIMUM de questions, détaillées, NUMÉROTÉES, dans l'ordre des termes douteux,
+en UN SEUL message ; il répondra à tout en un seul prompt. Il préfère beaucoup de questions à une traduction approximative.
+Procédure :
+  1. Vérifier d'abord en ligne dans les livrets officiels (section 2). Si c'est trouvé, appliquer sans demander, puis le mentionner.
+  2. Sinon, regrouper les doutes en une liste numérotée (terme anglais, contexte, 2-3 options, ta recommandation).
+  3. Ne rien livrer de définitif sur ces points avant sa réponse ; ne rien inventer ; laisser vide ou en anglais en attendant.
+  4. Après la réponse, mettre à jour CE FICHIER (sections 3 à 5) pour que la décision soit mémorisée.
+
+POINTS ENCORE OUVERTS (non tranchés) :
+  - Noms français officiels de la plupart des cartes (voir section 4) et lecture de la fin du livret Énorme Boîte.
+  - « jetons de stase » (stasis counters) : terme officiel français non trouvé (peut-être « marqueurs Stase »).
+  - Majuscules officielles (Créature, Force, Titan, Conquête) : gardées en minuscules par choix de style ; à confirmer si besoin.
+  - Noms français des 20+ autres titans (seuls 4 sont connus).
+  - notes.js : tutoiement/vouvoiement mélangés (état existant).
+  - « Spécial » en tant que « créatures spéciales » (Ninjas, notes.js) : le sens exact "Special minions" pourrait mériter « Créatures à effet Spécial ».
+  - Dans le titre des tags, « Pendant la conquête » remplace « Spéciaux de conquête » : à revalider si l'utilisateur préfère un terme plus court.
+
+
+11. EXEMPLES AVANT / APRÈS (modèles à imiter)
+---------------------------------------------
+  EN : "After this base scores, move one of your minions from here to another base."
+  AVANT (mauvais) : « Après que cette base est marquée, déplacez l'un de vos serviteurs d'ici vers une autre base. »
+  APRÈS (bon)     : « Spécial : après que cette base a été conquise, déplacez l'une de vos créatures présentes ici vers une autre base. »
+
+  EN : "Special: Instead of your regular minion play, you may play this titan…"
+  AVANT : « à la place de votre jeu de serviteur normal »
+  APRÈS : « Spécial : au lieu de jouer votre créature gratuite, vous pouvez jouer ce titan… »
+
+  EN : "Ongoing: You have +3 power here."
+  AVANT : « Continu : vous avez +3 de puissance ici. »
+  APRÈS : « Permanent : vous avez +3 de force ici. »
+
+  EN : "+1 power counter"
+  AVANT : « marqueur +1 de puissance » / « jeton +1 »
+  APRÈS : « marqueur Force +1 »
+
+  EN : "Draw a Madness card."
+  AVANT : « Piochez une carte Folie. »     APRÈS : « Piochez une carte Démence. »
+
+  EN : "Titan clash"  ->  « choc des titans »
+  EN : "Reduces the breakpoint of bases" -> « Réduit la résistance des bases »   (pas « seuil »)
+  EN (notes) : "Plays minions before a base scores" -> « Joue des créatures avant la conquête d'une base »
+
+
+12. PROCÉDURE POUR UN NOUVEAU TEXTE À TRADUIRE
+----------------------------------------------
+  1. Lire readme-ia.txt (structure) puis ce fichier.
+  2. Pour chaque terme de jeu rencontré, chercher d'abord dans le glossaire (sections 3 et 5). Si absent, vérifier dans un livret officiel.
+  3. Traduire en phrases courtes et naturelles (pas de calque), vocabulaire officiel, style de la section 6, genre/accords de la section 7.
+  4. Laisser les noms de cartes non vérifiés en anglais (section 4) ; ne jamais retraduire un nom de faction.
+  5. Remplir FR et EN ; ne jamais modifier l'EN existant en retouchant le FR.
+  6. Faire les vérifications de la section 8 ; renvoyer le fichier COMPLET.
+  7. Signaler à l'utilisateur, en français et en peu de mots, ce qui est vérifié, ce qui ne l'est pas, et poser les questions de la section 10.
+  8. Si une décision nouvelle est prise avec l'utilisateur, ajouter la règle dans ce fichier.
+
+Dernière mise à jour : novembre 2026 (session de vérification avec les livrets IELLO « SMASH_UP_regles_FR » et « SU15 Énorme Boîte »).

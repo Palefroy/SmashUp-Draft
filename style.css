@@ -844,3 +844,8 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 #paramContainer .astuce-modes::before { right: auto; left: 8px; }   /* centre du bouton = 8 + 13 = 21 px ; bulle à 8 px ; pointe de 10 px -> left: 8 px */
 #paramContainer .astuce-modes p { margin: 0 0 .4em; }
 #paramContainer .astuce-modes p:last-child { margin-bottom: 0; }
+
+/* Licence (onglet Crédits) : symbole copyleft discret à côté du texte */
+.ap-licence { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; opacity: .85; }
+.ap-copyleft { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; opacity: .8; }
+.ap-licence a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }

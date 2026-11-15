@@ -1518,7 +1518,7 @@ function validerMain() {
    Entrée discrète : ligne « Crédits · Application » tout en bas de l'onglet Paramètres (index.html, .apropos-lien).
    Fenêtre au style des pop-up (.dlg-fond.dlg-apropos) ; Échap la ferme (gestionnaire « Quitter la partie ? » plus haut). Contenu = DATA.credit (data/credit.js) :
    intro, sections [{ titre, lignes: [{ nom, role, url }] }], avertissement, mentions (petites lignes en pied de bulle), application { apk, versions }. */
-Object.assign(EN, { "À propos": "About", "Crédits": "Credits", "Application": "App", "Aucun crédit pour l'instant.": "No credits yet.",
+Object.assign(EN, { "À propos": "About", "Crédits": "Credits", "Application": "App", "Licence": "License", "Voir la licence": "View the license", "Aucun crédit pour l'instant.": "No credits yet.",
     "Tu utilises déjà l'application Android.": "You are already using the Android app.",
     "Application Android (APK)": "Android app (APK)", "Télécharger l'APK": "Download the APK", "Toutes les versions": "All versions",
     "Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).": "A real file to install, like any other app. Android will ask you to allow installs from your browser (unknown source).",
@@ -1550,9 +1550,11 @@ function htmlCredits() {
     const c = CREDIT(), secs = (c.sections || []).filter(x => Array.isArray(x.lignes) && x.lignes.length);
     const corps = secs.map(x => `<h4 class="ap-titre">${esc(txtCredit(x.titre))}</h4>` + x.lignes.map(l => {
         const nom = urlOk(l.url) ? `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nom)}</a>` : esc(l.nom), role = txtCredit(l.role);
-        return `<p class="ap-l"><b>${nom}</b>${role ? `<span>${esc(role)}</span>` : ""}</p>`;
+        return `<p class="ap-l">${l.nom ? `<b>${nom}</b>` : ""}${role ? `<span>${esc(role)}</span>` : ""}</p>`;
     }).join("")).join("");
-    return (c.intro ? `<p class="ap-intro">${esc(txtCredit(c.intro))}</p>` : "") + (corps || `<p class="ap-intro">${t("Aucun crédit pour l'instant.")}</p>`)
+    const lic = c.licence && txtCredit(c.licence.texte)
+        ? `<h4 class="ap-titre">${t("Licence")}</h4><p class="ap-licence"><svg class="ap-copyleft" viewBox="0 0 24 24" role="img" aria-label="Copyleft"><circle cx="12" cy="12" r="10"/><path d="M9 9.2a4 4 0 1 1 0 5.6"/></svg><span>${esc(txtCredit(c.licence.texte))}${urlOk(c.licence.url) ? ` <a href="${esc(c.licence.url)}" target="_blank" rel="noopener noreferrer">${t("Voir la licence")}</a>` : ""}</span></p>` : "";
+    return (c.intro ? `<p class="ap-intro">${esc(txtCredit(c.intro))}</p>` : "") + (corps || `<p class="ap-intro">${t("Aucun crédit pour l'instant.")}</p>`) + lic
         + (c.avertissement ? `<p class="ap-avert">${esc(txtCredit(c.avertissement))}</p>` : "");
 }
 

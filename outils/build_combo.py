@@ -64,9 +64,27 @@ def lire_valeur(s, i):
     while s[i] in " \t\r\n,": i += 1
     if s[i] in "'\"": return lire_chaine(s, i)
     if s[i] == "[": return lire_tableau(s, i)
+    if s[i] == "{": return lire_objet(s, i)
     m = re.compile(r"-?\d+(\.\d+)?").match(s, i)
     if m: return float(m.group()) if "." in m.group() else int(m.group()), m.end()
+    for mot, val in (("true", True), ("false", False), ("null", None)):
+        if s.startswith(mot, i): return val, i + len(mot)
     raise ValueError("littéral JS inattendu près de : " + s[i:i + 60])
+
+def lire_objet(s, i):   # objet JS : clés avec ou sans guillemets, virgule finale tolérée
+    assert s[i] == "{"; i += 1; out = {}
+    while True:
+        while s[i] in " \t\r\n,": i += 1
+        if s.startswith("//", i): i = s.index("\n", i); continue
+        if s[i] == "}": return out, i + 1
+        if s[i] in "'\"": cle, i = lire_chaine(s, i)
+        else:
+            m = re.compile(r"[A-Za-z_$][\w$]*").match(s, i)
+            if not m: raise ValueError("clé JS inattendue près de : " + s[i:i + 60])
+            cle, i = m.group(), m.end()
+        while s[i] in " \t\r\n": i += 1
+        assert s[i] == ":", "':' attendu près de : " + s[i:i + 60]
+        out[cle], i = lire_valeur(s, i + 1)
 
 def lire_tableau(s, i):
     assert s[i] == "["; i += 1; out = []
@@ -78,7 +96,7 @@ def lire_tableau(s, i):
 
 # ---------- lecture des 3 fichiers du dépôt ----------
 def trouver(motif):
-    for f in sorted(glob.glob(os.path.join(SRC, "*.js"))):
+    for f in sorted(glob.glob(os.path.join(SRC, "*.js")), key=os.path.getmtime, reverse=True):   # le plus récent d'abord
         if motif in open(f, encoding="utf-8").read(): return f
     sys.exit("Fichier introuvable dans %s (motif « %s »). Voir l'en-tête du script." % (SRC, motif))
 
@@ -88,7 +106,10 @@ f_tag = trouver("window.FACTION_TAG_DATA")
 print("Factions :", os.path.basename(f_fac), "| Relations :", os.path.basename(f_rel), "| Tags :", os.path.basename(f_tag))
 
 txt = open(f_fac, encoding="utf-8").read()
-factions, _fin = json.JSONDecoder().raw_decode(txt, txt.index("[", txt.index("window.FACTION_DATA =")))   # le fichier peut contenir d'autres tableaux après le premier
+def groupe(cle):   # factions classées (FACTION_DATA) + non classées (FACTION_REFERENCE_DATA)
+    pos = txt.find("window.%s =" % cle)
+    return json.JSONDecoder().raw_decode(txt, txt.index("[", pos))[0] if pos >= 0 else []
+factions = groupe("FACTION_DATA") + groupe("FACTION_REFERENCE_DATA")
 
 rel = open(f_rel, encoding="utf-8").read()
 entrees = []   # (type, de, vers, texte, conditions)
@@ -96,10 +117,21 @@ for m in re.finditer(r"batch\('([^']+)','(pair|counter)',\[", rel):
     rows, _ = lire_tableau(rel, m.end() - 1)
     for r in rows:
         entrees.append((m.group(2), r[0], r[1], r[3], r[4] if len(r) > 4 else []))
+if not entrees and "const entries = [" in rel:
+    # NOUVEAU FORMAT (dépôt >= 15/11/2026) : const entries = [ {type, factions:[A,B], summary, conditions, ...}, ... ]
+    #   pair    : factions = [A, B] (ordre alphabétique)
+    #   counter : factions = [faction CONTRÉE (la plus faible), faction qui CONTRE]  -> on remet dans l'ordre (qui contre, contrée)
+    objets, _ = lire_tableau(rel, rel.index("[", rel.index("const entries =")))
+    for e in objets:
+        a, b = e["factions"]
+        if e["type"] == "counter": a, b = b, a
+        entrees.append((e["type"], a, b, e["summary"], e.get("conditions", [])))
 
 tg = open(f_tag, encoding="utf-8").read()
 defs, _ = lire_tableau(tg, tg.index("[", tg.index("const definitions")))
 assign, _ = lire_tableau(tg, tg.index("[", tg.index("const assignments")))
+if not entrees or not defs or not assign:
+    sys.exit("Rien lu dans relationship-data.js ou tag-data.js : le format a sans doute changé.")
 
 inconnus = set()
 def c_ou_signale(nom):

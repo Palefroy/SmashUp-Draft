@@ -3,6 +3,7 @@
 //
 // sections : liste de blocs. Chaque bloc = { titre: {fr, en}, lignes: [ { nom: "Nom affiché", role: {fr, en}, url: "https://..." } ] }
 //            role et url sont optionnels ("" ou absent = rien). Un bloc sans ligne n'est pas affiché : pratique pour préparer des sections vides.
+// licence : { texte: {fr, en}, url } (voir plus bas).
 // mentions : petites lignes grisées en pied de bulle de fiche. "combo" = bulle Combo ; "donnees" = bulles Notes et Stats.
 // donneesCodes : [] = la mention "donnees" apparaît pour toutes les factions. Pour la limiter, y mettre les codes concernés, ex. ["DIN", "NIN"].
 // application : liens de l'onglet « Application » (APK = fichier de la release GitHub « apk-latest » ; versions = page de toutes les releases).
@@ -37,7 +38,7 @@ DATA.credit = {
     {
       titre: { fr: "Illustrations", en: "Artwork" },
       lignes: [
-        { nom: "Palefroy", role: { fr: "Une grande partie des illustrations a été scannée par l'auteur de l'appli à partir de ses boîtes de jeu", en: "Much of the artwork was scanned by the app's author from their own game boxes" }, url: "" }
+        { nom: "", role: { fr: "Une grande partie des illustrations a été scannée par l'auteur de l'appli à partir de ses boîtes de jeu", en: "Much of the artwork was scanned by the app's author from their own game boxes" }, url: "" }
       ]
     },
 
@@ -51,6 +52,15 @@ DATA.credit = {
   avertissement: {
     fr: "Projet de fan, non affilié à AEG ni à IELLO. Smash Up, ses illustrations, ses noms et ses marques appartiennent à leurs propriétaires respectifs.",
     en: "Fan project, not affiliated with AEG or IELLO. Smash Up, its artwork, names and trademarks belong to their respective owners."
+  },
+
+  // Licence : texte affiché en bas de l'onglet Crédits, avec le symbole copyleft (C inversé). url = lien vers le fichier LICENSE du dépôt GitHub ("" = pas de lien).
+  licence: {
+    texte: {
+      fr: "Le code et les contenus originaux de cette appli sont libres (copyleft) : tu peux les reprendre, les modifier et les partager, à condition que toute œuvre dérivée reste libre sous la même licence. Cela ne concerne pas les illustrations, noms et marques de Smash Up, qui appartiennent à leurs propriétaires.",
+      en: "The code and original content of this app are free (copyleft): you may reuse, modify and share them, as long as any derivative work stays free under the same licence. This does not cover Smash Up's artwork, names and trademarks, which belong to their owners."
+    },
+    url: ""
   },
 
   mentions: {
