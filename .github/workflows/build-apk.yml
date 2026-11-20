@@ -60,7 +60,18 @@ jobs:
 
       # Les images sont allégées UNIQUEMENT dans build/www (copie temporaire du build) ; le dépôt et le site GitHub Pages restent en pleine qualité.
       # Réglages (taille max, qualité) : apk/compresser-images.sh, partagé avec publish-content.yml pour que le contenu téléchargé = celui de l'APK.
+      # Cache GitHub (invisible, hors dépôt et hors GitHub Pages) des images DÉJÀ compressées. La clé = empreinte de img/ + du script de compression :
+      # si aucune image ni réglage n'a changé, on récupère le résultat et on saute la compression (plusieurs minutes gagnées).
+      # Si une image change, tout est recompressé UNE fois puis re-mis en cache. Pas de « restore-keys » : recompresser une image déjà compressée la dégraderait.
+      - name: Cache des images compressées
+        id: cache-img
+        uses: actions/cache@v4
+        with:
+          path: build/www/img
+          key: img-compressees-${{ hashFiles('img/**', 'apk/compresser-images.sh') }}
+
       - name: Compresser les images pour l'APK
+        if: steps.cache-img.outputs.cache-hit != 'true'
         run: bash apk/compresser-images.sh build/www
 
       - name: Préparer le projet Capacitor
