@@ -3,8 +3,8 @@
 //      -> écrit <out>/contenu.json { version, apiMin, date, total, fichiers: [{ p chemin, s taille, h SHA-256 du fichier livré, k clé de la source }] }
 //         Si la source d'un fichier n'a pas changé depuis la publication précédente (<prev> = copie de la branche « content »),
 //         on réutilise SON fichier compressé et son empreinte : les hash restent stables même si ImageMagick change de version.
-//  node apk/contenu.mjs apk <sortie.json> <version> <empreinteScript>
-//      -> écrit la liste { version, fichiers: [{ p, k }] } du contenu embarqué dans l'APK (sert à ne rien retélécharger d'inutile).
+//  node apk/contenu.mjs apk <sortie.json> <version> <empreinteScript> <numéroDeBuild>
+//      -> écrit la liste { version, build, fichiers: [{ p, k }] } du contenu embarqué dans l'APK (sert à ne rien retélécharger d'inutile).
 // k = SHA-256( SHA-256(fichier source du dépôt) + empreinte de compresser-images.sh si le fichier est compressé ).
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, copyFileSync } from "node:fs";
@@ -48,8 +48,8 @@ if (mode === "publier") {
   writeFileSync(join(out, "contenu.json"), JSON.stringify({ version: Number(version), apiMin: Number(apiMin) || 1, date: new Date().toISOString(), total, fichiers }));
   console.log(`contenu.json : ${fichiers.length} fichiers, ${(total / 1048576).toFixed(1)} Mo, ${reutilises} réutilisés de la publication précédente.`);
 } else if (mode === "apk") {
-  const [sortie, version, script] = a;
+  const [sortie, version, script, build] = a;
   const fichiers = ["data", "img"].filter(d => existsSync(d)).flatMap(d => lister(d, ".")).map(p => ({ p, k: cle(p, script) }));
-  writeFileSync(sortie, JSON.stringify({ version: Number(version), fichiers }));
+  writeFileSync(sortie, JSON.stringify({ version: Number(version), build: Number(build) || 0, fichiers }));
   console.log(`Inventaire embarqué : ${fichiers.length} fichiers.`);
 } else { console.error("Usage : voir l'en-tête de apk/contenu.mjs"); process.exit(1); }

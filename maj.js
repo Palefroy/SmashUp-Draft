@@ -13,19 +13,11 @@
     const CACHE = "smashup-contenu", TMP = "smashup-contenu-tmp";
     const ETAT_URL = new URL("__etat.json", document.baseURI).href, TMP_URL = new URL("__tmp.json", document.baseURI).href;
     const SEUIL = 20 * 1048576, PARALLELE = 5, ESSAIS = 3;
+    const DELAI_VERIF = 4000, INTERVALLE_VERIF = 24 * 3600 * 1000;   // vérification automatique : 4 s après le lancement, au plus une fois par 24 h (seul contenu.json, quelques Ko, est téléchargé)
+    const CLE_VERIF = "smashup_maj_verif", CLE_VU = "smashup_maj_vu";
     const MIME = { js: "text/javascript", json: "application/json", woff2: "font/woff2", ttf: "font/ttf", webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", avif: "image/avif", gif: "image/gif", svg: "image/svg+xml" };
     const ANNULE = new Error("annule");
 
-    Object.assign(EN, { "Contenu de l'appli": "App content", "Vérification…": "Checking…", "À jour ✓": "Up to date ✓", "Mettre à jour": "Update",
-        "Vérifier / réparer": "Check / repair", "Tout réinstaller": "Reinstall everything", "Réessayer": "Retry", "Continuer": "Continue", "Annuler": "Cancel",
-        "Reprendre": "Resume", "Recharger l'appli": "Reload the app", "Enregistrement…": "Saving…",
-        "Connexion impossible : serveur injoignable ou hors ligne.": "Connection failed: server unreachable or offline.",
-        "Nouvel APK nécessaire : ce contenu demande une version plus récente de l'appli.": "New APK required: this content needs a newer version of the app.",
-        "Mise à jour du contenu indisponible sur cet appareil : l'appli utilise son contenu intégré.": "Content update unavailable on this device: the app uses its built-in content.",
-        "Contenu mis à jour ✓ Recharge l'appli pour l'utiliser.": "Content updated ✓ Reload the app to use it.",
-        "Annulé. Les fichiers déjà téléchargés sont gardés : la reprise sera rapide.": "Cancelled. Files already downloaded are kept: resuming will be quick.",
-        "Cache des images": "Image cache", "Vider le cache des images": "Clear the image cache", "Cache vidé ✓": "Cache cleared ✓",
-        "Les images déjà vues sont gardées sur l'appareil pour s'afficher plus vite. Tu peux les effacer : elles seront retéléchargées au besoin.": "Images you have seen are kept on the device to load faster. You can clear them: they will be downloaded again when needed." });
 
     let ui = { type: "init", t: 0 }, ctrl = null, occupe = false, purge = false, embarque = null, attente = false;
     const mime = p => MIME[(p.split(".").pop() || "").toLowerCase()] || "application/octet-stream";
@@ -41,15 +33,15 @@
     // Contenu embarqué dans l'APK : { version, k: { chemin: clé } } (contenu-apk.json, généré par build-apk.yml)
     async function lireEmbarque() {
         if (embarque) return embarque;
-        try { const j = await (await fetch("contenu-apk.json", { cache: "no-store" })).json(); embarque = { version: j.version || 0, k: Object.fromEntries((j.fichiers || []).map(f => [f.p, f.k])) }; }
-        catch (e) { embarque = { version: 0, k: {} }; }
+        try { const j = await (await fetch("contenu-apk.json", { cache: "no-store" })).json(); embarque = { version: j.version || 0, build: j.build || 0, k: Object.fromEntries((j.fichiers || []).map(f => [f.p, f.k])) }; }
+        catch (e) { embarque = { version: 0, build: 0, k: {} }; }
         return embarque;
     }
     // Un nouvel APK plus récent que le contenu téléchargé : on jette l'ancien cache (sinon il masquerait le contenu neuf de l'APK).
     async function purgerSiPerime() {
+        const emb = await lireEmbarque();   // (charge aussi la version de l'APK, affichée dans À propos)
         const etat = await lireDoc(CACHE, ETAT_URL);
         if (!etat) return;
-        const emb = await lireEmbarque();
         if (emb.version && emb.version >= etat.version) { await caches.delete(CACHE); await caches.delete(TMP); location.reload(); }
     }
     async function swPret() {
@@ -241,6 +233,50 @@
         if (w) w.outerHTML = htmlWeb();
     }
 
+    // Petit message discret au lancement quand du nouveau contenu (ou un nouvel APK) est disponible. Une seule fois par version publiée.
+    function toast(msg) {
+        const d = document.createElement("div");
+        d.className = "maj-toast"; d.setAttribute("role", "status");
+        d.innerHTML = `<span>${esc(msg)}</span><button type="button" data-v>${t("Voir")}</button><button type="button" data-x aria-label="${t("Fermer")}">×</button>`;
+        d.addEventListener("click", e => {
+            if (e.target.closest("[data-v]")) { d.remove(); if (window.ouvrirApropos) ouvrirApropos("appli"); }
+            else if (e.target.closest("[data-x]")) d.remove();
+        });
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 15000);
+    }
+    async function verifAuto() {
+        try {
+            if (!navigator.onLine || occupe) return;
+            if (Date.now() - Number(localStorage.getItem(CLE_VERIF) || 0) < INTERVALLE_VERIF) return;
+            if (!window.caches || !(await swPret())) return;
+            ctrl = new AbortController();
+            const m = await chargerManif();
+            localStorage.setItem(CLE_VERIF, String(Date.now()));
+            const apk = (m.apiMin || 1) > APP_API;
+            let neuf = apk;
+            if (!apk) {
+                const p = await planifier(m, "maj");
+                neuf = !!(p.dl.length || p.supp.length || p.nouveauxMasques.length);
+                if (neuf && !occupe) { ui = { type: "dispo", p, t: Date.now() }; rendre(); }
+            } else if (!occupe) { ui = { type: "apk" }; rendre(); }
+            if (!neuf || localStorage.getItem(CLE_VU) === String(m.version)) return;
+            localStorage.setItem(CLE_VU, String(m.version));
+            toast(apk ? t("Une nouvelle version de l'appli est disponible") : t("Du nouveau contenu est disponible"));
+        } catch (e) { /* hors ligne ou erreur : silencieux, on réessaiera au prochain lancement */ }
+    }
+    // Version de l'APK pour la phrase « Tu utilises déjà l'application Android » (build + date du contenu embarqué), vide tant qu'elle n'est pas lue.
+    window.versionApk = function () {
+        if (!embarque || !embarque.version) return "";
+        const d = new Date(embarque.version * 1000).toLocaleDateString(langue === "en" ? "en-GB" : "fr-FR");
+        return embarque.build ? L(`version ${embarque.build}, ${d}`, `version ${embarque.build}, ${d}`) : d;
+    };
+    // Petit « i » de la carte APK : explication cachée par défaut (clic = afficher / masquer, voir clicMaj).
+    window.htmlInfoApk = function () {
+        return `<button type="button" class="maj-i" data-m="info-apk" aria-label="${t("Information")}" aria-expanded="false">i</button>`
+            + `<p class="maj-info-apk" hidden>${t("Mettre à jour l'APK de temps en temps vaut le coup : il apporte l'interface et les nouveautés de l'appli. Le contenu (images, textes, données) se met à jour sans APK, avec le bouton « Mettre à jour » plus bas.")}</p>`;
+    };
+
     window.htmlContenuMaj = function () {
         if (!APK) return htmlWeb();
         if (!window.caches) ui = { type: "indispo" };
@@ -249,6 +285,11 @@
     };
     window.clicMaj = function (a) {
         if (a === "purge") return purgerWeb();
+        if (a === "info-apk") {
+            const p = document.querySelector(".maj-info-apk"), b = document.querySelector("[data-m=\"info-apk\"]");
+            if (p) { p.hidden = !p.hidden; if (b) b.setAttribute("aria-expanded", String(!p.hidden)); }
+            return;
+        }
         if (a === "recharger") return location.reload();
         if (a === "stop") { if (ctrl) ctrl.abort(); return; }
         if (occupe) return;
@@ -259,7 +300,7 @@
     };
 
     const st = document.createElement("style");
-    st.textContent = ".maj-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.maj-barre{height:8px;border-radius:4px;background:rgba(128,128,128,.28);overflow:hidden;margin:8px 0 4px}.maj-barre i{display:block;height:100%;background:currentColor;opacity:.75;transition:width .2s}";
+    st.textContent = ".maj-i{width:1.5em;height:1.5em;border-radius:50%;border:1px solid currentColor;background:none;color:inherit;font:italic 700 .8em serif;line-height:1;padding:0;margin-left:8px;opacity:.7;cursor:pointer;vertical-align:middle}.maj-info-apk{font-size:.9em;opacity:.85}.maj-info-apk[hidden]{display:none}.maj-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:9999;max-width:min(92vw,420px);display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:12px;background:rgba(32,32,36,.95);color:#fff;font-size:.9rem;box-shadow:0 4px 16px rgba(0,0,0,.35)}.maj-toast button{background:none;border:0;color:#fff;font:inherit;font-weight:700;padding:4px 6px;cursor:pointer;text-decoration:underline}.maj-toast [data-x]{text-decoration:none;font-size:1.3em;line-height:1}.maj-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.maj-barre{height:8px;border-radius:4px;background:rgba(128,128,128,.28);overflow:hidden;margin:8px 0 4px}.maj-barre i{display:block;height:100%;background:currentColor;opacity:.75;transition:width .2s}";
     document.head.appendChild(st);
-    if (APK && window.caches) purgerSiPerime().catch(() => {});
+    if (APK && window.caches) { purgerSiPerime().catch(() => {}); setTimeout(verifAuto, DELAI_VERIF); }
 })();

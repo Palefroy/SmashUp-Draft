@@ -34,17 +34,8 @@ for (const [type, parCode] of Object.entries(window.DATA || {}))
 const codeDe = n => CODES[n] || (SPECIALES[n] ? n : undefined);   // nom de faction -> code ; un code de carte spéciale est son propre code
 const nomSpecial = c => { const o = (SPECIALES[c] || {}).nom || {}; return o[langue] || o.fr || c; };
 const DOSSIER_ICO = "img/ico/";   // icônes : img/ico/<CODE>.<format>
-const EN = {"Cartes spéciales": "Special cards", "Tirage Smash Up": "Smash Up Draw", "Tirer les Factions": "Draw Factions", "Paramètres": "Settings", "Historique": "History", "Extensions": "Expansions", "Nb joueurs": "Players", "Tirage": "Random draw", "Tout cocher": "Check all", "Tout décocher": "Uncheck all", "Vider l'historique": "Clear history", "Réinitialiser": "Reset", "Personnalisé": "Custom", "Nouvelle faction": "New faction", "commence": "goes first", "Passe l'écran à": "Hand the screen to", "Je suis": "I'm", "choisis 2 factions": "pick 2 factions", "Valider": "Confirm", "Bannies": "Banned", "Smash Up : Même Pas Mort": "Smash Up: Awesome Level 9000", "Smash Up : Cthulhu Fhtagn !": "Smash Up: The Obligatory Cthulhu Set", "Smash Up : Séries B": "Smash Up: Science Fiction Double Feature", "Smash Up : Monstres Sacrés": "Smash Up: Monster Smash", "Smash Up : Trop Minions": "Smash Up: Pretty Pretty Smash Up", "Smash Up : La Grosse Boîte pour Geek": "Smash Up: The Big Geeky Box", "Smash Up : Ressemblances Fortuites": "Smash Up: Cease and Desist", "Smash Up : Vous l'aurez voulu !": "Smash Up: It's Your Fault!", "Smash Up : Conflit de Générations": "Smash Up: What Were We Thinking?", "Smash Up : Rois du Japon": "Smash Up: Big in Japan", "Smash Up : Ces Années-Là": "Smash Up: That '70s Expansion", "Smash Up : Vous en voulez encore ?": "Smash Up: Oops, You Did It Again", "Smash Up : L'Énorme Boîte pour Geek": "Smash Up: The Bigger Geekier Box", "Smash Up : Tournée Mondiale - Incident Diplomatique": "Smash Up: World Tour - International Incident", "Smash Up : Tournée Mondiale - Choc des Cultures": "Smash Up: World Tour - Culture Shock", "Smash Up : Faction Moutons": "Smash Up Sheep Promo", "Smash Up : Faction Pingouins": "Smash Up Penguins", "Smash Up : Fait son Cinéma": "Smash Up: Excellent Movies, Dudes!", "Smash Up : Édition Anniversaire": "Smash Up: 10th Anniversary", "Dinosaures": "Dinosaurs", "Petit Peuple": "Tricksters", "Sorciers": "Wizards", "Cavalerie Ours": "Bear Cavalry", "Fantômes": "Ghosts", "Plantes Carnivores": "Killer Plants", "Grands Anciens": "Elder Things", "Serviteurs de Cthulhu": "Minions of Cthulhu", "Université Miskatonic": "Miskatonic University", "Métamorphes": "Shapeshifters", "Singes Cyborgs": "Cyborg Apes", "Super Espions": "Super Spies", "Voyageurs du Temps": "Time Travelers", "Fourmis Géantes": "Giant Ants", "Loups-Garous": "Werewolves", "Savants Fous": "Mad Scientists", "Chatons": "Kitty Cats", "Fées": "Fairies", "Poneys Magiques": "Mythic Horses", "Elfes": "Elves", "Guerriers": "Warriors", "Magiciens": "Mages", "Nains": "Dwarves", "Orques": "Orcs", "Prêtres": "Clerics", "Voleurs": "Thieves", "Changeformers": "Changerbots", "Chevaliers des Étoiles": "Astroknights", "Voyageurs de l'Espace": "Star Roamers", "Mythologies Grecques": "Mythic Greeks", "Requins": "Sharks", "Super-Héros": "Superheroes", "Tornades": "Tornados", "Explorateurs": "Explorers", "Grands-Mères": "Grannies", "Oursons": "Teddy Bears", "Rockstars": "Rock Stars", "Kaijū": "Kaiju", "Monstrapoches": "Itty Critters", "Petites Magiciennes": "Magical Girls", "Super Combattants": "Mega Troopers", "Danseurs Disco": "Disco Dancers", "Justiciers": "Vigilantes", "Maîtres Kung-Fu": "Kung Fu Fighters", "Routiers": "Truckers", "Anciens Égyptiens": "Ancient Egyptians", "Cow-Boys": "Cowboys", "Samouraïs": "Samurai", "Mousquetaires": "Musketeers", "Police Montée": "Mounties", "Sumos": "Sumo Wrestlers", "Anciens Incas": "Ancient Incas", "Contes d'Anansi": "Anansi Tales", "Contes de Grimm": "Grimms' Fairy Tales", "Contes Féeriques Russes": "Russian Fairy Tales", "Voyageurs Polynésiens": "Polynesian Voyagers", "Moutons": "Sheep", "Pingouins": "Penguins", "Traqueurs de Spectres": "Wraithrustlers", "Extramorphes": "Extramorphs", "Hommes d'Action": "Action Heroes", "Retourneurs du Futur": "Backtimers", "Gobelins": "Goblins", "Sirènes": "Mermaids", "Squelettes": "Skeletons"};
-Object.assign(EN, {
-    "Nombre de joueurs": "Number of players", "Mode": "Mode", "Draft": "Draft",
-    "Factions proposées par joueur": "Factions offered per player",
-    "Taille de la réserve": "Common pool size",
-    "Générateur Smash Up Avancé": "Advanced Smash Up Generator",
-    "Changer le thème": "Change theme",
-    "Historique des tirages": "Draw history", "Extensions & factions": "Expansions & factions",
-    "Halfelins": "Halflings", "Dream Team": "Smash Up All Stars", "Champions du Monde": "World Champs",
-    "Squatteurs de Trône": "Ignobles", "Luchadors": "Luchadores"
-});
+// Dictionnaire EN : data/traductions.js (modifiable sans nouvel APK). Texte absent = français.
+const EN = Object.assign({}, window.DATA && DATA.traductions && DATA.traductions.en);
 
 const $ = id => document.getElementById(id);
 const LS = {
@@ -57,22 +48,7 @@ const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(
 
 let langue = LS.get("smashup_lang") === "en" ? "en" : "fr";   // français par défaut
 const L = (fr, en) => langue === "en" ? en : fr;
-Object.assign(EN, { "Fermer": "Close", "Titan": "Titan", "Notes": "Notes", "Stats": "Stats", "Statistiques": "Statistics",
-    "Détails": "Details", "Chargement…": "Loading…", "Code de complexité": "Complexity code", "S = plus complexe · D = plus simple": "S = most complex · D = simplest" });
 const t = n => langue === "en" ? (EN[n] || n.replace(" : ", ": ")) : n;
-Object.assign(EN, { "Combo": "Combo", "Synergies": "Synergies", "Menaces": "Threats", "Contre": "Counters",
-    "Afficher les synergies": "Show synergies", "Afficher les menaces et contres": "Show threats and counters", "Activé": "On", "Désactivé": "Off",
-    "Synergie avec ta sélection": "Synergy with your selection", "Synergie avec tes factions": "Synergy with your factions",
-    "Contre une faction adverse": "Counters an opponent faction", "Menace tes factions": "Threatens your factions",
-    "Afficher :": "Show:", "Rang": "Tier", "Bannir": "Ban", "Complexe": "Complex", "Simple": "Simple",
-    "Reprendre la partie ?": "Resume the game?", "joueurs": "players", "étape": "step", "Reprendre": "Resume", "Abandonner": "Discard",
-    "Quitter la partie ?": "Leave the game?", "Ta partie est sauvegardée : tu pourras la reprendre au prochain lancement.": "Your game is saved: you can resume it next time you open the app.",
-    "Rester": "Stay", "Quitter": "Leave", "Contrée par ta sélection": "Countered by your selection", "Menace ta sélection": "Threatens your selection",
-    "Explication des modes": "What the modes mean",
-    "Tirage au sort : chaque joueur reçoit ses factions au hasard, sans choisir.": "Random draw: each player is dealt factions at random, no choice involved.",
-    "Draft : chaque joueur reçoit sa propre main de factions (nombre réglable) et en garde 2. Les mains sont secrètes : on se passe l'écran.": "Draft: each player gets their own hand of factions (adjustable size) and keeps 2. Hands are secret, so you pass the screen around.",
-    "Pick : une réserve commune est affichée. Chacun prend une faction à tour de rôle, en serpent (1→n puis n→1), jusqu'à en avoir 2.": "Pick: a shared pool is shown. Players take one faction each in turn, snake order (1→n then n→1), until everyone has 2.",
-    "Pick & Ban : réserve commune plus grande. Chacun bannit une faction, puis chacun en choisit une ; puis on recommence dans l'ordre inverse (2 bans et 2 picks par joueur).": "Pick & Ban: larger shared pool. Everyone bans a faction, then everyone picks one; then the same again in reverse order (2 bans and 2 picks per player)." });
 
 // ---------- Combo (data/combo.js : synergies, menaces, contres, tags de style de jeu) ----------
 // DATA.combo[CODE] = { tags: [id], syn: [CODE], men: [CODE qui contrent CODE], con: [CODE que CODE contre] } ; window.COMBO_INFO = { tags: { id: { fr, en } }, expl: { "p:A|B" ou "c:A>B": { fr, en } } }
@@ -123,8 +99,8 @@ const MODE_LABEL = { tirage: "Tirage", draft: "Draft", pick: "Pick", pickban: "P
 const DEFAUTS = { nbJ: 2, mode: "tirage", mainK: 5, poolAuto: true, poolVal: 10, syn: true, men: true, con: true, rang: false };   // syn / men / con : afficher les synergies / les menaces / les contres (activés par défaut) ; rang : mini médaille de rang sur les factions (masquée par défaut)
 let P = { ...DEFAUTS };
 
-const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter"];
-const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", japan: "japan", china: "china", halloween: "halloween", christmas: "christmas", easter: "easter" };
+const themesList = ["light", "sepia", "dark", "parchment", "felt", "wood", "japan", "china", "halloween", "christmas", "easter", "vicecity", "sanandreas"];
+const iconMap = { light: "sun", sepia: "sepia", dark: "moon", parchment: "parchment", felt: "felt", wood: "wood", japan: "japan", china: "china", halloween: "halloween", christmas: "christmas", easter: "easter", vicecity: "vicecity", sanandreas: "sanandreas" };
 const PANNEAUX = [["paramContainer", "tabParam"], ["historiqueContainer", "tabHist"], ["extContainer", "tabExt"]];
 
 function initialiser() {
@@ -175,6 +151,7 @@ const PERIODES_THEME = [
 ];
 // Nouvel An chinois : dates 2026-2040 en dur (tableau ci-dessous), puis calendrier chinois du téléphone au-delà.
 const NOUVEL_AN_CHINOIS = { 2026: [2, 17], 2027: [2, 6], 2028: [1, 26], 2029: [2, 13], 2030: [2, 3], 2031: [1, 23], 2032: [2, 11], 2033: [1, 31], 2034: [2, 19], 2035: [2, 8], 2036: [1, 28], 2037: [2, 15], 2038: [2, 4], 2039: [1, 24], 2040: [2, 12] };
+const VICE_CITY_2026 = [1105, 1130];   // thème par défaut du 5 au 30 novembre 2026 (mois*100 + jour) : à supprimer ou changer l'an prochain
 const CHINE_AVANT = 5, CHINE_APRES = 15;   // jours avant le Nouvel An et après (fête des lanternes) : à modifier ici
 function nouvelAnChinois(date) {
     const j = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -206,6 +183,7 @@ function themeDeSaison(date = new Date()) {
     if (ep >= -PAQUES_AVANT && ep <= PAQUES_APRES) return "easter";
     if (nouvelAnChinois(date)) return "china";
     const v = (date.getMonth() + 1) * 100 + date.getDate();
+    if (date.getFullYear() === 2026 && v >= VICE_CITY_2026[0] && v <= VICE_CITY_2026[1]) return "vicecity";   // 2026 uniquement ; Noël (1er déc.) reprend ensuite la main
     for (const p of PERIODES_THEME) {
         const d = p.debut[0] * 100 + p.debut[1], f = p.fin[0] * 100 + p.fin[1];
         if (d <= f ? (v >= d && v <= f) : (v >= d || v <= f)) return p.theme;
@@ -242,29 +220,81 @@ function toggleTheme() {                          // clic simple : thème suivan
     if (menuTheme.fait) return;                   // clic qui suit un appui long (menu de thèmes) : ignoré
     if (menuTheme.ouvert) return fermerMenuTheme();
     const current = document.documentElement.getAttribute("data-theme");
-    appliquerTheme(themesList[(themesList.indexOf(current) + 1) % themesList.length]);
+    const i = THEMES_BASE.indexOf(current);   // le clic simple parcourt les thèmes de base ; les thèmes spéciaux passent par l'appui long
+    appliquerTheme(THEMES_BASE[(i + 1) % THEMES_BASE.length]);
 }
 
 /* ---------- Menu de thèmes ----------
    Appui long (250 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
    Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
-Object.assign(EN, { "Japon": "Japan", "Chine": "China" });
-const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", japan: "Japon", china: "Chine", halloween: "Halloween", christmas: "Noël", easter: "Pâques" };
-Object.assign(EN, { "Clair": "Light", "Sépia": "Sepia", "Sombre": "Dark", "Parchemin": "Parchment", "Feutre": "Felt", "Bois": "Wood", "Noël": "Christmas", "Pâques": "Easter",
-    "Appui long : choisir un thème": "Long-press: choose a theme" });
+// Menu de thèmes en deux niveaux : thèmes de base dans la liste, thèmes animés dans le dossier « Thèmes spéciaux ».
+// Pour ajouter un thème : l'ajouter à themesList / iconMap / NOMS_THEMES ET dans l'un de ces deux groupes.
+const THEMES_BASE = ["light", "sepia", "dark", "parchment", "felt", "wood"];
+const THEMES_SPECIAUX = ["japan", "china", "halloween", "christmas", "easter", "vicecity", "sanandreas"];
+const ICONE_DOSSIER = '<svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.6L20 9l-4.5 3.8L17 19l-5-3.2L7 19l1.5-6.2L4 9l5.8-.4z"/></svg>';
+const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", japan: "Japon", china: "Chine", halloween: "Halloween", christmas: "Noël", easter: "Pâques", vicecity: "Vice City", sanandreas: "San Andreas" };
 const DELAI_MENU_THEME = 250;   // appui long le plus court : menus thème et langue
-const menuTheme = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
+const menuTheme = { vue: "base", ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
 const vibrer = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
 const optSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".theme-opt") : null; };
 
-function ouvrirMenuTheme() {
-    const m = $("themeMenu"), actuel = document.documentElement.getAttribute("data-theme");
-    m.innerHTML = themesList.map(k => `<div class="theme-opt${k === actuel ? " actuel" : ""}" role="option" data-theme="${k}" data-k="${k}" aria-selected="${k === actuel}"><span class="theme-ico"></span><span class="theme-nom">${esc(t(NOMS_THEMES[k]))}</span><span class="theme-ech" aria-hidden="true"><i></i><i></i></span></div>`).join("");
-    m.querySelectorAll(".theme-opt").forEach(o => {
+function ligneTheme(k, actuel) {
+    return `<div class="theme-opt${k === actuel ? " actuel" : ""}" role="option" data-theme="${k}" data-k="${k}" aria-selected="${k === actuel}"><span class="theme-ico"></span><span class="theme-nom">${esc(t(NOMS_THEMES[k]))}</span><span class="theme-ech" aria-hidden="true"><i></i><i></i></span></div>`;
+}
+function garnirIcones(c) {
+    c.querySelectorAll(".theme-opt:not(.theme-dossier)").forEach(o => {
         const svg = $("icon-" + iconMap[o.dataset.k]).cloneNode(true);
         svg.removeAttribute("id"); svg.style.display = "block";
         o.querySelector(".theme-ico").appendChild(svg);
     });
+}
+function rendreMenuTheme() {
+    const m = $("themeMenu"), actuel = document.documentElement.getAttribute("data-theme");
+    const dossier = `<div class="theme-opt theme-dossier${THEMES_SPECIAUX.includes(actuel) ? " actuel" : ""}" role="option" aria-haspopup="true" data-theme="dark" data-k="__speciaux"><span class="theme-ico">${ICONE_DOSSIER}</span><span class="theme-nom">${esc(L("Thèmes spéciaux", "Special themes"))}</span><span class="theme-fin">‹</span></div>`;
+    m.innerHTML = THEMES_BASE.map(k => ligneTheme(k, actuel)).join("") + dossier;
+    garnirIcones(m);
+    m.scrollTop = 0;
+}
+
+/* Sous-menu « Thèmes spéciaux » : petit panneau qui s'ouvre À GAUCHE du menu, dès que le doigt (ou la souris) survole la ligne « Thèmes spéciaux ». */
+function sousMenuTheme() {
+    let s = $("themeSub");
+    if (!s) {
+        s = document.createElement("div");
+        s.id = "themeSub"; s.className = "theme-menu"; s.setAttribute("role", "listbox"); s.hidden = true;
+        $("themeMenu").insertAdjacentElement("afterend", s);
+    }
+    return s;
+}
+function ouvrirSousMenuTheme() {
+    const m = $("themeMenu"), s = sousMenuTheme(), ligne = m.querySelector(".theme-dossier");
+    if (!ligne || !s.hidden) return;
+    const actuel = document.documentElement.getAttribute("data-theme");
+    s.innerHTML = THEMES_SPECIAUX.map(k => ligneTheme(k, actuel)).join("");
+    garnirIcones(s);
+    const rm = m.getBoundingClientRect(), rl = ligne.getBoundingClientRect();
+    s.style.width = Math.max(120, Math.min(176, rm.left - 10)) + "px";
+    s.style.right = (window.innerWidth - rm.left + 4) + "px";
+    s.hidden = false;
+    s.style.top = Math.max(8, Math.min(rl.top, window.innerHeight - s.offsetHeight - 8)) + "px";
+    ligne.classList.add("ouvert");
+    vibrer(8);
+}
+function fermerSousMenuTheme() {
+    const s = $("themeSub"); if (s) s.hidden = true;
+    const l = document.querySelector("#themeMenu .theme-dossier"); if (l) l.classList.remove("ouvert");
+}
+
+function choisirOptTheme(opt, bascule) {   // ligne de thème : applique et ferme ; ligne « Thèmes spéciaux » : ouvre (ou, au toucher, referme) le sous-menu
+    const k = opt.dataset.k;
+    if (k === "__speciaux") { if (bascule && !sousMenuTheme().hidden) fermerSousMenuTheme(); else ouvrirSousMenuTheme(); return; }
+    appliquerTheme(k); fermerMenuTheme();
+}
+
+function ouvrirMenuTheme() {
+    const m = $("themeMenu");
+    rendreMenuTheme();
+    fermerSousMenuTheme();
     m.hidden = false;
     menuTheme.ouvert = true;
     $("themeToggle").setAttribute("aria-expanded", "true");
@@ -276,6 +306,7 @@ function fermerMenuTheme() {
     clearTimeout(menuTheme.minuteur);
     menuTheme.ouvert = false;
     $("themeMenu").hidden = true;
+    fermerSousMenuTheme();
     $("themeToggle").setAttribute("aria-expanded", "false");
 }
 
@@ -291,10 +322,12 @@ function fermerMenuTheme() {
     window.addEventListener("pointermove", e => {
         if (!menuTheme.appui) return;
         if (!menuTheme.ouvert) { if (Math.hypot(e.clientX - menuTheme.x, e.clientY - menuTheme.y) > 12) clearTimeout(menuTheme.minuteur); return; }
-        const opt = optSous(e.clientX, e.clientY), ancien = m.querySelector(".survol");
+        const opt = optSous(e.clientX, e.clientY), ancien = document.querySelector(".theme-opt.survol");
         if (ancien === opt) return;
         if (ancien) ancien.classList.remove("survol");
         if (opt) { opt.classList.add("survol"); vibrer(6); }
+        if (opt && opt.dataset.k === "__speciaux") ouvrirSousMenuTheme();      // doigt sur « Thèmes spéciaux » : le sous-menu s'ouvre à gauche
+        else if (opt && opt.closest("#themeMenu")) fermerSousMenuTheme();      // doigt sur un autre thème de base : il se referme
     }, true);
     window.addEventListener("pointerup", e => {
         if (!menuTheme.appui) return;
@@ -302,7 +335,7 @@ function fermerMenuTheme() {
         clearTimeout(menuTheme.minuteur);
         if (!menuTheme.ouvert) return;             // appui court : le clic normal (thème suivant) s'en charge
         const opt = optSous(e.clientX, e.clientY), surBouton = document.elementFromPoint(e.clientX, e.clientY);
-        if (opt) { appliquerTheme(opt.dataset.k); fermerMenuTheme(); }
+        if (opt) choisirOptTheme(opt, false);
         else if (!(surBouton && surBouton.closest("#themeToggle"))) fermerMenuTheme();
         setTimeout(() => { menuTheme.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
     }, true);
@@ -312,13 +345,12 @@ function fermerMenuTheme() {
         fermerMenuTheme();
         setTimeout(() => { menuTheme.fait = false; }, 400);
     }, true);
-    m.addEventListener("click", e => {             // mode « toucher » : la liste est restée ouverte après un appui long
+    [m, sousMenuTheme()].forEach(c => c.addEventListener("click", e => {   // mode « toucher » : la liste est restée ouverte après un appui long
         const opt = e.target.closest(".theme-opt");
         if (!opt) return;
-        appliquerTheme(opt.dataset.k);
-        fermerMenuTheme();
-    });
-    document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeToggle")) fermerMenuTheme(); }, true);
+        choisirOptTheme(opt, true);
+    }));
+    document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeSub, #themeToggle")) fermerMenuTheme(); }, true);
     document.addEventListener("keydown", e => { if (e.key === "Escape" && menuTheme.ouvert) fermerMenuTheme(); });
     window.addEventListener("blur", () => { if (menuTheme.ouvert) fermerMenuTheme(); menuTheme.appui = false; menuTheme.fait = false; });
 })();
@@ -1234,7 +1266,6 @@ function afficherResultats(groupes, premier) {
 }
 
 /* ---------- Bulle « i » du draft (indice de l'appui long sur une faction) ---------- */
-Object.assign(EN, { "Aide": "Help", "Appuie longtemps sur une faction pour voir ses détails.": "Press and hold a faction to see its details." });
 let tmInfo = null;
 function htmlInfo() {
     return `<button type="button" class="btn-info" onclick="basculerInfo()" aria-label="${t("Aide")}" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-5M12 7.8h.01"/></svg></button>` +
@@ -1518,14 +1549,6 @@ function validerMain() {
    Entrée discrète : ligne « Crédits · Application » tout en bas de l'onglet Paramètres (index.html, .apropos-lien).
    Fenêtre au style des pop-up (.dlg-fond.dlg-apropos) ; Échap la ferme (gestionnaire « Quitter la partie ? » plus haut). Contenu = DATA.credit (data/credit.js) :
    intro, sections [{ titre, lignes: [{ nom, role, url }] }], avertissement, mentions (petites lignes en pied de bulle), application { apk, versions }. */
-Object.assign(EN, { "À propos": "About", "Crédits": "Credits", "Application": "App", "Licence": "License", "Voir la licence": "View the license", "Aucun crédit pour l'instant.": "No credits yet.",
-    "Tu utilises déjà l'application Android.": "You are already using the Android app.",
-    "Application Android (APK)": "Android app (APK)", "Télécharger l'APK": "Download the APK", "Toutes les versions": "All versions",
-    "Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).": "A real file to install, like any other app. Android will ask you to allow installs from your browser (unknown source).",
-    "Appli web (installation rapide)": "Web app (quick install)", "Installer l'appli web": "Install the web app", "Déjà installée ✓": "Already installed ✓",
-    "Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.": "No file to download: the app is added to your home screen from your browser and updates itself.",
-    "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil ».": "On iPhone / iPad: tap the Share button, then “Add to Home Screen”.",
-    "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».": "In your browser menu (⋮), choose “Install app” or “Add to Home screen”." });
 
 let promptInstall = null, ongletApropos = "credits";
 const CREDIT = () => (window.DATA && DATA.credit) || {};
@@ -1560,11 +1583,12 @@ function htmlCredits() {
 
 function htmlAppli() {
     const a = CREDIT().application || {}, ios = surIOS(), android = enAppliAndroid();
-    const intro = android ? `<p class="ap-intro">${t("Tu utilises déjà l'application Android.")}</p>` : "";
+    const ver = android && window.versionApk ? versionApk() : "";   // maj.js : « version 42, 20/11/2026 »
+    const intro = android ? `<p class="ap-intro">${t("Tu utilises déjà l'application Android.").replace(/\.$/, ver ? " (" + esc(ver) + ")." : ".")}</p>` : "";
     const contenu = window.htmlContenuMaj ? htmlContenuMaj() : "";   // maj.js : mise à jour du contenu (APK) ou purge du cache images (web)
     // 1) Application Android (fichier APK, release GitHub). Masquée sur iPhone / iPad.
     const apk = !ios && urlOk(a.apk)
-        ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b><p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
+        ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b>${android && window.htmlInfoApk ? htmlInfoApk() : ""}<p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
           + `<a class="ap-btn" href="${esc(a.apk)}" target="_blank" rel="noopener noreferrer">${t("Télécharger l'APK")}</a>`
           + (urlOk(a.versions) ? `<a class="ap-lien" href="${esc(a.versions)}" target="_blank" rel="noopener noreferrer">${t("Toutes les versions")}</a>` : "") + `</div>` : "";
     // 2) Appli web (PWA) : bouton d'installation du navigateur quand il existe ; sinon explication du geste à faire à la main.

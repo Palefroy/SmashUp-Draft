@@ -55,7 +55,7 @@ jobs:
 
       # Liste du contenu embarqué (chemin + clé de la source) : l'appli s'en sert pour ne télécharger que ce qui a changé.
       - name: Inventaire du contenu embarqué
-        run: node apk/contenu.mjs apk build/www/contenu-apk.json "$(git log -1 --format=%ct)" "$(sha256sum apk/compresser-images.sh | cut -d' ' -f1)"
+        run: node apk/contenu.mjs apk build/www/contenu-apk.json "$(git log -1 --format=%ct)" "$(sha256sum apk/compresser-images.sh | cut -d' ' -f1)" "${{ github.run_number }}"
 
       # Les images sont allégées UNIQUEMENT dans build/www (copie temporaire du build) ; le dépôt et le site GitHub Pages restent en pleine qualité.
       # Réglages (taille max, qualité) : apk/compresser-images.sh, partagé avec publish-content.yml pour que le contenu téléchargé = celui de l'APK.

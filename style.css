@@ -849,3 +849,133 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 .ap-licence { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; opacity: .85; }
 .ap-copyleft { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; opacity: .8; }
 .ap-licence a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ===== Menu de thèmes : ligne « Thèmes spéciaux » (dossier) et ligne « Retour » ===== */
+#themeMenu .theme-dossier { font-weight: 700; border-style: dashed; letter-spacing: .01em; }
+#themeMenu .theme-dossier .theme-fin { flex: none; font-size: 18px; line-height: 1; opacity: .8; }
+#themeMenu .theme-dossier svg { fill: currentColor; stroke-width: 1.5; }
+
+/* ===== Menu de thèmes : sous-menu latéral « Thèmes spéciaux » ===== */
+#themeSub { position: fixed; left: auto; right: auto; z-index: 31; width: 170px; gap: 4px; padding: 6px; max-height: calc(100vh - 16px); overflow-y: auto; scrollbar-width: none; transform-origin: top right; }
+#themeSub::-webkit-scrollbar { display: none; }
+#themeSub .theme-opt { height: 35px; padding: 0 10px; gap: 8px; font-size: 14px; }
+#themeSub .theme-opt svg { width: 20px; height: 20px; }
+#themeMenu .theme-dossier.ouvert { box-shadow: 0 0 0 3px #ffd54a, 0 6px 16px rgba(0,0,0,.5); }
+
+/* ===== Polices GTA : à déposer dans data/fonts/ (voir NOTES-THEMES-GTA.md). Fichier absent = police de secours, rien ne casse. ===== */
+@font-face { font-family: "GTA Pricedown"; src: url("data/fonts/PricedownBlack.woff2") format("woff2"), url("data/fonts/PricedownBlack.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Vice Rage"; src: url("data/fonts/RageItalic.woff2") format("woff2"), url("data/fonts/RageItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Vice Bank"; src: url("data/fonts/BankGothic.woff2") format("woff2"), url("data/fonts/BankGothic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "SA Diploma"; src: url("data/fonts/Diploma.woff2") format("woff2"), url("data/fonts/Diploma.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "SA Futura"; src: url("data/fonts/FuturaCondensedExtraBold.woff2") format("woff2"), url("data/fonts/FuturaCondensedExtraBold.ttf") format("truetype"); font-display: swap; }
+
+/* ===== Thème Vice City (néon rose / cyan, soleil couchant, palmiers) ===== */
+[data-theme="vicecity"] {
+    --bg-color: #12052e;
+    --bg-image: radial-gradient(circle at 50% 62%,rgba(255,61,160,0.30) 0%,transparent 55%),linear-gradient(180deg,#0b0226 0%,#2a0b5e 30%,#8a1f8f 58%,#ff4f9a 80%,#ff9a52 100%);
+    --text-color: #fff0fb;
+    --panel-bg: linear-gradient(165deg,rgba(34,10,70,0.92),rgba(18,5,44,0.96));
+    --border-color: #ff4fd8;
+    --summary-bg: linear-gradient(180deg,rgba(120,20,120,0.9),rgba(60,10,90,0.94));
+    --btn-primary: linear-gradient(180deg,#ff4fa8 0%,#c4157a 100%);
+    --btn-secondary: linear-gradient(180deg,#17b1d1 0%,#0c6a8a 100%);
+    --btn-danger: linear-gradient(180deg,#b3123c 0%,#6a0822 100%);
+    --shadow-color: rgba(0,0,0,0.85);
+    --panel-shadow: 0 8px 20px rgba(0,0,0,0.8),0 0 18px rgba(255,79,216,0.28),inset 0 0 20px rgba(32,227,255,0.10),inset 0 1px 0 rgba(255,160,240,0.35);
+    --text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    --panel-border: 1px solid rgba(255,79,216,0.8);
+    --btn-border: 1px solid rgba(127,243,255,0.8);
+    --btn-shadow: 0 4px 10px rgba(0,0,0,0.65),0 0 12px rgba(255,79,216,0.45),inset 0 1px 0 rgba(255,210,245,0.4);
+}
+[data-theme="vicecity"]         { --k: 255,79,168;  --k2: 170,20,110;  --kb: 127,243,255;  --kx: 80,110,255;  --ka1: .55; --ka2: .40; }
+[data-theme="vicecity"] #scene-vicecity { display: block; }
+[data-theme="vicecity"] body, [data-theme="vicecity"] button, [data-theme="vicecity"] input, [data-theme="vicecity"] select, [data-theme="vicecity"] textarea { font-family: "Vice Bank", "Bank Gothic", "Arial Narrow", sans-serif; }
+[data-theme="vicecity"] h2 { font-family: "Vice Rage", "GTA Pricedown", "Curse Casual JVE", sans-serif; font-size: 26px; color: #ff8ae2; text-shadow: 0 0 6px #ff2fb9, 0 0 16px #ff2fb9, 0 0 30px rgba(32,227,255,0.65), 0 2px 4px rgba(0,0,0,0.9); }
+[data-theme="vicecity"] #resultat > ul > li::before, [data-theme="vicecity"] .menu-extensions::before {
+    content: ""; position: absolute; left: 8px; right: 8px; bottom: 3px; height: 3px; pointer-events: none; border-radius: 2px;
+    background: linear-gradient(90deg,#ff4fd8,#7ff3ff); box-shadow: 0 0 8px #ff4fd8, 0 0 14px rgba(127,243,255,0.6); opacity: .8;
+}
+[data-theme="vicecity"] #resultat > ul > li::after, [data-theme="vicecity"] .menu-extensions::after {
+    content: ""; position: absolute; top: 6px; right: 8px; width: 18px; height: 18px; pointer-events: none; border-radius: 50%;
+    background: repeating-linear-gradient(180deg,transparent 0 11px,rgba(18,5,44,.9) 11px 13px,transparent 13px 15px,rgba(18,5,44,.9) 15px 18px), linear-gradient(180deg,#ffe45e,#ff2f9b);
+    box-shadow: 0 0 10px rgba(255,79,216,0.8);
+}
+.scene-estoiles { position: absolute; inset: 0 0 45% 0; opacity: .9;
+    background-image: radial-gradient(1.6px 1.6px at 8% 14%,#fff,transparent),radial-gradient(1.2px 1.2px at 18% 34%,#bff,transparent),radial-gradient(1.8px 1.8px at 27% 8%,#fff,transparent),radial-gradient(1.2px 1.2px at 36% 26%,#fff,transparent),radial-gradient(1.6px 1.6px at 47% 12%,#ffd0f2,transparent),radial-gradient(1.2px 1.2px at 58% 30%,#fff,transparent),radial-gradient(1.8px 1.8px at 68% 10%,#bff,transparent),radial-gradient(1.2px 1.2px at 77% 24%,#fff,transparent),radial-gradient(1.6px 1.6px at 86% 6%,#fff,transparent),radial-gradient(1.2px 1.2px at 93% 28%,#ffd0f2,transparent),radial-gradient(1.4px 1.4px at 13% 50%,#fff,transparent),radial-gradient(1.4px 1.4px at 90% 52%,#fff,transparent); }
+.scene-svg-vc { position: absolute; bottom: 0; left: 0; width: 100%; height: min(58vh, 560px); }
+.vc-sway { transform-box: fill-box; transform-origin: 50% 100%; }
+.vc-car { transform: translateX(160px); }
+@media (prefers-reduced-motion: no-preference) {
+    .scene-estoiles { animation: vc-scintille 7s ease-in-out infinite alternate; }
+    .vc-sway { animation: vc-balance 6s ease-in-out infinite alternate; }
+    .vc-s2 { animation-duration: 7.5s; animation-delay: -2s; }
+    .vc-s3 { animation-duration: 5.2s; animation-delay: -3.5s; }
+    .vc-w1 { animation: vc-fen 4s ease-in-out infinite alternate; }
+    .vc-w2 { animation: vc-fen 6.5s ease-in-out -2s infinite alternate; }
+    .vc-w3 { animation: vc-fen 9s ease-in-out -5s infinite alternate; }
+    .vc-h { animation: vc-grille 4s cubic-bezier(.5,0,1,1) infinite; opacity: 0; }
+    .vc-car { animation: vc-voiture 42s linear infinite; }
+}
+@keyframes vc-scintille { from { opacity: .45; } to { opacity: 1; } }
+@keyframes vc-balance { from { transform: rotate(-1.6deg); } to { transform: rotate(1.9deg); } }
+@keyframes vc-fen { from { opacity: .95; } to { opacity: .2; } }
+@keyframes vc-grille { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(200px); opacity: 1; } }
+@keyframes vc-voiture { from { transform: translateX(-460px); } to { transform: translateX(1500px); } }
+
+/* ===== Thème San Andreas (soleil couchant orange, vert, Los Santos, lowrider) ===== */
+[data-theme="sanandreas"] {
+    --bg-color: #2a1208;
+    --bg-image: radial-gradient(circle at 66% 56%,rgba(255,200,90,0.35) 0%,transparent 50%),linear-gradient(180deg,#34163f 0%,#a83a2a 30%,#ff8a2a 58%,#ffc65a 82%,#ffe6a0 100%);
+    --text-color: #fff4e0;
+    --panel-bg: linear-gradient(165deg,rgba(46,24,12,0.93),rgba(26,14,8,0.96));
+    --border-color: #ffa733;
+    --summary-bg: linear-gradient(180deg,rgba(46,110,46,0.92),rgba(24,62,28,0.95));
+    --btn-primary: linear-gradient(180deg,#ffa026 0%,#c25a00 100%);
+    --btn-secondary: linear-gradient(180deg,#4aa247 0%,#1f5f24 100%);
+    --btn-danger: linear-gradient(180deg,#b3261c 0%,#5e0e0a 100%);
+    --shadow-color: rgba(0,0,0,0.85);
+    --panel-shadow: 0 8px 20px rgba(0,0,0,0.8),0 0 16px rgba(255,167,51,0.25),inset 0 0 18px rgba(126,214,106,0.08),inset 0 1px 0 rgba(255,214,140,0.35);
+    --text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    --panel-border: 1px solid rgba(255,167,51,0.8);
+    --btn-border: 1px solid rgba(255,214,120,0.8);
+    --btn-shadow: 0 4px 10px rgba(0,0,0,0.65),0 0 10px rgba(255,167,51,0.4),inset 0 1px 0 rgba(255,235,190,0.45);
+}
+[data-theme="sanandreas"]         { --k: 255,160,38;  --k2: 194,90,0;  --kb: 126,214,106;  --kx: 255,214,120;  --ka1: .55; --ka2: .40; }
+[data-theme="sanandreas"] #scene-sanandreas { display: block; }
+[data-theme="sanandreas"] body, [data-theme="sanandreas"] button, [data-theme="sanandreas"] input, [data-theme="sanandreas"] select, [data-theme="sanandreas"] textarea { font-family: "SA Futura", "Arial Narrow", sans-serif; }
+[data-theme="sanandreas"] h2 { font-family: "SA Diploma", "SA Futura", "Curse Casual JVE", sans-serif; font-size: 28px; color: #ffcf5e; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 14px rgba(255,167,51,0.6); }
+[data-theme="sanandreas"] #resultat > ul > li::before, [data-theme="sanandreas"] .menu-extensions::before {
+    content: ""; position: absolute; left: 8px; right: 8px; bottom: 3px; height: 3px; pointer-events: none; border-radius: 2px;
+    background: linear-gradient(90deg,#ffa733,#7ed66a); box-shadow: 0 0 8px rgba(255,167,51,0.7); opacity: .85;
+}
+[data-theme="sanandreas"] #resultat > ul > li::after, [data-theme="sanandreas"] .menu-extensions::after {
+    content: ""; position: absolute; top: 6px; right: 8px; width: 18px; height: 18px; pointer-events: none;
+    background: linear-gradient(180deg,#ffe27a,#ffa026); clip-path: polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+    filter: drop-shadow(0 0 4px rgba(255,167,51,0.8));
+}
+.scene-svg-sa { position: absolute; bottom: 0; left: 0; width: 100%; height: min(58vh, 560px); }
+.sa-sway { transform-box: fill-box; transform-origin: 50% 100%; }
+.sa-car { transform: translateX(300px); }
+.sa-hop { transform-box: fill-box; transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: no-preference) {
+    .sa-sway { animation: sa-balance 6.5s ease-in-out infinite alternate; }
+    .sa-s2 { animation-duration: 8s; animation-delay: -2s; }
+    .sa-s3 { animation-duration: 5.5s; animation-delay: -3.5s; }
+    .sa-w1 { animation: sa-fen 4s ease-in-out infinite alternate; }
+    .sa-w2 { animation: sa-fen 6.5s ease-in-out -2s infinite alternate; }
+    .sa-w3 { animation: sa-fen 9s ease-in-out -5s infinite alternate; }
+    .sa-balise { animation: sa-clignote 1.6s steps(2, jump-none) infinite; }
+    .sa-nuage { animation: sa-derive 60s linear infinite alternate; }
+    .sa-n2 { animation-duration: 80s; } .sa-n3 { animation-duration: 100s; }
+    .sa-brume { animation: sa-derive 40s ease-in-out infinite alternate; }
+    .sa-route { animation: sa-ligne 1.2s linear infinite; }
+    .sa-car { animation: sa-voiture 36s linear infinite; }
+    .sa-hop { animation: sa-saut 2.6s ease-in-out infinite; }
+}
+@keyframes sa-balance { from { transform: rotate(-1.4deg); } to { transform: rotate(1.6deg); } }
+@keyframes sa-fen { from { opacity: .95; } to { opacity: .15; } }
+@keyframes sa-clignote { from { opacity: 1; } to { opacity: .15; } }
+@keyframes sa-derive { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
+@keyframes sa-ligne { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -72; } }
+@keyframes sa-voiture { from { transform: translateX(-260px); } to { transform: translateX(1400px); } }
+@keyframes sa-saut { 0%,55%,100% { transform: translateY(0); } 62% { transform: translateY(-9px) rotate(-2deg); } 70% { transform: translateY(0); } 78% { transform: translateY(-5px) rotate(1.5deg); } 86% { transform: translateY(0); } }
