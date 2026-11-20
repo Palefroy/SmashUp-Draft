@@ -808,7 +808,7 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 }
 
 /* ===== À propos : crédits + application (ligne discrète en bas des Paramètres, fenêtre au style des pop-up) ===== */
-.apropos-lien { margin: 14px 0 4px; text-align: center; font-size: 12px; opacity: .5; }
+.apropos-lien { margin: 6px 0 4px; text-align: center; font-size: 12px; opacity: .5; }
 .apropos-lien button { all: unset; box-sizing: border-box; cursor: pointer; padding: 8px 9px; font: inherit; -webkit-tap-highlight-color: transparent; }
 .apropos-lien button:hover, .apropos-lien button:focus-visible { text-decoration: underline; }
 .apropos-lien:hover, .apropos-lien:focus-within { opacity: .85; }
@@ -955,7 +955,7 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 [data-theme="sanandreas"]         { --k: 255,160,38;  --k2: 194,90,0;  --kb: 126,214,106;  --kx: 255,214,120;  --ka1: .55; --ka2: .40; }
 [data-theme="sanandreas"] #scene-sanandreas { display: block; }
 [data-theme="sanandreas"] body, [data-theme="sanandreas"] button, [data-theme="sanandreas"] input, [data-theme="sanandreas"] select, [data-theme="sanandreas"] textarea { font-family: "SA Futura", "Arial Narrow", sans-serif; }
-[data-theme="sanandreas"] h2 { font-family: "SA Diploma", "SA Futura", "Curse Casual JVE", sans-serif; font-size: 28px; color: #ffcf5e; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 14px rgba(255,167,51,0.6); }
+[data-theme="sanandreas"] h2 { font-family: "SA Diploma", "SA Futura", "Curse Casual JVE", sans-serif; font-size: 25px; color: #ffcf5e; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 14px rgba(255,167,51,0.6); }
 [data-theme="sanandreas"] #resultat > ul > li::before, [data-theme="sanandreas"] .menu-extensions::before {
     content: ""; position: absolute; left: 8px; right: 8px; bottom: 3px; height: 3px; pointer-events: none; border-radius: 2px;
     background: linear-gradient(90deg,#ffa733,#7ed66a); box-shadow: 0 0 8px rgba(255,167,51,0.7); opacity: .85;
@@ -991,3 +991,7 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 @keyframes sa-ligne { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -72; } }
 @keyframes sa-voiture { from { transform: translateX(-260px); } to { transform: translateX(1400px); } }
 @keyframes sa-saut { 0%,55%,100% { transform: translateY(0); } 62% { transform: translateY(-9px) rotate(-2deg); } 70% { transform: translateY(0); } 78% { transform: translateY(-5px) rotate(1.5deg); } 86% { transform: translateY(0); } }
+
+/* « i » de la carte APK (À propos > Application) : même bouton et même bulle que les autres « i » de l'appli, dans l'angle de la carte. */
+.ap-carte { position: relative; }
+.astuce.maj-info-apk { top: 42px; right: 8px; --pointe: 16px; max-width: min(280px, calc(100% - 16px)); opacity: 1; font-size: 13px; }

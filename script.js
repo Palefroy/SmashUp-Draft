@@ -1276,7 +1276,8 @@ document.addEventListener("pointerdown", e => {
 /* ---------- Sauvegarde du draft en cours, reprise, confirmation avant de quitter ---------- */
 const CLE_DRAFT = "smashup_draft", DRAFT_MAX_H = 24;   // un draft sauvegardé plus vieux que 24 h est oublié
 function sauverDraft() { if (draft) LS.set(CLE_DRAFT, JSON.stringify({ ts: Date.now(), draft, noms: nomsFixes })); }
-function effacerDraft() { LS.del(CLE_DRAFT); }
+function effacerDraft() { LS.del(CLE_DRAFT); majBoutonTirer(false); }   // draft terminé / abandonné / relancé : le bouton « Tirer » réapparaît
+function majBoutonTirer(cache) { const b = document.querySelector(".btn-tirer"); if (b) b.style.display = cache ? "none" : ""; }   // masqué pendant le choix des factions
 function draftSauve() {
     const s = jsonLS(CLE_DRAFT, null), d = s && s.draft;
     if (!d || !Array.isArray(d.ordre) || !Array.isArray(d.pris) || typeof d.etape !== "number" || !Array.isArray(d.mode === "draft" ? d.mains : d.pool)) return null;
@@ -1381,6 +1382,7 @@ function demarrerDraft(pioche, nbJ, mode, premier, taille) {
 
 function rendreDraft() {
     sauverDraft();   // sauvegarde à chaque étape : si l'appli est fermée, on peut reprendre
+    majBoutonTirer(true);
     const d = draft;
     if (d.mode === "draft") return rendreMain();
     const [j, type] = d.ordre[d.etape];

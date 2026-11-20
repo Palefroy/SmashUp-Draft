@@ -273,8 +273,8 @@
     };
     // Petit « i » de la carte APK : explication cachée par défaut (clic = afficher / masquer, voir clicMaj).
     window.htmlInfoApk = function () {
-        return `<button type="button" class="maj-i" data-m="info-apk" aria-label="${t("Information")}" aria-expanded="false">i</button>`
-            + `<p class="maj-info-apk" hidden>${t("Mettre à jour l'APK de temps en temps vaut le coup : il apporte l'interface et les nouveautés de l'appli. Le contenu (images, textes, données) se met à jour sans APK, avec le bouton « Mettre à jour » plus bas.")}</p>`;
+        return `<button type="button" class="btn-info" data-m="info-apk" aria-label="${t("Information")}" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-5M12 7.8h.01"/></svg></button>`
+            + `<div class="astuce astuce-apk maj-info-apk" role="status" hidden>${t("Mettre à jour l'APK de temps en temps vaut le coup : il apporte l'interface et les nouveautés de l'appli. Le contenu (images, textes, données) se met à jour sans APK, avec le bouton « Mettre à jour » plus bas.")}</div>`;
     };
 
     window.htmlContenuMaj = function () {
