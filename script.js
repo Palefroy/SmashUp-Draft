@@ -1231,12 +1231,24 @@ function rendreResultat() {
     $("resultat").innerHTML = html + `</ul><p>🎲 <b>${nomJ(r.premier, r.noms)}</b> ${t("commence")}</p>`;
 }
 
+// Fin d'un tirage (tous les modes) : le haut de l'écran devient le haut du cadre des résultats (le bouton « Tirer les Factions » reste au-dessus, simplement défilé hors de vue).
+// Si la page est trop courte pour défiler jusque-là (peu de joueurs), le navigateur s'arrête au plus bas possible : les résultats restent entièrement visibles.
+function montrerResultats() {
+    requestAnimationFrame(() => {
+        const r = $("resultat");
+        if (!r || !r.firstChild) return;
+        const marge = 12;   // petit espace au-dessus du cadre
+        window.scrollTo({ top: Math.max(0, window.scrollY + r.getBoundingClientRect().top - marge), behavior: "smooth" });
+    });
+}
+
 function afficherResultats(groupes, premier) {
     effacerDraft();
     libererRetour();
     const noms = groupes.map((_, i) => nomsFixes[i] || "");
     dernierResultat = { groupes, premier, noms };
     rendreResultat();
+    montrerResultats();
     historique.unshift({ n: compteurTirage, ts: Date.now(), groupes, premier, noms });
     compteurTirage++;
     rendreHistorique();
@@ -1564,22 +1576,21 @@ function htmlCredits() {
 
 function htmlAppli() {
     const a = CREDIT().application || {}, ios = surIOS(), android = enAppliAndroid();
-    const ver = android && window.versionApk ? versionApk() : "";   // maj.js : « version 42, 20/11/2026 »
-    const intro = android ? `<p class="ap-intro">${t("Tu utilises déjà l'application Android.").replace(/\.$/, ver ? " (" + esc(ver) + ")." : ".")}</p>` : "";
     const contenu = window.htmlContenuMaj ? htmlContenuMaj() : "";   // maj.js : mise à jour du contenu (APK) ou purge du cache images (web)
-    const majApk = android && window.htmlMajApk ? htmlMajApk() : "";   // apk-maj.js : mise à jour de l'APK elle-même (carte au-dessus du lien APK)
-    // 1) Application Android (fichier APK, release GitHub). Masquée sur iPhone / iPad.
+    // Dans l'application Android : une seule carte « Mise à jour de l'appli » (apk-maj.js : version, date, ⓘ, lien « Toutes les versions »), puis le contenu.
+    if (android) return (window.htmlMajApk ? htmlMajApk() : "") + contenu;
+    // Web / iPhone : carte du fichier APK (masquée sur iPhone / iPad) + appli web (PWA).
     const apk = !ios && urlOk(a.apk)
-        ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b>${android && window.htmlInfoApk ? htmlInfoApk() : ""}<p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
+        ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b><p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
           + `<a class="ap-btn" href="${esc(a.apk)}" target="_blank" rel="noopener noreferrer">${t("Télécharger l'APK")}</a>`
           + (urlOk(a.versions) ? `<a class="ap-lien" href="${esc(a.versions)}" target="_blank" rel="noopener noreferrer">${t("Toutes les versions")}</a>` : "") + `</div>` : "";
-    // 2) Appli web (PWA) : bouton d'installation du navigateur quand il existe ; sinon explication du geste à faire à la main.
+    // Appli web (PWA) : bouton d'installation du navigateur quand il existe ; sinon explication du geste à faire à la main.
     const deja = enAppliWeb();
     const bouton = deja ? `<button type="button" class="ap-btn" disabled>${t("Déjà installée ✓")}</button>`
         : promptInstall ? `<button type="button" class="ap-btn" data-a="installer">${t("Installer l'appli web")}</button>` : "";
     const aide = deja || promptInstall ? "" : `<p class="ap-aide">${t(ios ? "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil »." : "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».")}</p>`;
     const web = `<div class="ap-carte"><b>${t("Appli web (installation rapide)")}</b><p>${t("Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.")}</p>${bouton}${aide}</div>`;
-    return android ? intro + majApk + apk + contenu : apk + web + contenu;
+    return apk + web + contenu;
 }
 
 function rendreApropos() {

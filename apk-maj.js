@@ -6,7 +6,7 @@
      3. Le plugin natif « ApkInstaller » (apk/android-plugin/, ajouté au projet Android par build-apk.yml) télécharge l'APK (reprise possible), vérifie le SHA-256,
         puis ouvre l'installateur d'Android. L'utilisateur doit toujours appuyer sur « Installer » : Android l'impose.
    Sans le plugin (ancienne APK, web, iPhone) : ce fichier ne change rien : le lien « Télécharger l'APK » de script.js reste le plan B.
-   Expose : window.htmlMajApk() (appelé par htmlAppli() dans script.js, carte « Mise à jour de l'appli »).
+   Expose : window.htmlMajApk() (appelé par htmlAppli() dans script.js, carte « Mise à jour de l'appli » : état, version + date installées, « i » explicatif, lien « Toutes les versions »).
    Dépendances (script.js / maj.js) : L(), esc(), langue, ouvrirApropos(), classes CSS .ap-carte .ap-btn .maj-btns .maj-barre .maj-toast. Clics : attribut data-apk (pas data-m, réservé à maj.js). */
 (function () {
     "use strict";
@@ -20,7 +20,7 @@
     const ANDROID = !!(C && (typeof C.getPlatform !== "function" || C.getPlatform() === "android"));
     if (!ANDROID) return;   // web, PWA, iPhone : rien à faire ici
 
-    let ui = { type: "init", t: 0 }, local = null, plug = null, occupe = false, attente = false, ecouteur = null;
+    let ui = { type: "init", t: 0 }, local = null, plug = null, occupe = false, attente = false, ecouteur = null, infoOuverte = false;
     const mo = n => (n / 1048576).toFixed(n < 10485760 ? 1 : 0);
     const poser = o => { ui = Object.assign({ t: Date.now() }, o); };
     const lib = (fr, en) => L(fr, en);
@@ -140,7 +140,7 @@
             btns = bt("go", lib("Installer la dernière version", "Install the latest version"));
         }
         else if (u.type === "hors") { msg = lib("Connexion impossible : serveur injoignable ou hors ligne.", "Connection failed: server unreachable or offline."); btns = bt("verif", lib("Réessayer", "Retry")); }
-        else if (u.type === "indispo") msg = lib("La mise à jour intégrée n'est pas disponible dans cette version de l'appli : utilise le bouton « Télécharger l'APK » ci-dessous, une seule fois.", "In-app update isn't available in this version of the app: use the “Download the APK” button below, just this once.");
+        else if (u.type === "indispo") msg = lib("La mise à jour intégrée n'est pas disponible dans cette version de l'appli : télécharge la dernière APK via « Toutes les versions » ci-dessous, une seule fois.", "In-app update isn't available in this version of the app: download the latest APK via “All versions” below, just this once.");
         else if (u.type === "permission") {
             msg = lib("Android doit d'abord t'autoriser à installer des applis depuis Smash Up Draft : active « Autoriser depuis cette source », puis reviens ici.", "Android must first allow installing apps from Smash Up Draft: turn on “Allow from this source”, then come back here.");
             btns = bt("perm", lib("Ouvrir les réglages", "Open settings"));
@@ -157,7 +157,24 @@
         else if (u.type === "annule") { msg = lib("Annulé. Ce qui est déjà téléchargé est gardé : la reprise sera rapide.", "Cancelled. What was already downloaded is kept: resuming will be quick."); btns = bt("go", lib("Reprendre", "Resume")); }
         else if (u.type === "erreur") { msg = lib("Échec : ", "Failed: ") + esc(u.msg || ""); btns = bt(u.m ? "go" : "verif", lib("Réessayer", "Retry")); }
         const aide = (u.type === "dispo" || u.type === "inconnu") ? notes : "";
-        return `<b>${lib("Mise à jour de l'appli", "App update")}</b><p>${msg}</p>${aide}${barre}<div class="maj-btns">${btns}</div>`;
+        return `<b>${lib("Mise à jour de l'appli", "App update")}</b>${boutonInfo()}<p>${msg}</p>${infosVersion()}${aide}${barre}<div class="maj-btns">${btns}</div>${lienVersions()}`;
+    }
+    // Version et date de l'APK installée (contenu-apk.json embarqué) : une ligne n'apparaît que si sa valeur est connue.
+    function infosVersion() {
+        if (!local) return "";
+        const l = [];
+        if (local.build > 0) l.push(lib("Version installée : ", "Installed version: ") + local.build);
+        if (local.version > 0) l.push(lib("Date de la version : ", "Version date: ") + new Date(local.version * 1000).toLocaleDateString(langue === "en" ? "en-GB" : "fr-FR"));
+        return l.length ? `<p class="ap-aide">${l.join("<br>")}</p>` : "";
+    }
+    // Petit « i » en haut à droite de la carte. L'état ouvert / fermé est gardé (infoOuverte) : la carte est réécrite à chaque étape du téléchargement.
+    function boutonInfo() {
+        return `<button type="button" class="btn-info" data-apk="info" aria-label="${lib("Information", "Information")}" aria-expanded="${infoOuverte}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16.5v-5M12 7.8h.01"/></svg></button>`
+            + `<div class="astuce apk-info-bulle" style="top:40px;right:8px;--pointe:14px" role="status"${infoOuverte ? "" : " hidden"}>${lib("Mettre à jour l'APK de temps en temps vaut le coup : il apporte l'interface et les nouveautés de l'appli. Le contenu (images, textes, données) se met à jour sans APK, avec le bouton « Mettre à jour » plus bas.", "Updating the APK from time to time is worth it: it brings the app's interface and new features. The content (images, texts, data) updates without an APK, with the “Update” button below.")}</div>`;
+    }
+    function lienVersions() {
+        const u = window.DATA && DATA.credit && DATA.credit.application && DATA.credit.application.versions;
+        return typeof u === "string" && /^https?:\/\//i.test(u) ? `<a class="ap-lien" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${lib("Toutes les versions", "All versions")}</a>` : "";
     }
     function rendre() {
         if (attente) return;
@@ -166,6 +183,7 @@
     }
 
     window.htmlMajApk = function () {
+        if (!local) lireLocal().then(rendre);   // version / date : lues une fois, puis la carte se redessine
         if (!occupe && (ui.type === "init" || (/^(ajour|dispo|hors|indispo|inconnu)$/.test(ui.type) && Date.now() - ui.t > 60000))) setTimeout(verifier, 0);
         return `<div class="ap-carte apk-carte">${corps()}</div>`;
     };
@@ -175,6 +193,13 @@
         const b = e.target.closest && e.target.closest(".apk-carte [data-apk]");
         if (!b) return;
         const a = b.dataset.apk, p = plugin();
+        if (a === "info") {
+            infoOuverte = !infoOuverte;
+            const c = b.closest(".apk-carte"), bulle = c && c.querySelector(".apk-info-bulle");
+            if (bulle) bulle.hidden = !infoOuverte;
+            b.setAttribute("aria-expanded", String(infoOuverte));
+            return;
+        }
         if (a === "verif") verifier();
         else if (a === "go") aller();
         else if (a === "installer") installerDeNouveau();
