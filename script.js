@@ -1559,8 +1559,9 @@ function htmlCredits() {
 }
 
 function htmlAppli() {
-    if (enAppliAndroid()) return `<p class="ap-intro">${t("Tu utilises déjà l'application Android.")}</p>`;
-    const a = CREDIT().application || {}, ios = surIOS();
+    const a = CREDIT().application || {}, ios = surIOS(), android = enAppliAndroid();
+    const intro = android ? `<p class="ap-intro">${t("Tu utilises déjà l'application Android.")}</p>` : "";
+    const contenu = window.htmlContenuMaj ? htmlContenuMaj() : "";   // maj.js : mise à jour du contenu (APK) ou purge du cache images (web)
     // 1) Application Android (fichier APK, release GitHub). Masquée sur iPhone / iPad.
     const apk = !ios && urlOk(a.apk)
         ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b><p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
@@ -1572,7 +1573,7 @@ function htmlAppli() {
         : promptInstall ? `<button type="button" class="ap-btn" data-a="installer">${t("Installer l'appli web")}</button>` : "";
     const aide = deja || promptInstall ? "" : `<p class="ap-aide">${t(ios ? "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil »." : "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».")}</p>`;
     const web = `<div class="ap-carte"><b>${t("Appli web (installation rapide)")}</b><p>${t("Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.")}</p>${bouton}${aide}</div>`;
-    return apk + web;
+    return android ? intro + apk + contenu : apk + web + contenu;
 }
 
 function rendreApropos() {
@@ -1594,6 +1595,8 @@ function ouvrirApropos(onglet) {
         if (e.target === f || e.target.closest("[data-a=\"fermer\"]")) return fermerApropos();   // fond sombre ou bouton Fermer
         const o = e.target.closest("[data-onglet]");
         if (o) { ongletApropos = o.dataset.onglet; return rendreApropos(); }
+        const mj = e.target.closest("[data-m]");
+        if (mj && window.clicMaj) return clicMaj(mj.dataset.m);   // maj.js
         if (e.target.closest("[data-a=\"installer\"]")) installerAppliWeb();
     });
     document.body.appendChild(f);

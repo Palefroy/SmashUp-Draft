@@ -1,0 +1,67 @@
+# Publie le contenu (data/ + img/) pour la mise à jour DANS l'appli, sans nouvel APK.
+# Se lance : - tout seul à chaque push qui modifie data/ ou img/
+#            - à la demande : onglet Actions > "Publier le contenu" > "Run workflow" (à faire une première fois après avoir ajouté ce fichier)
+# Résultat : branche « content » (écrasée à chaque fois, sans historique) lue par l'appli via raw.githubusercontent.com.
+# Les images y sont compressées EXACTEMENT comme dans l'APK (apk/compresser-images.sh) ; contenu.json liste taille + SHA-256 de chaque fichier.
+name: Publier le contenu
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "img/**"
+      - "apk/compresser-images.sh"
+      - "apk/contenu.mjs"
+      - "apk/api-min.txt"
+      - ".github/workflows/publish-content.yml"
+
+concurrency:
+  group: publish-content
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      # Publication précédente : sert à réutiliser les images déjà compressées (hash stables). Absente la toute première fois : normal.
+      - name: Récupérer le contenu précédent
+        uses: actions/checkout@v4
+        with:
+          ref: content
+          path: prev
+        continue-on-error: true
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Copier data et img
+        run: |
+          mkdir -p out
+          cp -r data img out/
+
+      - name: Compresser les images (mêmes réglages que l'APK)
+        run: bash apk/compresser-images.sh out
+
+      - name: Générer contenu.json
+        run: node apk/contenu.mjs publier out prev "$(git log -1 --format=%ct)" "$(cat apk/api-min.txt 2>/dev/null || echo 1)" "$(sha256sum apk/compresser-images.sh | cut -d' ' -f1)"
+
+      - name: Publier sur la branche content
+        run: |
+          cd out
+          git init -q -b content
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Contenu (build n°${{ github.run_number }})"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" content

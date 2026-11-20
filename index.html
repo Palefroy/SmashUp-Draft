@@ -16,10 +16,10 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <script>
-// Service worker : uniquement en http(s) et hors application APK (le site continue de s'ouvrir normalement en double-cliquant sur index.html).
-if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !window.Capacitor) {
+// Service worker : uniquement en http(s) (le site continue de s'ouvrir normalement en double-cliquant sur index.html). Web = cache PWA ; application APK = contenu mis à jour (mode ?apk=1, voir maj.js).
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function () { /* échec silencieux : le site marche sans */ });
+        navigator.serviceWorker.register(window.Capacitor ? "sw.js?apk=1" : "sw.js").catch(function () { /* échec silencieux : le site marche sans */ });
     });
 }
 </script>
@@ -284,5 +284,6 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !wind
 
 <script src="data/data.js"></script>
 <script src="script.js"></script>
+<script src="maj.js"></script>
 </body>
 </html>
