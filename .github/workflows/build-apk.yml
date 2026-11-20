@@ -13,6 +13,7 @@ on:
       - "style.css"
       - "script.js"
       - "maj.js"
+      - "apk-maj.js"
       - "sw.js"
       - "manifest.json"
       - "data/**"
@@ -50,7 +51,7 @@ jobs:
       - name: Copier les fichiers du site dans build/www
         run: |
           mkdir -p build/www
-          cp index.html style.css script.js maj.js sw.js manifest.json build/www/
+          cp index.html style.css script.js maj.js apk-maj.js sw.js manifest.json build/www/
           cp -r data img icons build/www/
 
       # Liste du contenu embarqué (chemin + clé de la source) : l'appli s'en sert pour ne télécharger que ce qui a changé.
@@ -128,6 +129,9 @@ jobs:
           }
           EOF
 
+      - name: Ajouter le plugin ApkInstaller (mise à jour de l'APK dans l'appli)
+        run: python3 apk/ajouter-plugin-android.py build/android
+
       - name: Numéro de version (augmente à chaque build)
         working-directory: build/android
         run: sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/" app/build.gradle
@@ -154,3 +158,19 @@ jobs:
           body: "Dernière version de l'application Android. Télécharge SmashUp-Draft.apk ci-dessous. Construit automatiquement (build n°${{ github.run_number }})."
           files: SmashUp-Draft.apk
           make_latest: true
+
+      - name: Générer apk.json
+        run: node apk/apk-json.mjs SmashUp-Draft.apk apk.json --build "${{ github.run_number }}" --version "$(git log -1 --format=%ct)" --notes-fr "Nouvelle version de l'appli (interface et nouveautés)." --notes-en "New app version (interface and new features)."
+
+      # Branche séparée « apk-info » (et non « content », recréée à zéro par publish-content.yml). Poussée APRÈS la release : l'asset est déjà en ligne.
+      - name: Publier apk.json sur la branche apk-info
+        run: |
+          mkdir apk-out
+          cp apk.json apk-out/
+          cd apk-out
+          git init -q -b apk-info
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "apk.json (build n°${{ github.run_number }})"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" apk-info

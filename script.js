@@ -1560,6 +1560,7 @@ function htmlAppli() {
     const ver = android && window.versionApk ? versionApk() : "";   // maj.js : « version 42, 20/11/2026 »
     const intro = android ? `<p class="ap-intro">${t("Tu utilises déjà l'application Android.").replace(/\.$/, ver ? " (" + esc(ver) + ")." : ".")}</p>` : "";
     const contenu = window.htmlContenuMaj ? htmlContenuMaj() : "";   // maj.js : mise à jour du contenu (APK) ou purge du cache images (web)
+    const majApk = android && window.htmlMajApk ? htmlMajApk() : "";   // apk-maj.js : mise à jour de l'APK elle-même (carte au-dessus du lien APK)
     // 1) Application Android (fichier APK, release GitHub). Masquée sur iPhone / iPad.
     const apk = !ios && urlOk(a.apk)
         ? `<div class="ap-carte"><b>${t("Application Android (APK)")}</b>${android && window.htmlInfoApk ? htmlInfoApk() : ""}<p>${t("Un vrai fichier à installer, comme une appli classique. Android te demandera d'autoriser l'installation depuis ton navigateur (source inconnue).")}</p>`
@@ -1571,7 +1572,7 @@ function htmlAppli() {
         : promptInstall ? `<button type="button" class="ap-btn" data-a="installer">${t("Installer l'appli web")}</button>` : "";
     const aide = deja || promptInstall ? "" : `<p class="ap-aide">${t(ios ? "Sur iPhone / iPad : touche le bouton Partager, puis « Sur l'écran d'accueil »." : "Dans le menu de ton navigateur (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».")}</p>`;
     const web = `<div class="ap-carte"><b>${t("Appli web (installation rapide)")}</b><p>${t("Pas de fichier à télécharger : l'appli s'ajoute à l'écran d'accueil depuis ton navigateur et se met à jour toute seule.")}</p>${bouton}${aide}</div>`;
-    return android ? intro + apk + contenu : apk + web + contenu;
+    return android ? intro + majApk + apk + contenu : apk + web + contenu;
 }
 
 function rendreApropos() {

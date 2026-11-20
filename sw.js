@@ -18,7 +18,7 @@ const APK = new URL(self.location.href).searchParams.has("apk");
 const IMG_MAX = 700;   // nombre maximum d'images gardées en cache (les plus anciennes sont supprimées)
 
 const SITE = [
-  "./", "index.html", "style.css", "script.js", "maj.js", "manifest.json",
+  "./", "index.html", "style.css", "script.js", "maj.js", "apk-maj.js", "manifest.json",
   "data/data.js", "data/factions.js", "data/titans.js", "data/notes.js", "data/sources.js", "data/stats.js", "data/cartes.js", "data/rank.js", "data/combo.js", "data/credit.js", "data/traductions.js", "data/fonts/CurseCasualJVE.woff2", "data/fonts/CurseCasualJVE.ttf", "data/fonts/HennyPenny.woff2", "data/fonts/HennyPenny.ttf", "data/fonts/Shojumaru.woff2", "data/fonts/Shojumaru.ttf", "data/fonts/Fairydust.woff2", "data/fonts/Fairydust.ttf", "data/fonts/DeadheadRough.woff2", "data/fonts/DeadheadRough.ttf", "data/fonts/StickRice.woff2", "data/fonts/StickRice.ttf", "data/fonts/PricedownBlack.woff2", "data/fonts/PricedownBlack.ttf", "data/fonts/RageItalic.woff2", "data/fonts/RageItalic.ttf", "data/fonts/BankGothic.woff2", "data/fonts/BankGothic.ttf", "data/fonts/Diploma.woff2", "data/fonts/Diploma.ttf", "data/fonts/FuturaCondensedExtraBold.woff2", "data/fonts/FuturaCondensedExtraBold.ttf",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"
 ];
