@@ -440,6 +440,7 @@ function chargerParametres() {
 
 function setP(k, v) {
     P[k] = v;
+    if (k !== "syn" && k !== "men") majBoutonTirer(false);   // réglage du tirage modifié : on peut relancer
     sauvegarderParametres();
     rendreSegments();
     if (k === "nbJ") genererChampsJoueurs();
@@ -451,6 +452,7 @@ function setPInput(k, el, min, max) {
     if (isNaN(v)) return rendreSegments();
     v = Math.min(max, Math.max(min, v));
     P[k] = v;
+    majBoutonTirer(false);
     if (k === "poolVal") P.poolAuto = false;
     sauvegarderParametres();
     rendreSegments();
@@ -581,6 +583,7 @@ function verifierExpirationHistorique() {
 function remonter() { window.scrollTo({ top: 0, behavior: "smooth" }); }
 
 function viderHistorique() {
+    majBoutonTirer(false);
     historique = [];
     dernierResultat = null;
     compteurTirage = 1;
@@ -592,6 +595,7 @@ function viderHistorique() {
 }
 
 function reinitialiserTout() {
+    majBoutonTirer(false);
     viderHistorique();
     ["smashup_factions", "smashup_params", "smashup_noms", "smashup_mode", CLE_DRAFT].forEach(k => LS.del(k));
     P = { ...DEFAUTS };
@@ -713,6 +717,7 @@ function fermerPanneaux() {
 }
 
 function ouvrirOnglet(panneau, bouton) {
+    majBoutonTirer(false);   // on quitte l'écran de draft (changement de mode, réinitialisation...) : le bouton « Tirer » doit toujours être accessible
     const ouvre = $(panneau).classList.contains("tab-hidden");
     fermerPanneaux();
     if (ouvre) {

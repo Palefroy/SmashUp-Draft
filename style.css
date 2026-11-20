@@ -427,8 +427,8 @@ body.rang-on .rk-mini { display: flex; }
     @keyframes p { 0%,100% { opacity: 0.85; } 50% { opacity: 1; } }
     .glow-anim { animation: p 3.5s infinite ease-in-out; }
 }
-.theme-toggle { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; padding: 0; margin: 0; background: transparent !important; box-shadow: none !important; border: none !important; color: var(--text-color); display: flex; align-items: center; justify-content: center; z-index: 10; }
-.lang-toggle { right: auto; left: 4px; }
+.theme-toggle { position: absolute; top: 4px; right: 0; width: 44px; height: 44px; padding: 0; margin: 0; background: transparent !important; box-shadow: none !important; border: none !important; color: var(--text-color); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.lang-toggle { right: auto; left: 0; }
 .param-row { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0 0 14px; }
 .param-row .lbl { font-size: 14px; font-weight: bold; }
 .seg { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; }
