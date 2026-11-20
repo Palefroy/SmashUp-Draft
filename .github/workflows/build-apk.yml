@@ -150,6 +150,20 @@ jobs:
       - name: Renommer l'APK
         run: cp build/android/app/build/outputs/apk/debug/app-debug.apk SmashUp-Draft.apk
 
+      # Informatif (ne fait jamais échouer le build) : affiche le versionCode réel de l'APK et le certificat qui l'a signée,
+      # pour comprendre un « Application non installée » lors d'une mise à jour par-dessus une version précédente.
+      - name: Diagnostic versionCode et signature
+        run: |
+          echo "--- versionCode dans build.gradle"
+          grep -n "versionCode\|versionName" build/android/app/build.gradle || true
+          echo "--- empreinte de apk/debug.keystore (celle qui DEVRAIT signer)"
+          keytool -list -v -keystore apk/debug.keystore -storepass android 2>&1 | grep -i "alias\|SHA-256\|SHA256" || true
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
+          echo "--- versionCode réel de l'APK"
+          "${BT}aapt2" dump badging SmashUp-Draft.apk 2>&1 | grep -i "^package" || true
+          echo "--- certificat qui a réellement signé l'APK"
+          "${BT}apksigner" verify --verbose --print-certs SmashUp-Draft.apk 2>&1 | grep -i "verifies\|SHA-256\|DN" || true
+
       - name: Publier dans Releases
         uses: softprops/action-gh-release@v2
         with:
