@@ -1231,9 +1231,14 @@ function rendreResultat() {
     $("resultat").innerHTML = html + `</ul><p>🎲 <b>${nomJ(r.premier, r.noms)}</b> ${t("commence")}</p>`;
 }
 
-// Fin d'un tirage (tous les modes) : le haut de l'écran devient le haut du cadre des résultats (le bouton « Tirer les Factions » reste au-dessus, simplement défilé hors de vue).
-// Si la page est trop courte pour défiler jusque-là (peu de joueurs), le navigateur s'arrête au plus bas possible : les résultats restent entièrement visibles.
-function montrerResultats() {
+// Fin d'un draft / pick / pick & ban : le haut de l'écran devient le haut du cadre des résultats (le bouton « Tirer les Factions » reste au-dessus, simplement défilé hors de vue).
+// Pas d'espace ajouté : si la page est trop courte pour défiler jusque-là, le navigateur s'arrête au plus bas possible et les résultats restent entièrement visibles.
+// Piège corrigé : libererRetour() fait un history.back() ; sans précaution le navigateur remet alors la page à sa position d'avant le draft (le haut) APRÈS notre défilement.
+// -> restauration automatique du défilement coupée, et si un retour est en cours (ignorerPop) on attend qu'il soit terminé (événement popstate, avec une sécurité à 600 ms).
+try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) {}
+let defilementEnAttente = false;
+function defilerVersResultats() {
+    defilementEnAttente = false;
     requestAnimationFrame(() => {
         const r = $("resultat");
         if (!r || !r.firstChild) return;
@@ -1241,14 +1246,19 @@ function montrerResultats() {
         window.scrollTo({ top: Math.max(0, window.scrollY + r.getBoundingClientRect().top - marge), behavior: "smooth" });
     });
 }
+function montrerResultats() {
+    if (!ignorerPop) return defilerVersResultats();
+    defilementEnAttente = true;
+    setTimeout(() => { if (defilementEnAttente) defilerVersResultats(); }, 600);
+}
 
-function afficherResultats(groupes, premier) {
+function afficherResultats(groupes, premier, defiler) {   // defiler = true à la fin d'un draft / pick / pick & ban (pas pour le tirage simple)
     effacerDraft();
     libererRetour();
     const noms = groupes.map((_, i) => nomsFixes[i] || "");
     dernierResultat = { groupes, premier, noms };
     rendreResultat();
-    montrerResultats();
+    if (defiler) montrerResultats();
     historique.unshift({ n: compteurTirage, ts: Date.now(), groupes, premier, noms });
     compteurTirage++;
     rendreHistorique();
@@ -1354,7 +1364,7 @@ function libererRetour() {   // fin du draft : on retire l'entrée en trop pour 
     if (history.state && history.state.su) { ignorerPop = true; history.back(); }
 }
 window.addEventListener("popstate", () => {
-    if (ignorerPop) { ignorerPop = false; return; }
+    if (ignorerPop) { ignorerPop = false; if (defilementEnAttente) defilerVersResultats(); return; }
     if (sortieVoulue) { sortieVoulue = false; gardeRetour = false; history.back(); return; }   // « Quitter » : on remonte encore d'un cran
     if (!gardeRetour) return;
     gardeRetour = false;
@@ -1433,7 +1443,7 @@ function choisirDraft(i) {
     (type === "ban" ? d.bannies : d.pris[j]).push(n);
     if (++d.etape < d.ordre.length) return rendreDraft();
     draft = null;
-    afficherResultats(d.pris, d.premier);
+    afficherResultats(d.pris, d.premier, true);
 }
 
 // Légende des indicateurs affichés (une ligne sous la réserve ; vide s'il n'y a aucun indicateur : rien ne s'affiche).
@@ -1535,7 +1545,7 @@ function validerMain() {
     d.ecran = "attente";
     if (++d.etape < d.ordre.length) return rendreDraft();
     draft = null;
-    afficherResultats(d.pris, d.premier);
+    afficherResultats(d.pris, d.premier, true);
 }
 
 /* ---------- À propos : crédits + application (data/credit.js) ----------
