@@ -295,6 +295,7 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
     </button>
     <button class="theme-toggle lang-toggle" id="langToggle" onclick="toggleLangue()" title="Langue / Language" aria-haspopup="listbox" aria-expanded="false">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+        <span class="lang-abr" id="langAbr" aria-hidden="true">FR</span>
     </button>
     <div id="themeMenu" class="theme-menu" role="listbox" hidden></div>
     <div id="langMenu" class="theme-menu lang-menu" role="listbox" hidden></div>

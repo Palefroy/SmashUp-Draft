@@ -850,17 +850,28 @@ h2 { font-size: 23px; position: relative; top: 3px; }                           
 .ap-copyleft { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; opacity: .8; }
 .ap-licence a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
-/* ===== Menu de thèmes : ligne « Thèmes spéciaux » (dossier) et ligne « Retour » ===== */
+/* ===== Menu de thèmes : dossier « Thèmes spéciaux » intégré au panneau =====
+   Deux vues superposées (.vue-base, .vue-spe) dans .theme-vues ; data-vue dit laquelle est affichée. La ligne dossier reste en bas ; sa flèche pointe vers le bas (fermé) ou vers le haut (ouvert).
+   Marge intérieure de 6 px compensée par une marge négative : l'overflow masque les vues qui glissent sans rogner le halo des lignes survolées. */
+#themeMenu { width: min(208px, calc(100vw - 40px)); }   /* un peu plus large qu'avant : « San Andreas ✓ » et « Thèmes spéciaux » tiennent sur une ligne */
+#themeMenu .theme-vues { position: relative; box-sizing: border-box; flex: none; margin: -6px; padding: 6px; overflow: hidden; transition: height .26s ease; }
+#themeMenu .theme-vue { position: absolute; top: 6px; left: 6px; right: 6px; display: flex; flex-direction: column; gap: 4px; transition: transform .26s ease, opacity .26s ease, visibility .26s; }
+#themeMenu .theme-vues[data-vue="base"] .vue-spe { transform: translateY(70%); opacity: 0; visibility: hidden; pointer-events: none; }
+#themeMenu .theme-vues[data-vue="speciaux"] .vue-base { transform: translateY(-70%); opacity: 0; visibility: hidden; pointer-events: none; }
 #themeMenu .theme-dossier { font-weight: 700; border-style: dashed; letter-spacing: .01em; }
-#themeMenu .theme-dossier .theme-fin { flex: none; font-size: 18px; line-height: 1; opacity: .8; }
-#themeMenu .theme-dossier svg { fill: currentColor; stroke-width: 1.5; }
-
-/* ===== Menu de thèmes : sous-menu latéral « Thèmes spéciaux » ===== */
-#themeSub { position: fixed; left: auto; right: auto; z-index: 31; width: 170px; gap: 4px; padding: 6px; max-height: calc(100vh - 16px); overflow-y: auto; scrollbar-width: none; transform-origin: top right; }
-#themeSub::-webkit-scrollbar { display: none; }
-#themeSub .theme-opt { height: 35px; padding: 0 10px; gap: 8px; font-size: 14px; }
-#themeSub .theme-opt svg { width: 20px; height: 20px; }
+#themeMenu .theme-nom { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }   /* un nom ne passe jamais sur deux lignes (ex. « San Andreas ✓ ») */
+#themeMenu .theme-ech { gap: 4px; }
+#themeMenu .theme-ech i { width: 16px; }
+#themeMenu .theme-dossier.actuel .theme-nom::after { content: none; }   /* la ligne dossier n'affiche pas de ✓ (il est sur le thème choisi dans la liste) */
+#themeMenu .theme-dossier .theme-ico svg { fill: currentColor; stroke-width: 1.5; }
+#themeMenu .theme-dossier .theme-fin { flex: none; display: flex; opacity: .85; }
+#themeMenu .theme-dossier .theme-fin svg { width: 18px; height: 18px; fill: none; stroke-width: 2.4; transition: transform .26s ease; }
+#themeMenu .theme-dossier.ouvert .theme-fin svg { transform: rotate(180deg); }
 #themeMenu .theme-dossier.ouvert { box-shadow: 0 0 0 3px #ffd54a, 0 6px 16px rgba(0,0,0,.5); }
+@media (prefers-reduced-motion: reduce) { #themeMenu .theme-vues, #themeMenu .theme-vue, #themeMenu .theme-dossier .theme-fin svg { transition: none; } }
+
+/* Initiales de la langue (FR / EN), toutes petites, dans le coin du bouton de langue */
+.lang-abr { position: absolute; right: 1px; bottom: 3px; font: 800 9px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .3px; color: var(--text-color); opacity: .85; text-shadow: 0 1px 2px rgba(0,0,0,.4); pointer-events: none; }
 
 /* ===== Polices GTA : à déposer dans data/fonts/ (voir NOTES-THEMES-GTA.md). Fichier absent = police de secours, rien ne casse. ===== */
 @font-face { font-family: "GTA Pricedown"; src: url("data/fonts/PricedownBlack.woff2") format("woff2"), url("data/fonts/PricedownBlack.ttf") format("truetype"); font-display: swap; }

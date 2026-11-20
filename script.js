@@ -114,10 +114,14 @@ function initialiser() {
 }
 
 /* ---------- Langue ---------- */
-function toggleLangue() {                       // clic simple : l'autre langue ; appui long : menu de langues (voir plus bas)
+function toggleLangue() {                       // toucher : ouvre (ou ferme) le menu de langues ; appui long : langue suivante (voir plus bas)
     if (menuLangue.fait) return;                // clic qui suit un appui long : ignoré
     if (menuLangue.ouvert) return fermerMenuLangue();
-    choisirLangue(langue === "fr" ? "en" : "fr");
+    ouvrirMenuLangue();
+}
+function langueSuivante() {
+    const i = LANGUES.findIndex(l => l.code === langue);
+    choisirLangue(LANGUES[(i + 1) % LANGUES.length].code);
 }
 function choisirLangue(code) {
     if (code === langue) return;
@@ -128,6 +132,7 @@ function choisirLangue(code) {
 
 function appliquerLangue() {
     document.documentElement.lang = langue;
+    const abr = $("langAbr"); if (abr) abr.textContent = (LANGUES.find(l => l.code === langue) || {}).abr || langue.toUpperCase();   // initiales à côté de l'icône
     document.title = t("Générateur Smash Up Avancé");
     document.querySelectorAll("[data-t]").forEach(el => el.textContent = (el.dataset.e || "") + t(el.dataset.t));
     document.querySelectorAll("[data-ttl]").forEach(el => el.title = t(el.dataset.ttl));
@@ -216,27 +221,31 @@ function appliquerTheme(theme) {                  // choix de l'utilisateur : m�
     majIconeTheme(theme);
 }
 
-function toggleTheme() {                          // clic simple : thème suivant
-    if (menuTheme.fait) return;                   // clic qui suit un appui long (menu de thèmes) : ignoré
+function toggleTheme() {                          // toucher : ouvre (ou ferme) le menu ; appui long : thème suivant (voir plus bas)
+    if (menuTheme.fait) return;                   // clic qui suit un appui long : ignoré
     if (menuTheme.ouvert) return fermerMenuTheme();
-    const current = document.documentElement.getAttribute("data-theme");
-    const i = THEMES_BASE.indexOf(current);   // le clic simple parcourt les thèmes de base ; les thèmes spéciaux passent par l'appui long
-    appliquerTheme(THEMES_BASE[(i + 1) % THEMES_BASE.length]);
+    ouvrirMenuTheme();
+}
+function themeSuivant() {                         // appui long : thème suivant, dans la catégorie du thème actif (base OU spéciaux)
+    const actuel = document.documentElement.getAttribute("data-theme");
+    const liste = THEMES_SPECIAUX.includes(actuel) ? THEMES_SPECIAUX : THEMES_BASE;
+    appliquerTheme(liste[(liste.indexOf(actuel) + 1) % liste.length]);
 }
 
 /* ---------- Menu de thèmes ----------
-   Appui long (250 ms) sur le bouton de thème : une liste s'ouvre dessous. Le doigt glisse, la ligne survolée s'illumine, on relâche pour choisir.
-   Relâcher en dehors de la liste annule. Relâcher sur le bouton laisse la liste ouverte : on peut alors toucher un thème. */
-// Menu de thèmes en deux niveaux : thèmes de base dans la liste, thèmes animés dans le dossier « Thèmes spéciaux ».
+   Toucher le bouton de thème : une liste s'ouvre dessous. Toucher un thème pour le choisir.
+   Appui long (250 ms) sur le bouton : thème suivant, sans ouvrir le menu (dans la catégorie du thème actif : de base ou spéciaux). */
+// Menu de thèmes en deux niveaux : thèmes de base dans la liste, thèmes animés dans le « dossier » Thèmes spéciaux.
+// Le dossier s'ouvre DANS le panneau : la ligne « Thèmes spéciaux » reste en bas, les thèmes de base glissent vers le haut et laissent la place aux thèmes spéciaux (et inversement).
 // Pour ajouter un thème : l'ajouter à themesList / iconMap / NOMS_THEMES ET dans l'un de ces deux groupes.
 const THEMES_BASE = ["light", "sepia", "dark", "parchment", "felt", "wood"];
 const THEMES_SPECIAUX = ["japan", "china", "halloween", "christmas", "easter", "vicecity", "sanandreas"];
 const ICONE_DOSSIER = '<svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.6L20 9l-4.5 3.8L17 19l-5-3.2L7 19l1.5-6.2L4 9l5.8-.4z"/></svg>';
+const ICONE_CHEVRON = '<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';   // pointe vers le bas ; tournée vers le haut quand le dossier est ouvert (CSS)
 const NOMS_THEMES = { light: "Clair", sepia: "Sépia", dark: "Sombre", parchment: "Parchemin", felt: "Feutre", wood: "Bois", japan: "Japon", china: "Chine", halloween: "Halloween", christmas: "Noël", easter: "Pâques", vicecity: "Vice City", sanandreas: "San Andreas" };
-const DELAI_MENU_THEME = 250;   // appui long le plus court : menus thème et langue
-const menuTheme = { vue: "base", ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
+const DELAI_MENU_THEME = 250;   // durée de l'appui long : boutons thème et langue
+const menuTheme = { vue: "base", ouvert: false, appui: false, fait: false, minuteur: null, reset: null, x: 0, y: 0 };
 const vibrer = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
-const optSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".theme-opt") : null; };
 
 function ligneTheme(k, actuel) {
     return `<div class="theme-opt${k === actuel ? " actuel" : ""}" role="option" data-theme="${k}" data-k="${k}" aria-selected="${k === actuel}"><span class="theme-ico"></span><span class="theme-nom">${esc(t(NOMS_THEMES[k]))}</span><span class="theme-ech" aria-hidden="true"><i></i><i></i></span></div>`;
@@ -250,52 +259,35 @@ function garnirIcones(c) {
 }
 function rendreMenuTheme() {
     const m = $("themeMenu"), actuel = document.documentElement.getAttribute("data-theme");
-    const dossier = `<div class="theme-opt theme-dossier${THEMES_SPECIAUX.includes(actuel) ? " actuel" : ""}" role="option" aria-haspopup="true" data-theme="dark" data-k="__speciaux"><span class="theme-ico">${ICONE_DOSSIER}</span><span class="theme-nom">${esc(L("Thèmes spéciaux", "Special themes"))}</span><span class="theme-fin">‹</span></div>`;
-    m.innerHTML = THEMES_BASE.map(k => ligneTheme(k, actuel)).join("") + dossier;
+    const dossier = `<div class="theme-opt theme-dossier${THEMES_SPECIAUX.includes(actuel) ? " actuel" : ""}" role="option" data-theme="dark" data-k="__speciaux"><span class="theme-ico">${ICONE_DOSSIER}</span><span class="theme-nom">${esc(L("Thèmes spéciaux", "Special themes"))}</span><span class="theme-fin">${ICONE_CHEVRON}</span></div>`;
+    m.innerHTML = `<div class="theme-vues" data-vue="base"><div class="theme-vue vue-base">${THEMES_BASE.map(k => ligneTheme(k, actuel)).join("")}</div><div class="theme-vue vue-spe" aria-hidden="true">${THEMES_SPECIAUX.map(k => ligneTheme(k, actuel)).join("")}</div></div>` + dossier;
     garnirIcones(m);
+    menuTheme.vue = "base";
     m.scrollTop = 0;
 }
-
-/* Sous-menu « Thèmes spéciaux » : petit panneau qui s'ouvre À GAUCHE du menu, dès que le doigt (ou la souris) survole la ligne « Thèmes spéciaux ». */
-function sousMenuTheme() {
-    let s = $("themeSub");
-    if (!s) {
-        s = document.createElement("div");
-        s.id = "themeSub"; s.className = "theme-menu"; s.setAttribute("role", "listbox"); s.hidden = true;
-        $("themeMenu").insertAdjacentElement("afterend", s);
-    }
-    return s;
+function hauteurVueTheme() {   // la zone des thèmes prend la hauteur de la vue affichée (6 ou 7 lignes) ; la transition CSS anime le changement
+    const v = document.querySelector("#themeMenu .theme-vues"); if (!v) return;
+    const actif = v.querySelector(v.dataset.vue === "base" ? ".vue-base" : ".vue-spe");
+    v.style.height = (actif.offsetHeight + 12) + "px";   // + 2 x 6 px de marge intérieure (laisse visible le halo des lignes survolées)
 }
-function ouvrirSousMenuTheme() {
-    const m = $("themeMenu"), s = sousMenuTheme(), ligne = m.querySelector(".theme-dossier");
-    if (!ligne || !s.hidden) return;
-    const actuel = document.documentElement.getAttribute("data-theme");
-    s.innerHTML = THEMES_SPECIAUX.map(k => ligneTheme(k, actuel)).join("");
-    garnirIcones(s);
-    const rm = m.getBoundingClientRect(), rl = ligne.getBoundingClientRect();
-    s.style.width = Math.max(120, Math.min(176, rm.left - 10)) + "px";
-    s.style.right = (window.innerWidth - rm.left + 4) + "px";
-    s.hidden = false;
-    s.style.top = Math.max(8, Math.min(rl.top, window.innerHeight - s.offsetHeight - 8)) + "px";
-    ligne.classList.add("ouvert");
+function basculerDossierTheme() {   // toucher la ligne « Thèmes spéciaux » : ouvre le dossier, ou revient aux thèmes de base
+    const v = document.querySelector("#themeMenu .theme-vues"), l = document.querySelector("#themeMenu .theme-dossier");
+    if (!v || !l) return;
+    const versSpeciaux = menuTheme.vue === "base";
+    menuTheme.vue = versSpeciaux ? "speciaux" : "base";
+    v.dataset.vue = menuTheme.vue;
+    v.querySelector(".vue-base").setAttribute("aria-hidden", String(versSpeciaux));
+    v.querySelector(".vue-spe").setAttribute("aria-hidden", String(!versSpeciaux));
+    l.classList.toggle("ouvert", versSpeciaux);
+    hauteurVueTheme();
     vibrer(8);
-}
-function fermerSousMenuTheme() {
-    const s = $("themeSub"); if (s) s.hidden = true;
-    const l = document.querySelector("#themeMenu .theme-dossier"); if (l) l.classList.remove("ouvert");
-}
-
-function choisirOptTheme(opt, bascule) {   // ligne de thème : applique et ferme ; ligne « Thèmes spéciaux » : ouvre (ou, au toucher, referme) le sous-menu
-    const k = opt.dataset.k;
-    if (k === "__speciaux") { if (bascule && !sousMenuTheme().hidden) fermerSousMenuTheme(); else ouvrirSousMenuTheme(); return; }
-    appliquerTheme(k); fermerMenuTheme();
 }
 
 function ouvrirMenuTheme() {
     const m = $("themeMenu");
     rendreMenuTheme();
-    fermerSousMenuTheme();
     m.hidden = false;
+    hauteurVueTheme();
     menuTheme.ouvert = true;
     $("themeToggle").setAttribute("aria-expanded", "true");
     document.querySelectorAll(".astuce-theme").forEach(a => a.remove());   // l'astuce du premier lancement n'a plus de raison d'être
@@ -306,7 +298,6 @@ function fermerMenuTheme() {
     clearTimeout(menuTheme.minuteur);
     menuTheme.ouvert = false;
     $("themeMenu").hidden = true;
-    fermerSousMenuTheme();
     $("themeToggle").setAttribute("aria-expanded", "false");
 }
 
@@ -314,53 +305,44 @@ function fermerMenuTheme() {
     const bt = $("themeToggle"), m = $("themeMenu");
     bt.addEventListener("pointerdown", e => {
         if (e.pointerType === "mouse" && e.button !== 0) return;
-        if (menuTheme.ouvert) return;
+        if (menuTheme.ouvert) return;               // menu ouvert : le clic qui suit le refermera
         menuTheme.appui = true; menuTheme.x = e.clientX; menuTheme.y = e.clientY;
         clearTimeout(menuTheme.minuteur);
-        menuTheme.minuteur = setTimeout(() => { menuTheme.fait = true; ouvrirMenuTheme(); }, DELAI_MENU_THEME);
+        menuTheme.minuteur = setTimeout(() => {     // appui long : thème suivant (le clic qui suit le relâchement est ignoré)
+            clearTimeout(menuTheme.reset);
+            menuTheme.fait = true;
+            themeSuivant();
+            vibrer(12);
+        }, DELAI_MENU_THEME);
     });
-    window.addEventListener("pointermove", e => {
-        if (!menuTheme.appui) return;
-        if (!menuTheme.ouvert) { if (Math.hypot(e.clientX - menuTheme.x, e.clientY - menuTheme.y) > 12) clearTimeout(menuTheme.minuteur); return; }
-        const opt = optSous(e.clientX, e.clientY), ancien = document.querySelector(".theme-opt.survol");
-        if (ancien === opt) return;
-        if (ancien) ancien.classList.remove("survol");
-        if (opt) { opt.classList.add("survol"); vibrer(6); }
-        if (opt && opt.dataset.k === "__speciaux") ouvrirSousMenuTheme();      // doigt sur « Thèmes spéciaux » : le sous-menu s'ouvre à gauche
-        else if (opt && opt.closest("#themeMenu")) fermerSousMenuTheme();      // doigt sur un autre thème de base : il se referme
+    window.addEventListener("pointermove", e => {   // le doigt s'éloigne du bouton : ce n'est plus un appui long
+        if (menuTheme.appui && Math.hypot(e.clientX - menuTheme.x, e.clientY - menuTheme.y) > 12) clearTimeout(menuTheme.minuteur);
     }, true);
-    window.addEventListener("pointerup", e => {
+    const fin = () => {
         if (!menuTheme.appui) return;
         menuTheme.appui = false;
         clearTimeout(menuTheme.minuteur);
-        if (!menuTheme.ouvert) return;             // appui court : le clic normal (thème suivant) s'en charge
-        const opt = optSous(e.clientX, e.clientY), surBouton = document.elementFromPoint(e.clientX, e.clientY);
-        if (opt) choisirOptTheme(opt, false);
-        else if (!(surBouton && surBouton.closest("#themeToggle"))) fermerMenuTheme();
-        setTimeout(() => { menuTheme.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
-    }, true);
-    window.addEventListener("pointercancel", () => {
-        if (!menuTheme.appui) return;
-        menuTheme.appui = false;
-        fermerMenuTheme();
-        setTimeout(() => { menuTheme.fait = false; }, 400);
-    }, true);
-    [m, sousMenuTheme()].forEach(c => c.addEventListener("click", e => {   // mode « toucher » : la liste est restée ouverte après un appui long
+        if (menuTheme.fait) menuTheme.reset = setTimeout(() => { menuTheme.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
+    };
+    window.addEventListener("pointerup", fin, true);
+    window.addEventListener("pointercancel", fin, true);
+    m.addEventListener("click", e => {
         const opt = e.target.closest(".theme-opt");
         if (!opt) return;
-        choisirOptTheme(opt, true);
-    }));
-    document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeSub, #themeToggle")) fermerMenuTheme(); }, true);
+        if (opt.dataset.k === "__speciaux") return basculerDossierTheme();
+        appliquerTheme(opt.dataset.k);
+        fermerMenuTheme();
+    });
+    document.addEventListener("pointerdown", e => { if (menuTheme.ouvert && !e.target.closest("#themeMenu, #themeToggle")) fermerMenuTheme(); }, true);
     document.addEventListener("keydown", e => { if (e.key === "Escape" && menuTheme.ouvert) fermerMenuTheme(); });
-    window.addEventListener("blur", () => { if (menuTheme.ouvert) fermerMenuTheme(); menuTheme.appui = false; menuTheme.fait = false; });
+    window.addEventListener("blur", () => { if (menuTheme.ouvert) fermerMenuTheme(); clearTimeout(menuTheme.minuteur); menuTheme.appui = false; menuTheme.fait = false; });
 })();
 
 /* ---------- Menu de langues ----------
-   Même geste que le menu de thèmes : appui long (250 ms) sur le bouton de langue, une liste s'ouvre, le doigt glisse, on relâche sur une langue pour la choisir.
-   Un appui court bascule toujours directement d'une langue à l'autre. Pour ajouter une langue : une ligne dans LANGUES (+ ses traductions dans EN/équivalent). */
+   Même geste que le menu de thèmes : toucher le bouton de langue ouvre la liste, toucher une langue la choisit ; appui long (250 ms) : langue suivante.
+   Pour ajouter une langue : une ligne dans LANGUES (+ ses traductions dans EN/équivalent). */
 const LANGUES = [{ code: "fr", abr: "FR", nom: "Français" }, { code: "en", abr: "EN", nom: "English" }];
-const menuLangue = { ouvert: false, appui: false, fait: false, minuteur: null, x: 0, y: 0 };
-const optLangueSous = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".lang-opt") : null; };
+const menuLangue = { ouvert: false, appui: false, fait: false, minuteur: null, reset: null, x: 0, y: 0 };
 
 function ouvrirMenuLangue() {
     fermerMenuTheme();
@@ -384,36 +366,28 @@ function fermerMenuLangue() {
     const bt = $("langToggle"), m = $("langMenu");
     bt.addEventListener("pointerdown", e => {
         if (e.pointerType === "mouse" && e.button !== 0) return;
-        if (menuLangue.ouvert) return;
+        if (menuLangue.ouvert) return;              // menu ouvert : le clic qui suit le refermera
         menuLangue.appui = true; menuLangue.x = e.clientX; menuLangue.y = e.clientY;
         clearTimeout(menuLangue.minuteur);
-        menuLangue.minuteur = setTimeout(() => { menuLangue.fait = true; ouvrirMenuLangue(); }, DELAI_MENU_THEME);
+        menuLangue.minuteur = setTimeout(() => {    // appui long : langue suivante (le clic qui suit le relâchement est ignoré)
+            clearTimeout(menuLangue.reset);
+            menuLangue.fait = true;
+            langueSuivante();
+            vibrer(12);
+        }, DELAI_MENU_THEME);
     });
     window.addEventListener("pointermove", e => {
-        if (!menuLangue.appui) return;
-        if (!menuLangue.ouvert) { if (Math.hypot(e.clientX - menuLangue.x, e.clientY - menuLangue.y) > 12) clearTimeout(menuLangue.minuteur); return; }
-        const opt = optLangueSous(e.clientX, e.clientY), ancien = m.querySelector(".survol");
-        if (ancien === opt) return;
-        if (ancien) ancien.classList.remove("survol");
-        if (opt) { opt.classList.add("survol"); vibrer(6); }
+        if (menuLangue.appui && Math.hypot(e.clientX - menuLangue.x, e.clientY - menuLangue.y) > 12) clearTimeout(menuLangue.minuteur);
     }, true);
-    window.addEventListener("pointerup", e => {
+    const fin = () => {
         if (!menuLangue.appui) return;
         menuLangue.appui = false;
         clearTimeout(menuLangue.minuteur);
-        if (!menuLangue.ouvert) return;             // appui court : le clic normal (autre langue) s'en charge
-        const opt = optLangueSous(e.clientX, e.clientY), surBouton = document.elementFromPoint(e.clientX, e.clientY);
-        if (opt) { fermerMenuLangue(); choisirLangue(opt.dataset.k); }
-        else if (!(surBouton && surBouton.closest("#langToggle"))) fermerMenuLangue();
-        setTimeout(() => { menuLangue.fait = false; }, 400);   // laisse passer (et ignorer) le clic qui suit le relâchement
-    }, true);
-    window.addEventListener("pointercancel", () => {
-        if (!menuLangue.appui) return;
-        menuLangue.appui = false;
-        fermerMenuLangue();
-        setTimeout(() => { menuLangue.fait = false; }, 400);
-    }, true);
-    m.addEventListener("click", e => {              // mode « toucher » : la liste est restée ouverte après un appui long
+        if (menuLangue.fait) menuLangue.reset = setTimeout(() => { menuLangue.fait = false; }, 400);
+    };
+    window.addEventListener("pointerup", fin, true);
+    window.addEventListener("pointercancel", fin, true);
+    m.addEventListener("click", e => {
         const opt = e.target.closest(".lang-opt");
         if (!opt) return;
         fermerMenuLangue();
@@ -421,10 +395,10 @@ function fermerMenuLangue() {
     });
     document.addEventListener("pointerdown", e => { if (menuLangue.ouvert && !e.target.closest("#langMenu, #langToggle")) fermerMenuLangue(); }, true);
     document.addEventListener("keydown", e => { if (e.key === "Escape" && menuLangue.ouvert) fermerMenuLangue(); });
-    window.addEventListener("blur", () => { if (menuLangue.ouvert) fermerMenuLangue(); menuLangue.appui = false; menuLangue.fait = false; });
+    window.addEventListener("blur", () => { if (menuLangue.ouvert) fermerMenuLangue(); clearTimeout(menuLangue.minuteur); menuLangue.appui = false; menuLangue.fait = false; });
 })();
 
-// Astuce du premier lancement (une seule fois) : le geste d'appui long sur le bouton de thème n'a aucun indice visible.
+// Astuce du premier lancement (une seule fois) : le raccourci « appui long = thème suivant » n'a aucun indice visible.
 function afficherAstuceTheme() {
     if (LS.get("smashup_astuce_theme")) return;
     LS.set("smashup_astuce_theme", "1");
@@ -432,7 +406,7 @@ function afficherAstuceTheme() {
     const a = document.createElement("div");
     a.className = "astuce astuce-theme";
     a.setAttribute("role", "status");
-    a.textContent = t("Appui long : choisir un thème");
+    a.textContent = L("Appui long : thème suivant", "Long press: next theme");
     document.querySelector(".app-content").appendChild(a);
     let tm = null;
     const retirer = () => {
